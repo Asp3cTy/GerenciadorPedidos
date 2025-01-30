@@ -141,7 +141,7 @@ function renderPedidos(pedidos) {
     pedidoDiv.innerHTML = `
         <div class="flex-grow">
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
-          <p><strong>Data:</strong> ${formatarData(pedido.data)}</p>
+           ${formatarData(pedido.data)}
           <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
           <p><strong>Ônus:</strong> ${pedido.onus}</p>           
           <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
