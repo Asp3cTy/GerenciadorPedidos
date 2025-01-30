@@ -32,7 +32,7 @@ function getDadosFormulario() {
   };
 }
 
-console.log("Associando event listener ao botão salvarPedido"); // Verifique se o event listener está sendo associado
+console.log("Associando event listener ao botão salvarPedido");
 
 // Função que será chamada quando o pedido for salvo ou editado
 document.getElementById('salvarPedido').addEventListener('click', () => {
@@ -75,16 +75,16 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
         document.getElementById('salvarPedido').removeAttribute('data-pedido-id');
 
         currentPage = 1; // Volta para a página 1 após salvar um pedido
-        carregarPedidos();
+        carregarPedidos(); // Atualiza a lista de pedidos carregados
         document.getElementById('closeModal').click();
         alert(resposta.mensagem);
         // Limpar campos do formulário
         document.getElementById('pedido').value = '';
         document.getElementById('matricula').value = '';
-        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar
+        document.getElementById('onus').value = 'NEGATIVA';
         document.getElementById('folhas').value = '';
         document.getElementById('imagens').value = '';
-        document.getElementById('tipoCertidao').value = 'BALCAO'; // Ou o valor padrão que você desejar
+        document.getElementById('tipoCertidao').value = 'BALCAO';
         document.getElementById('codigoArirj').value = '';
         document.getElementById('codigoEcartorio').value = '';
         document.getElementById('protocolosAdicionados').innerHTML = '';
@@ -114,7 +114,6 @@ function formatarData(data) {
     if (!(data instanceof Date)) {
         dataFormatada = new Date(data);
         if (isNaN(dataFormatada.getTime())) {
-            // Se a conversão falhar, retorne a data original ou uma mensagem de erro
             return 'Data inválida';
         }
     } else {
@@ -136,7 +135,7 @@ function renderPedidos(pedidos) {
   // Adiciona os pedidos da página atual à tela
   pedidos.forEach((pedido) => {
     const pedidoDiv = document.createElement('div');
-    pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-start'); // items-start para alinhar os itens no topo
+    pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-start');
     pedidoDiv.innerHTML = `
         <div class="flex-grow">
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
@@ -205,7 +204,7 @@ function carregarPedidos() {
     xhr.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             const resposta = JSON.parse(this.responseText);
-            pedidosCarregados = resposta.pedidos; // Atualiza a variável global
+            pedidosCarregados = resposta.pedidos; // Atualiza a variável global com os pedidos carregados
             totalPages = Math.ceil(resposta.totalPedidos / 3);
             renderPedidos(pedidosCarregados);
             updatePaginationButtons();
@@ -235,7 +234,7 @@ document.getElementById('pedidosResumo').addEventListener('click', function (eve
 
     // Envia uma requisição para o servidor para excluir o pedido
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/excluir_pedido.php", true); // Rota para excluir pedido no servidor Node.js
+    xhr.open("POST", "/excluir_pedido.php", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -269,7 +268,7 @@ document.getElementById('pedidosResumo').addEventListener('click', function(even
     }
 });
 
-// Função para buscar um pedido pelo ID
+// Função para buscar um pedido pelo ID (CORRIGIDA)
 function buscarPedidoPorId(pedidoId) {
   const pedidoEncontrado = pedidosCarregados.find(p => p.id === pedidoId);
   return pedidoEncontrado;
@@ -277,7 +276,7 @@ function buscarPedidoPorId(pedidoId) {
 
 // Função para editar um pedido
 function editarPedido(pedidoId) {
-    // 1. Buscar o pedido pelo ID
+    // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
     const pedido = buscarPedidoPorId(pedidoId);
 
     // 2. Preencher o formulário com os dados do pedido
@@ -313,7 +312,7 @@ function editarPedido(pedidoId) {
 
 // Função para copiar um pedido
 function copiarPedido(pedidoId) {
-    // 1. Buscar o pedido pelo ID
+    // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
     const pedido = buscarPedidoPorId(pedidoId);
 
     // 2. Formatar o texto do pedido
@@ -376,16 +375,16 @@ document.getElementById('openModal').addEventListener('click', function () {
 
 // Fechar o modal
 document.getElementById('closeModal').addEventListener('click', function () {
-  console.log("Fechando o modal"); // Verifique se a função está sendo chamada
+  console.log("Fechando o modal");
   document.getElementById('modal').classList.add('hidden');
 
         // Limpar campos do formulário
         document.getElementById('pedido').value = '';
         document.getElementById('matricula').value = '';
-        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar      
+        document.getElementById('onus').value = 'NEGATIVA';     
         document.getElementById('folhas').value = '';
         document.getElementById('imagens').value = '';
-        document.getElementById('tipoCertidao').value = 'BALCAO'; // Ou o valor padrão que você desejar
+        document.getElementById('tipoCertidao').value = 'BALCAO';
         document.getElementById('codigoArirj').value = '';
         document.getElementById('codigoEcartorio').value = '';
         document.getElementById('protocolosAdicionados').innerHTML = '';
@@ -577,23 +576,19 @@ function renderizarProprietarios() {
     proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
   }
 
-  // Declaração das variáveis FORA do loop forEach
-  let editButton;
-  let deleteButton;
-
   proprietariosArray.forEach((proprietarioTexto, index) => {
     const proprietarioSpan = document.createElement('span');
     proprietarioSpan.classList.add('text-black');
     proprietarioSpan.textContent = proprietarioTexto;
 
     // Botão Editar
-    editButton = document.createElement('button'); // Agora acessível fora do loop
+    const editButton = document.createElement('button');
     editButton.classList.add('edit-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
     editButton.textContent = 'Editar';
     editButton.dataset.index = index; // Armazena o índice do proprietário
 
     // Botão Excluir
-    deleteButton = document.createElement('button'); // Agora acessível fora do loop
+    const deleteButton = document.createElement('button');
     deleteButton.classList.add('delete-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
     deleteButton.textContent = 'Excluir';
     deleteButton.dataset.index = index; // Armazena o índice do proprietário
@@ -610,13 +605,13 @@ function renderizarProprietarios() {
   // Adiciona event listeners para os botões de editar e excluir
   const editButtons = document.querySelectorAll('.edit-button');
   editButtons.forEach(button => {
-    button.removeEventListener('click', handleEditButtonClick); // Remove event listener anterior, se houver
+    button.removeEventListener('click', handleEditButtonClick);
     button.addEventListener('click', handleEditButtonClick);
   });
 
   const deleteButtons = document.querySelectorAll('.delete-button');
   deleteButtons.forEach(button => {
-    button.removeEventListener('click', handleDeleteButtonClick); // Remove event listener anterior, se houver
+    button.removeEventListener('click', handleDeleteButtonClick);
     button.addEventListener('click', handleDeleteButtonClick);
   });
 }
@@ -645,7 +640,19 @@ function handleEditButtonClick(event) {
     }
   
     // Remover o proprietário da lista
-proprietariosArray.splice(index, 1); // Remove o proprietário do array
+    proprietariosArray.splice(index, 1);
+    document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+    renderizarProprietarios();
+  
+    // Abrir o popup de proprietários
+    abrirPopupProprietarios();
+  }
+
+// Função para lidar com o clique no botão de excluir
+function handleDeleteButtonClick(event) {
+    const index = parseInt(event.target.dataset.index);
+    let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+    proprietariosArray.splice(index, 1); // Remove o proprietário do array
     document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
     renderizarProprietarios(); // Renderiza a lista atualizada
   }
@@ -730,28 +737,20 @@ document.getElementById('uploadPedidos').addEventListener('change', function (ev
 
     reader.onload = function (e) {
       try {
-        const data = JSON.parse(e.target.result); // Tenta fazer o parse do JSON
+        const data = JSON.parse(e.target.result);
 
         if (Array.isArray(data)) {
           // Para cada pedido no JSON, adicione ao array de pedidos
           data.forEach(pedido => {
-            pedidos.push({
-              id: Date.now() + pedidos.length, // Gera IDs sequenciais e únicos
-              pedido: pedido.pedido,
-              data: pedido.data,
-              matricula: pedido.matricula,
-              onus: pedido.onus,             
-              folhas: pedido.folhas,
-              imagens: pedido.imagens,
-              tipoCertidao: pedido.tipoCertidao,
-              codigoArirj: pedido.codigoArirj,
-              codigoEcartorio: pedido.codigoEcartorio,
-              protocolos: pedido.protocolos.join('|'), // Junta os protocolos em uma string separada por pipe
-              proprietarios: pedido.proprietarios.join('|') // Junta os proprietários em uma string separada por pipe
-            });
+            // Adiciona um ID único para cada pedido importado
+            pedido.id = Date.now() + Math.floor(Math.random() * 1000);
+            // Insere o novo pedido no início do array 'pedidosCarregados'
+            pedidosCarregados.unshift(pedido); 
           });
 
-          renderPedidos(pedidos);
+          // Atualiza a exibição com os pedidos importados
+          currentPage = 1;
+          carregarPedidos();
           alert('Pedidos carregados com sucesso!');
         } else {
           alert('Arquivo inválido. O conteúdo deve ser um array JSON.');
@@ -766,4 +765,4 @@ document.getElementById('uploadPedidos').addEventListener('change', function (ev
 });
 
 // Carrega os pedidos quando a página é carregada
-carregarPedidos();    
+carregarPedidos();
