@@ -279,7 +279,7 @@ function renderizarProtocolos() {
 
   protocolosArray.forEach((protocoloTexto, index) => {
     const protocoloSpan = document.createElement('span');
-    protocoloSpan.classList.add('text-white');
+    protocoloSpan.classList.add('text-black');
     protocoloSpan.textContent = protocoloTexto;
 
     // Botão Editar
@@ -414,7 +414,7 @@ function renderizarProprietarios() {
 
   proprietariosArray.forEach((proprietarioTexto, index) => {
     const proprietarioSpan = document.createElement('span');
-    proprietarioSpan.classList.add('text-white');
+    proprietarioSpan.classList.add('text-black');
     proprietarioSpan.textContent = proprietarioTexto;
 
     // Botão Editar
