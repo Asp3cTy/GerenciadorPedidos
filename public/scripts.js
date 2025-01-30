@@ -729,40 +729,6 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
   link.click();
 });
 
-document.getElementById('uploadPedidos').addEventListener('change', function (event) {
-  const file = event.target.files[0];
-
-  if (file) {
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      try {
-        const data = JSON.parse(e.target.result);
-
-        if (Array.isArray(data)) {
-          // Para cada pedido no JSON, adicione ao array de pedidos
-          data.forEach(pedido => {
-            // Adiciona um ID único para cada pedido importado
-            pedido.id = Date.now() + Math.floor(Math.random() * 1000);
-            // Insere o novo pedido no início do array 'pedidosCarregados'
-            pedidosCarregados.unshift(pedido); 
-          });
-
-          // Atualiza a exibição com os pedidos importados
-          currentPage = 1;
-          carregarPedidos();
-          alert('Pedidos carregados com sucesso!');
-        } else {
-          alert('Arquivo inválido. O conteúdo deve ser um array JSON.');
-        }
-      } catch (error) {
-        alert('Erro ao processar o arquivo. Certifique-se de que o conteúdo é JSON válido.');
-      }
-    };
-
-    reader.readAsText(file); // Lê o arquivo como texto
-  }
-});
 
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
