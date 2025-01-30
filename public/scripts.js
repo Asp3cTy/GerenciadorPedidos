@@ -111,7 +111,7 @@ function formatarData(data) {
     const dia = String(dataFormatada.getDate()).padStart(2, '0');
     const mes = String(dataFormatada.getMonth() + 1).padStart(2, '0');
     const ano = dataFormatada.getFullYear();
-    return `<span class="math-inline">\{dia\}/</span>{mes}/${ano}`;
+    return `${dia}/${mes}/${ano}`;
 }
 
 // Função para renderizar os pedidos
