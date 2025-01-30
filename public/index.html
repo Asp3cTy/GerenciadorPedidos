@@ -24,7 +24,7 @@
 </head>
 <body class="bg-primary text-light p-4 dark min-h-screen"> 
     <div class="flex justify-center items-center min-h-[200px]">
-        <button id="openModal" class="bg-yellow-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
+        <button id="openModal" class="bg-tertiary hover:bg-blue-300 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
             Novo Pedido
         </button>
     </div>
@@ -39,25 +39,25 @@
                         <label class="block text-light text-sm font-bold mb-2" for="pedido">
                             Pedido:
                         </label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="pedido" type="text" placeholder="Ex. 000123">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="pedido" type="text" placeholder="Ex. 000123">
                     </div>
                     <div class="mb-4">
                         <label class="block text-light text-sm font-bold mb-2" for="data">
                             Data:
                         </label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="data" type="date">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="data" type="date">
                     </div>
                     <div class="mb-4">
                         <label class="block text-light text-sm font-bold mb-2" for="matricula">
                             N.º Matrícula:
                         </label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="matricula" type="text" placeholder="Ex. 12345 (máx. 5 dígitos)">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="matricula" type="text" placeholder="Ex. 12345 (máx. 5 dígitos)">
                     </div>
                     <div class="mb-4">
                         <label class="block text-light text-sm font-bold mb-2" for="onus">
                             Ônus:
                         </label>
-                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="onus">
+                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="onus">
                             <option value="NEGATIVA">NEGATIVA</option>
                             <option value="POSITIVA">POSITIVA</option>
                             <option value="INDETERMINADA">INDETERMINADA</option>
@@ -67,29 +67,29 @@
                         <label class="block text-light text-sm font-bold mb-2" for="folhas">
                             N.º Folhas:
                         </label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="folhas" type="text" placeholder="Quantas Folhas possui a Matrícula?">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="folhas" type="text" placeholder="Quantas Folhas possui a Matrícula?">
                     </div>
                     <div class="mb-4">
                         <label class="block text-light text-sm font-bold mb-2" for="imagens">
                             N.º de Imagens:
                         </label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="imagens" type="text" placeholder="Quantas Imagens possui a Matrícula?">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="imagens" type="text" placeholder="Quantas Imagens possui a Matrícula?">
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-light text-sm font-bold mb-2" for="tipoCertidao">
                             Tipo de Certidão:
                         </label>
-                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="tipoCertidao">
+                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="tipoCertidao">
                             <option value="BALCAO">BALCÃO</option>
                             <option value="ARIRJ">ARIRJ</option>
                             <option value="E-CARTORIO">E-CARTORIO</option>
                         </select>
                         <div id="codigoArirjContainer" class="hidden mt-2">
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="codigoArirj" type="text" placeholder="Código ARIRJ (Ex. S25010390845D)">
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="codigoArirj" type="text" placeholder="Código ARIRJ (Ex. S25010390845D)">
                         </div>
                         <div id="codigoEcartorioContainer" class="hidden mt-2">
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="codigoEcartorio" type="text" placeholder="Código E-CARTORIO (Ex. 20241254659545)">
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="codigoEcartorio" type="text" placeholder="Código E-CARTORIO (Ex. 20241254659545)">
                         </div>
                     </div>
 
@@ -128,7 +128,7 @@
     </div>
 
     <div id="resumoPedidos" class="mt-4 w-full sm:w-[calc(100%-2rem)] md:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] mx-auto">
-        <h2 class="text-xl font-bold mb-4">Resumo dos Pedidos</h2>
+        <h2 class="text-xl flex justify-center font-bold mb-4">Resumo dos Pedidos</h2>
         <div id="pedidosResumo" class="mt-4 p-4 rounded">
         </div>
     </div>
