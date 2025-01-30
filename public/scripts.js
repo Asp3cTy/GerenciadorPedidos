@@ -122,7 +122,7 @@ function renderPedidos(pedidos) {
   // Adiciona os pedidos à tela
   pedidos.forEach((pedido) => {
     const pedidoDiv = document.createElement('div');
-    pedidoDiv.classList.add('bg-secondary',  'text-white', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-center');
+    pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-center');
     pedidoDiv.innerHTML = `
         <div>
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
