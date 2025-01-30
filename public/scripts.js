@@ -118,7 +118,7 @@ function formatarData(data) {
         dataFormatada = new Date(data);
         if (isNaN(dataFormatada.getTime())) {
             // Se a conversão falhar, retorne a data original ou uma mensagem de erro
-            return `<p><strong>Data:</strong> Data inválida</p>`;
+            return `<p><strong>Data inválida</strong></p>`;
         }
     } else {
         dataFormatada = data;
@@ -127,7 +127,7 @@ function formatarData(data) {
     const dia = String(dataFormatada.getDate()).padStart(2, '0');
     const mes = String(dataFormatada.getMonth() + 1).padStart(2, '0');
     const ano = dataFormatada.getFullYear();
-    return `<p><strong>Data:</strong>${dia}/${mes}/${ano}</p>`;
+    return `<p><strong>${dia}/${mes}/${ano}</strong></p>`;
 }
 
 // Função para renderizar os pedidos
