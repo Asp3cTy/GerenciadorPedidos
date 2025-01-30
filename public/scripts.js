@@ -109,12 +109,14 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
 });
 
 // Função para formatar a data
+// Dentro de scripts.js
 function formatarData(data) {
     let dataFormatada;
     if (!(data instanceof Date)) {
         dataFormatada = new Date(data);
         if (isNaN(dataFormatada.getTime())) {
-            return 'Data inválida';
+            // Se a conversão falhar, retorne a data original ou uma mensagem de erro
+            return `<p><strong>Data:</strong> Data inválida</p>`;
         }
     } else {
         dataFormatada = data;
@@ -123,7 +125,7 @@ function formatarData(data) {
     const dia = String(dataFormatada.getDate()).padStart(2, '0');
     const mes = String(dataFormatada.getMonth() + 1).padStart(2, '0');
     const ano = dataFormatada.getFullYear();
-    return `<span class="math-inline">\{dia\}/</span>{mes}/${ano}`;
+    return `<p><strong>Data:</strong> <span class="math-inline">\{dia\}/</span>{mes}/${ano}</p>`;
 }
 
 // Função para renderizar os pedidos
