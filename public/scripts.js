@@ -1,4 +1,3 @@
-let pedidos = []; // Array para armazenar os pedidos (não mais usado para exibição, mas mantido para consistência com o código de upload)
 let currentPage = 1; // Página atual
 let totalPages = 1; // Total de páginas (será calculado)
 
@@ -67,7 +66,7 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
         // Limpar campos do formulário
         document.getElementById('pedido').value = '';
         document.getElementById('matricula').value = '';
-        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar        
+        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar      
         document.getElementById('folhas').value = '';
         document.getElementById('imagens').value = '';
         document.getElementById('tipoCertidao').value = 'BALCAO'; // Ou o valor padrão que você desejar
@@ -112,7 +111,7 @@ function formatarData(data) {
     const dia = String(dataFormatada.getDate()).padStart(2, '0');
     const mes = String(dataFormatada.getMonth() + 1).padStart(2, '0');
     const ano = dataFormatada.getFullYear();
-    return `${dia}/${mes}/${ano}`;
+    return `<span class="math-inline">\{dia\}/</span>{mes}/${ano}`;
 }
 
 // Função para renderizar os pedidos
@@ -121,7 +120,7 @@ function renderPedidos(pedidos) {
   const pedidosResumo = document.getElementById('pedidosResumo');
   pedidosResumo.innerHTML = '';
 
-  // Adiciona os pedidos à tela
+  // Adiciona os pedidos da página atual à tela
   pedidos.forEach((pedido) => {
     const pedidoDiv = document.createElement('div');
     pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-center');
@@ -130,7 +129,7 @@ function renderPedidos(pedidos) {
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
           <p><strong>Data:</strong> ${formatarData(pedido.data)}</p>
           <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
-          <p><strong>Ônus:</strong> ${pedido.onus}</p>          
+          <p><strong>Ônus:</strong> ${pedido.onus}</p>           
           <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
           <p><strong>N.º Imagens:</strong> ${pedido.imagens}</p>
           <p><strong>Tipo de Certidão:</strong> ${pedido.tipoCertidao}</p>
@@ -149,9 +148,9 @@ function renderPedidos(pedidos) {
                 .split('|') // Divide a string em um array usando o pipe como separador
                 .filter(item => item.trim() !== '') // Remove itens vazios
                 .map(p => {
-                    // Remove tags de botão e seus conteúdos usando expressão regular
-                    const protocoloText = p.replace(/<button.*?>.*?<\/button>/gi, '').trim();
-                    return `<p>${protocoloText}</p>`;
+                  // Remove tags de botão e seus conteúdos usando expressão regular
+                  const protocoloText = p.replace(/<button.*?>.*?<\/button>/gi, '').trim();
+                  return `<p>${protocoloText}</p>`;
                 })
                 .join('') // Junta os elementos <p> em uma string
               : '<p>Nenhum protocolo adicionado</p>'
@@ -182,15 +181,12 @@ function renderPedidos(pedidos) {
 function carregarPedidos() {
     console.log("Carregando pedidos...");
     const xhr = new XMLHttpRequest();
-    // Modifique a URL para incluir o parâmetro 'page'
     xhr.open("GET", `/listar/_pedidos.php?page=${currentPage}`, true);
     xhr.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            const pedidos = JSON.parse(this.responseText);
-            // Você precisará obter o total de pedidos do servidor para calcular o total de páginas
-            // Por enquanto, vamos assumir que você tem uma maneira de calcular isso.
-            // Substitua a linha abaixo pelo cálculo correto do total de páginas
-            totalPages = Math.ceil(pedidos.length / 3); // Exemplo: se você receber sempre 3 ou menos, totalPages será 1.
+            const resposta = JSON.parse(this.responseText);
+            const pedidos = resposta.pedidos;
+            totalPages = Math.ceil(resposta.totalPedidos / 3);
             renderPedidos(pedidos);
             updatePaginationButtons();
         }
@@ -198,6 +194,7 @@ function carregarPedidos() {
     xhr.send();
 }
 
+// Funções para mudar de página e atualizar botões
 function changePage(delta) {
     currentPage += delta;
     if (currentPage < 1) currentPage = 1;
@@ -223,7 +220,7 @@ document.getElementById('pedidosResumo').addEventListener('click', function (eve
     xhr.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
         const resposta = JSON.parse(this.responseText);
-        if (resposta.status === 'sucesso') {
+if (resposta.status === 'sucesso') {
           // Recarrega os pedidos após a exclusão
           carregarPedidos();
         } else {
@@ -246,10 +243,10 @@ document.getElementById('closeModal').addEventListener('click', function () {
   console.log("Fechando o modal"); // Verifique se a função está sendo chamada
   document.getElementById('modal').classList.add('hidden');
 
-          // Limpar campos do formulário
+        // Limpar campos do formulário
         document.getElementById('pedido').value = '';
         document.getElementById('matricula').value = '';
-        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar        
+        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar      
         document.getElementById('folhas').value = '';
         document.getElementById('imagens').value = '';
         document.getElementById('tipoCertidao').value = 'BALCAO'; // Ou o valor padrão que você desejar
@@ -493,14 +490,14 @@ function handleEditButtonClick(event) {
     const index = parseInt(event.target.dataset.index);
     let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
     const proprietarioTexto = proprietariosArray[index];
-
+  
     // Preencher o formulário com os dados do proprietário
     const partes = proprietarioTexto.split(' - ');
     document.getElementById('qualificacao').value = partes[0];
     document.getElementById('nome').value = partes[1];
     document.getElementById('cpf').value = partes[2];
     document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
-
+  
     if (document.getElementById('tipoDocumento').value === 'cpf') {
       document.getElementById('sexo').value = partes[3];
       document.getElementById('identidade').value = partes[4];
@@ -510,15 +507,15 @@ function handleEditButtonClick(event) {
     } else {
       document.getElementById('camposPessoais').style.display = 'none';
     }
-
+  
     // Remover o proprietário da lista
     proprietariosArray.splice(index, 1);
     document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
     renderizarProprietarios();
-
+  
     // Abrir o popup de proprietários
     abrirPopupProprietarios();
-}
+  }
 
 // Função para lidar com o clique no botão de excluir
 function handleDeleteButtonClick(event) {
@@ -527,7 +524,7 @@ function handleDeleteButtonClick(event) {
     proprietariosArray.splice(index, 1); // Remove o proprietário do array
     document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
     renderizarProprietarios(); // Renderiza a lista atualizada
-}
+  }
 
 // Função para permitir apenas números nos campos
 function permitirSomenteNumeros(idCampo) {
@@ -569,7 +566,7 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
     pedido: pedido.pedido,
     data: pedido.data,
     matricula: pedido.matricula,
-    onus: pedido.onus,    
+    onus: pedido.onus,      
     folhas: pedido.folhas,
     imagens: pedido.imagens,
     tipoCertidao: pedido.tipoCertidao,
@@ -583,7 +580,7 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
       : [],
     proprietarios: pedido.proprietarios
       ? pedido.proprietarios
-        .replace(/<[^>]*>/g, '') // Remove tags HTML
+.replace(/<[^>]*>/g, '') // Remove tags HTML
         .split('|') // Divide os proprietarios em um array
         .filter(item => item.trim() !== '') // Remove itens vazios
         .map(item => `${item.trim()}`) // Formata
@@ -619,7 +616,7 @@ document.getElementById('uploadPedidos').addEventListener('change', function (ev
               pedido: pedido.pedido,
               data: pedido.data,
               matricula: pedido.matricula,
-              onus: pedido.onus,              
+              onus: pedido.onus,             
               folhas: pedido.folhas,
               imagens: pedido.imagens,
               tipoCertidao: pedido.tipoCertidao,
