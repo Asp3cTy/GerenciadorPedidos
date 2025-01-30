@@ -1,4 +1,6 @@
 let pedidos = []; // Array para armazenar os pedidos (não mais usado para exibição, mas mantido para consistência com o código de upload)
+let currentPage = 1; // Página atual
+let totalPages = 1; // Total de páginas (será calculado)
 
 // Função para formatar CPF e CNPJ
 function formatarCpfCnpj(numero) {
@@ -178,16 +180,35 @@ function renderPedidos(pedidos) {
 
 // Função para carregar os pedidos do servidor
 function carregarPedidos() {
-  console.log("Carregando pedidos..."); // Verifique se a função está sendo chamada
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "/listar/_pedidos.php", true);
-  xhr.onreadystatechange = function () {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      const pedidos = JSON.parse(this.responseText);
-      renderPedidos(pedidos);
-    }
-  };
-  xhr.send();
+    console.log("Carregando pedidos...");
+    const xhr = new XMLHttpRequest();
+    // Modifique a URL para incluir o parâmetro 'page'
+    xhr.open("GET", `/listar/_pedidos.php?page=${currentPage}`, true);
+    xhr.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            const pedidos = JSON.parse(this.responseText);
+            // Você precisará obter o total de pedidos do servidor para calcular o total de páginas
+            // Por enquanto, vamos assumir que você tem uma maneira de calcular isso.
+            // Substitua a linha abaixo pelo cálculo correto do total de páginas
+            totalPages = Math.ceil(pedidos.length / 3); // Exemplo: se você receber sempre 3 ou menos, totalPages será 1.
+            renderPedidos(pedidos);
+            updatePaginationButtons();
+        }
+    };
+    xhr.send();
+}
+
+function changePage(delta) {
+    currentPage += delta;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    carregarPedidos();
+}
+
+function updatePaginationButtons() {
+    document.getElementById('pageNumber').textContent = `Página ${currentPage} de ${totalPages}`;
+    document.getElementById('prevPage').disabled = currentPage === 1;
+    document.getElementById('nextPage').disabled = currentPage === totalPages;
 }
 
 // Evento para excluir pedido (usando delegação de eventos)
