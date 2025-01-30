@@ -3,7 +3,7 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const path = require('path'); // Importe o módulo 'path' aqui
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Configurações do banco de dados (ajuste conforme necessário)
 const dbConfig = {
