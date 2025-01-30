@@ -124,7 +124,7 @@ function formatarData(data) {
     const dia = String(dataFormatada.getDate()).padStart(2, '0');
     const mes = String(dataFormatada.getMonth() + 1).padStart(2, '0');
     const ano = dataFormatada.getFullYear();
-    return `<p><strong>Data:</strong> <span class="math-inline">\{dia\}/</span>{mes}/${ano}</p>`;
+    return `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
 }
 
 // Função para renderizar os pedidos
@@ -182,10 +182,10 @@ function renderPedidos(pedidos) {
           </div>
         </div>
         <div class="flex flex-col space-y-2 ml-4">
-            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="<span class="math-inline">\{pedido\.id\}"\>
-Editar
-</button\>
-<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data\-id\="</span>{pedido.id}">
+            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
+                Editar
+            </button>
+            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
                 Copiar
             </button>
             <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
