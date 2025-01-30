@@ -44,6 +44,7 @@ app.post('/salvar_pedido.php', (req, res) => {
         pedido: pedido.pedido, // Substitua por uma função de sanitização mais robusta
         data: pedido.data,
         matricula: pedido.matricula, // Substitua por uma função de sanitização mais robusta
+        onus: pedido.onus,        
         folhas: pedido.folhas, // Substitua por uma função de sanitização mais robusta
         imagens: pedido.imagens, // Substitua por uma função de sanitização mais robusta
         tipoCertidao: pedido.tipoCertidao, // Substitua por uma função de sanitização mais robusta
@@ -54,13 +55,14 @@ app.post('/salvar_pedido.php', (req, res) => {
     };
 
     // Query SQL para inserir o pedido (ajuste conforme a estrutura da sua tabela)
-    const sql = `INSERT INTO pedidos (pedido, data, matricula, folhas, imagens, tipoCertidao, codigoArirj, codigoEcartorio, protocolos, proprietarios) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO pedidos (pedido, data, matricula, onus, folhas, imagens, tipoCertidao, codigoArirj, codigoEcartorio, protocolos, proprietarios) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     // Executa a query
     connection.query(sql, [
       sanitizedPedido.pedido,
       sanitizedPedido.data,
       sanitizedPedido.matricula,
+      sanitizedPedido.onus,      
       sanitizedPedido.folhas,
       sanitizedPedido.imagens,
       sanitizedPedido.tipoCertidao,
@@ -101,7 +103,7 @@ app.get('/listar/_pedidos.php', (req, res) => {
     console.log('Conectado ao banco de dados!');
 
     // Query SQL para buscar todos os pedidos, ordenando por data de forma descendente
-    const sql = `SELECT * FROM pedidos ORDER BY data DESC, id ASC`; // Ordena por data e ID para garantir consistência
+    const sql = `SELECT * FROM pedidos ORDER BY data ASC, id ASC`; // Ordena por data e ID para garantir consistência
 
     // Executa a query
     connection.query(sql, (err, results) => {
