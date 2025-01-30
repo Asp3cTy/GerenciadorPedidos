@@ -141,7 +141,7 @@ function renderPedidos(pedidos) {
     pedidoDiv.innerHTML = `
         <div class="flex-grow">
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
-           ${formatarData(pedido.data)}
+          ${formatarData(pedido.data)}
           <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
           <p><strong>Ônus:</strong> ${pedido.onus}</p>           
           <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
@@ -183,10 +183,10 @@ function renderPedidos(pedidos) {
           </div>
         </div>
         <div class="flex flex-col space-y-2 ml-4">
-            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="<span class="math-inline">\{pedido\.id\}"\>
-Editar
-</button\>
-<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data\-id\="</span>{pedido.id}">
+            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
+                Editar
+            </button>
+            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
                 Copiar
             </button>
             <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
@@ -196,7 +196,6 @@ Editar
       `;
     pedidosResumo.appendChild(pedidoDiv);
   });
-}
 
 // Função para carregar os pedidos do servidor
 function carregarPedidos() {
