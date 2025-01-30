@@ -22,7 +22,7 @@
         }
     </script>
 </head>
-<body class="bg-primary text-light p-4 dark min-h-screen"> 
+<body class="bg-primary text-light p-4 dark min-h-screen" onload="carregarPedidos()">
     <div class="flex justify-center items-center min-h-[200px]">
         <button id="openModal" class="bg-tertiary hover:bg-blue-300 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
             Novo Pedido
@@ -272,9 +272,5 @@
     </div>
 
     <script src="scripts.js"></script>
-    <script>
-        document.getElementById('data').valueAsDate = new Date();
-        carregarPedidos()
-    </script>
 </body>
-</html>                                
+</html>
