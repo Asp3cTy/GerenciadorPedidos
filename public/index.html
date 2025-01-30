@@ -228,49 +228,48 @@
                                 <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="sexo">
                                     <option value="Masculino">Masculino</option>
                                     <option value="Feminino">Feminino</option>
-                                    <option value="Outro">Nenhuma</option>
-                                </select>
+                                    <option value="Outro">Nenhuma
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="block text-light text-sm font-bold mb-2" for="identidade">
+                                        Identidade:
+                                    </label>
+                                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="identidade" type="text">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="block text-light text-sm font-bold mb-2" for="orgaoExpedidor">
+                                        Órgão Expedidor:
+                                    </label>
+                                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="orgaoExpedidor" type="text">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="block text-light text-sm font-bold mb-2" for="estadoCivil">
+                                        Estado Civil:
+                                    </label>
+                                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="estadoCivil">
+                                        <option value="Solteiro">Solteiro</option>
+                                        <option value="Casado">Casado</option>
+                                        <option value="Viúvo">Viúvo</option>
+                                        <option value="Separado Judicialmente">Separado Judicialmente</option>
+                                        <option value="Divorciado">Divorciado</option>
+                                        <option value="Separado Consensualmente">Separado Consensualmente</option>
+                                        <option value="Desquitado">Desquitado</option>
+                                        <option value="Nenhuma">Nenhuma</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <label class="block text-light text-sm font-bold mb-2" for="identidade">
-                                    Identidade:
-                                </label>
-                                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="identidade" type="text">
-                            </div>
-                            <div class="mb-2">
-                                <label class="block text-light text-sm font-bold mb-2" for="orgaoExpedidor">
-                                    Órgão Expedidor:
-                                </label>
-                                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="orgaoExpedidor" type="text">
-                            </div>
-                            <div class="mb-2">
-                                <label class="block text-light text-sm font-bold mb-2" for="estadoCivil">
-                                    Estado Civil:
-                                </label>
-                                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="estadoCivil">
-                                    <option value="Solteiro">Solteiro</option>
-                                    <option value="Casado">Casado</option>
-                                    <option value="Viúvo">Viúvo</option>
-                                    <option value="Separado Judicialmente">Separado Judicialmente</option>
-                                    <option value="Divorciado">Divorciado</option>
-                                    <option value="Separado Consensualmente">Separado Consensualmente</option>
-                                    <option value="Desquitado">Desquitado</option>
-                                    <option value="Nenhuma">Nenhuma</option>
-                                </select>
-                            </div>
+                            <button type="button" id="confirmarProprietario" class="bg-tertiary hover:bg-quaternary text-light font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
+                                Confirmar Proprietário
+                            </button>
                         </div>
-                        <button type="button" id="confirmarProprietario" class="bg-tertiary hover:bg-quaternary text-light font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
-                            Confirmar Proprietário
-                        </button>
                     </div>
-                </div>
-                <div class="bg-white-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-white-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-white-700 hover:bg-white-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="fecharPopupProprietarios()">Fechar</button>
+                    <div class="bg-white-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-white-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-white-700 hover:bg-white-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="fecharPopupProprietarios()">Fechar</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <script src="scripts.js"></script>
-</body>
-</html>
+        <script src="scripts.js"></script>
+    </body>
+    </html>                                        
