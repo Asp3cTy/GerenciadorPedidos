@@ -109,7 +109,6 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
 });
 
 // Função para formatar a data
-// Dentro de scripts.js
 function formatarData(data) {
     let dataFormatada;
     if (!(data instanceof Date)) {
@@ -183,10 +182,10 @@ function renderPedidos(pedidos) {
           </div>
         </div>
         <div class="flex flex-col space-y-2 ml-4">
-            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
-                Editar
-            </button>
-            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
+            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="<span class="math-inline">\{pedido\.id\}"\>
+Editar
+</button\>
+<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data\-id\="</span>{pedido.id}">
                 Copiar
             </button>
             <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
@@ -196,6 +195,7 @@ function renderPedidos(pedidos) {
       `;
     pedidosResumo.appendChild(pedidoDiv);
   });
+}
 
 // Função para carregar os pedidos do servidor
 function carregarPedidos() {
@@ -379,32 +379,35 @@ document.getElementById('closeModal').addEventListener('click', function () {
   console.log("Fechando o modal");
   document.getElementById('modal').classList.add('hidden');
 
-        // Limpar campos do formulário
-        document.getElementById('pedido').value = '';
-        document.getElementById('matricula').value = '';
-        document.getElementById('onus').value = 'NEGATIVA';     
-        document.getElementById('folhas').value = '';
-        document.getElementById('imagens').value = '';
-        document.getElementById('tipoCertidao').value = 'BALCAO';
-        document.getElementById('codigoArirj').value = '';
-        document.getElementById('codigoEcartorio').value = '';
-        document.getElementById('protocolosAdicionados').innerHTML = '';
-        document.getElementById('proprietariosAdicionados').innerHTML = '';
-        document.getElementById('protocolosAdicionados').dataset.protocolos = '';
-        document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
-        document.getElementById('data').valueAsDate = new Date();
+  // Limpar campos do formulário
+  document.getElementById('pedido').value = '';
+  document.getElementById('matricula').value = '';
+  document.getElementById('onus').value = 'NEGATIVA';
+  document.getElementById('folhas').value = '';
+  document.getElementById('imagens').value = '';
+  document.getElementById('tipoCertidao').value = 'BALCAO';
+  document.getElementById('codigoArirj').value = '';
+  document.getElementById('codigoEcartorio').value = '';
+  document.getElementById('protocolosAdicionados').innerHTML = '';
+  document.getElementById('proprietariosAdicionados').innerHTML = '';
+  document.getElementById('protocolosAdicionados').dataset.protocolos = '';
+  document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
+  document.getElementById('data').valueAsDate = new Date();
 });
 
 // Funções para abrir e fechar popups
 function abrirPopupProtocolos() {
   document.getElementById('popupProtocolos').classList.remove('hidden');
 }
+
 function fecharPopupProtocolos() {
   document.getElementById('popupProtocolos').classList.add('hidden');
 }
+
 function abrirPopupProprietarios() {
   document.getElementById('popupProprietarios').classList.remove('hidden');
 }
+
 function fecharPopupProprietarios() {
   document.getElementById('popupProprietarios').classList.add('hidden');
 }
@@ -731,7 +734,7 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
 });
 
 document.getElementById('uploadPedidos').addEventListener('change', function (event) {
-  const file = event.target.files[0];
+const file = event.target.files[0];
 
   if (file) {
     const reader = new FileReader();
@@ -746,7 +749,7 @@ document.getElementById('uploadPedidos').addEventListener('change', function (ev
             // Adiciona um ID único para cada pedido importado
             pedido.id = Date.now() + Math.floor(Math.random() * 1000);
             // Insere o novo pedido no início do array 'pedidosCarregados'
-            pedidosCarregados.unshift(pedido); 
+            pedidosCarregados.unshift(pedido);
           });
 
           // Atualiza a exibição com os pedidos importados
