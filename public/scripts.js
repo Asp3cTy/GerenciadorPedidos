@@ -33,17 +33,27 @@ function getDadosFormulario() {
 
 console.log("Associando event listener ao botão salvarPedido"); // Verifique se o event listener está sendo associado
 
-// Função que será chamada quando o pedido for salvo
+// Função que será chamada quando o pedido for salvo ou editado
 document.getElementById('salvarPedido').addEventListener('click', () => {
   console.log("Botão salvarPedido clicado!");
   const dadosPedido = getDadosFormulario();
+
+  // Verifica se está editando um pedido existente
+  const pedidoId = document.getElementById('salvarPedido').getAttribute('data-pedido-id');
   const novoPedido = {
-    id: Date.now(),
     ...dadosPedido
   };
 
+  // Se tiver pedidoId, é uma edição, então adiciona o ID ao objeto
+  if (pedidoId) {
+    novoPedido.id = parseInt(pedidoId);
+  } else {
+    novoPedido.id = Date.now();
+  }
+
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/salvar_pedido.php", true);
+  // Usa uma rota diferente para edição, por exemplo, /editar_pedido.php
+  xhr.open("POST", pedidoId ? "/editar_pedido.php" : "/salvar_pedido.php", true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -60,13 +70,17 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
       }
 
       if (resposta.status === 'sucesso') {
+        // Remove o atributo data-pedido-id, já que a edição foi concluída
+        document.getElementById('salvarPedido').removeAttribute('data-pedido-id');
+
+        currentPage = 1; // Volta para a página 1 após salvar um pedido
         carregarPedidos();
         document.getElementById('closeModal').click();
         alert(resposta.mensagem);
         // Limpar campos do formulário
         document.getElementById('pedido').value = '';
         document.getElementById('matricula').value = '';
-        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar      
+        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar
         document.getElementById('folhas').value = '';
         document.getElementById('imagens').value = '';
         document.getElementById('tipoCertidao').value = 'BALCAO'; // Ou o valor padrão que você desejar
@@ -80,12 +94,10 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
 
         // Disparar o evento 'change' no tipoCertidao para redefinir a visibilidade dos campos ARIRJ/E-CARTORIO
         document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
-        
+
         // Fechar os popups, se estiverem abertos
         fecharPopupProtocolos();
         fecharPopupProprietarios();
-        
-        
       } else {
         alert(resposta.mensagem);
       }
@@ -111,7 +123,7 @@ function formatarData(data) {
     const dia = String(dataFormatada.getDate()).padStart(2, '0');
     const mes = String(dataFormatada.getMonth() + 1).padStart(2, '0');
     const ano = dataFormatada.getFullYear();
-    return `${dia}/${mes}/${ano}`;
+    return `<span class="math-inline">\{dia\}/</span>{mes}/${ano}`;
 }
 
 // Função para renderizar os pedidos
@@ -123,9 +135,9 @@ function renderPedidos(pedidos) {
   // Adiciona os pedidos da página atual à tela
   pedidos.forEach((pedido) => {
     const pedidoDiv = document.createElement('div');
-    pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-center');
+    pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-start'); // items-start para alinhar os itens no topo
     pedidoDiv.innerHTML = `
-        <div>
+        <div class="flex-grow">
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
           <p><strong>Data:</strong> ${formatarData(pedido.data)}</p>
           <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
@@ -145,14 +157,13 @@ function renderPedidos(pedidos) {
             <p><strong>Protocolos:</strong></p>
             ${pedido.protocolos
               ? pedido.protocolos
-                .split('|') // Divide a string em um array usando o pipe como separador
-                .filter(item => item.trim() !== '') // Remove itens vazios
+                .split('|')
+                .filter(item => item.trim() !== '')
                 .map(p => {
-                  // Remove tags de botão e seus conteúdos usando expressão regular
                   const protocoloText = p.replace(/<button.*?>.*?<\/button>/gi, '').trim();
                   return `<p>${protocoloText}</p>`;
                 })
-                .join('') // Junta os elementos <p> em uma string
+                .join('')
               : '<p>Nenhum protocolo adicionado</p>'
             }
           </div>
@@ -161,19 +172,27 @@ function renderPedidos(pedidos) {
             <p><strong>Proprietários:</strong></p>
             ${pedido.proprietarios
               ? pedido.proprietarios
-                .split('|') // Divide a string em um array usando o pipe como separador
-                .filter(item => item.trim() !== '') // Remove itens vazios
-                .map(p => `<p>${p.trim()}</p>`) // Cria um elemento <p> para cada proprietário
-                .join('') // Junta os elementos <p> em uma string
+                .split('|')
+                .filter(item => item.trim() !== '')
+                .map(p => `<p>${p.trim()}</p>`)
+                .join('')
               : '<p>Nenhum proprietário adicionado</p>'
             }
           </div>
         </div>
-        <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-4" data-id="${pedido.id}">
-          Excluir
-        </button>
+        <div class="flex flex-col space-y-2 ml-4">
+            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="<span class="math-inline">\{pedido\.id\}"\>
+Editar
+</button\>
+<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data\-id\="</span>{pedido.id}">
+                Copiar
+            </button>
+            <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
+                Excluir
+            </button>
+        </div>
       `;
-    pedidosResumo.prepend(pedidoDiv); // Insere o pedido no início da lista, para que os mais recentes fiquem no topo
+    pedidosResumo.appendChild(pedidoDiv); // Agora usamos appendChild, já que a ordem é controlada pelo servidor
   });
 }
 
@@ -205,7 +224,7 @@ function changePage(delta) {
 function updatePaginationButtons() {
     document.getElementById('pageNumber').textContent = `Página ${currentPage} de ${totalPages}`;
     document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = currentPage === totalPages;
+    document.getElementById('nextPage').disabled = currentPage >= totalPages;
 }
 
 // Evento para excluir pedido (usando delegação de eventos)
@@ -220,7 +239,7 @@ document.getElementById('pedidosResumo').addEventListener('click', function (eve
     xhr.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
         const resposta = JSON.parse(this.responseText);
-if (resposta.status === 'sucesso') {
+        if (resposta.status === 'sucesso') {
           // Recarrega os pedidos após a exclusão
           carregarPedidos();
         } else {
@@ -232,6 +251,133 @@ if (resposta.status === 'sucesso') {
     xhr.send(JSON.stringify({ id: pedidoId }));
   }
 });
+
+// Evento para editar pedido (usando delegação de eventos)
+document.getElementById('pedidosResumo').addEventListener('click', function(event) {
+    if (event.target.classList.contains('editar-button')) {
+        const pedidoId = parseInt(event.target.getAttribute('data-id'));
+        editarPedido(pedidoId);
+    }
+});
+
+// Evento para copiar pedido (usando delegação de eventos)
+document.getElementById('pedidosResumo').addEventListener('click', function(event) {
+    if (event.target.classList.contains('copiar-button')) {
+        const pedidoId = parseInt(event.target.getAttribute('data-id'));
+        copiarPedido(pedidoId);
+    }
+});
+
+// Função para buscar um pedido pelo ID
+function buscarPedidoPorId(pedidoId) {
+    let pedidoEncontrado = null;
+    // Buscar o pedido na resposta atual do servidor
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", `/listar/_pedidos.php?page=${currentPage}`, false); // Requisição síncrona (não recomendado, mas simplifica o exemplo)
+    xhr.send();
+
+    if (xhr.status === 200) {
+        const resposta = JSON.parse(xhr.responseText);
+        const pedidos = resposta.pedidos;
+        pedidoEncontrado = pedidos.find(p => p.id === pedidoId);
+    }
+
+    return pedidoEncontrado;
+}
+
+// Função para editar um pedido
+function editarPedido(pedidoId) {
+    // 1. Buscar o pedido pelo ID
+    const pedido = buscarPedidoPorId(pedidoId);
+
+    // 2. Preencher o formulário com os dados do pedido
+    if (pedido) {
+        document.getElementById('pedido').value = pedido.pedido;
+        document.getElementById('data').valueAsDate = new Date(pedido.data);
+        document.getElementById('matricula').value = pedido.matricula;
+        document.getElementById('onus').value = pedido.onus;
+        document.getElementById('folhas').value = pedido.folhas;
+        document.getElementById('imagens').value = pedido.imagens;
+        document.getElementById('tipoCertidao').value = pedido.tipoCertidao;
+        document.getElementById('codigoArirj').value = pedido.codigoArirj;
+        document.getElementById('codigoEcartorio').value = pedido.codigoEcartorio;
+
+        // Tratar protocolos e proprietários
+        document.getElementById('protocolosAdicionados').dataset.protocolos = pedido.protocolos;
+        document.getElementById('proprietariosAdicionados').dataset.proprietarios = pedido.proprietarios;
+        renderizarProtocolos();
+        renderizarProprietarios();
+
+        // 3. Disparar o evento 'change' no tipoCertidao
+        document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
+
+        // Adiciona o data-pedido-id ao botão "Salvar Pedido"
+        document.getElementById('salvarPedido').setAttribute('data-pedido-id', pedidoId);
+
+        // 4. Abrir o modal
+        document.getElementById('modal').classList.remove('hidden');
+    } else {
+        alert("Pedido não encontrado!");
+    }
+}
+
+// Função para copiar um pedido
+function copiarPedido(pedidoId) {
+    // 1. Buscar o pedido pelo ID
+    const pedido = buscarPedidoPorId(pedidoId);
+
+    // 2. Formatar o texto do pedido
+    if (pedido) {
+        let textoPedido = `
+Pedido: ${pedido.pedido}
+Data: ${formatarData(pedido.data)}
+Matrícula: ${pedido.matricula}
+Ônus: ${pedido.onus}
+N.º Folhas: ${pedido.folhas}
+N.º Imagens: ${pedido.imagens}
+Tipo de Certidão: ${pedido.tipoCertidao}
+`;
+
+        if (pedido.tipoCertidao === 'ARIRJ') {
+            textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
+        }
+
+        if (pedido.tipoCertidao === 'E-CARTORIO') {
+            textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+        }
+
+        textoPedido += `Protocolos:\n`;
+        if (pedido.protocolos) {
+            textoPedido += pedido.protocolos
+                .split('|')
+                .filter(item => item.trim() !== '')
+                .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
+                .join('\n');
+        } else {
+            textoPedido += `Nenhum protocolo adicionado\n`;
+        }
+
+        textoPedido += `\nProprietários:\n`;
+        if (pedido.proprietarios) {
+            textoPedido += pedido.proprietarios
+                .split('|')
+                .filter(item => item.trim() !== '')
+                .map(p => p.trim())
+                .join('\n');
+        } } else {
+            textoPedido += `Nenhum proprietário adicionado\n`;
+        }
+
+        // 3. Copiar para a área de transferência
+        navigator.clipboard.writeText(textoPedido).then(() => {
+            alert("Pedido copiado para a área de transferência!");
+        }, () => {
+            alert("Erro ao copiar o pedido!");
+        });
+    } else {
+        alert("Pedido não encontrado!");
+    }
+}
 
 // Abrir o modal
 document.getElementById('openModal').addEventListener('click', function () {
@@ -642,4 +788,4 @@ document.getElementById('uploadPedidos').addEventListener('change', function (ev
 });
 
 // Carrega os pedidos quando a página é carregada
-carregarPedidos();
+carregarPedidos();        
