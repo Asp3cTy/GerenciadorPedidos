@@ -311,16 +311,15 @@ function editarPedido(pedidoId) {
     }
 }
 
-// Função para copiar um pedido
 function copiarPedido(pedidoId) {
-    // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
-    const pedido = buscarPedidoPorId(pedidoId);
+  // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
+  const pedido = buscarPedidoPorId(pedidoId);
 
-    // 2. Formatar o texto do pedido
-    if (pedido) {
-        let textoPedido = `
+  // 2. Formatar o texto do pedido
+  if (pedido) {
+      let textoPedido = `
 Pedido: ${pedido.pedido}
-Data: ${formatarData(pedido.data)}
+Data: ${formatarData(pedido.data).replace(/<[^>]+>/g, '')}
 Matrícula: ${pedido.matricula}
 Ônus: ${pedido.onus}
 N.º Folhas: ${pedido.folhas}
@@ -328,45 +327,48 @@ N.º Imagens: ${pedido.imagens}
 Tipo de Certidão: ${pedido.tipoCertidao}
 `;
 
-        if (pedido.tipoCertidao === 'ARIRJ') {
-            textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
-        }
+      if (pedido.tipoCertidao === 'ARIRJ') {
+          textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
+      }
 
-        if (pedido.tipoCertidao === 'E-CARTORIO') {
-            textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
-        }
+      if (pedido.tipoCertidao === 'E-CARTORIO') {
+          textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+      }
 
-        textoPedido += `Protocolos:\n`;
-        if (pedido.protocolos) {
-            textoPedido += pedido.protocolos
-                .split('|')
-                .filter(item => item.trim() !== '')
-                .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
-                .join('\n');
-        } else {
-            textoPedido += `Nenhum protocolo adicionado\n`;
-        }
+      textoPedido += `Protocolos:\n`;
+      if (pedido.protocolos) {
+          textoPedido += pedido.protocolos
+              .split('|')
+              .filter(item => item.trim() !== '')
+              .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
+              .join('\n');
+      } else {
+          textoPedido += `Nenhum protocolo adicionado\n`;
+      }
 
-        textoPedido += `\nProprietários:\n`;
-        if (pedido.proprietarios) {
-            textoPedido += pedido.proprietarios
-                .split('|')
-                .filter(item => item.trim() !== '')
-                .map(p => p.trim())
-                .join('\n');
-        } else {
-            textoPedido += `Nenhum proprietário adicionado\n`;
-        }
+      textoPedido += `\nProprietários:\n`;
+      if (pedido.proprietarios) {
+          textoPedido += pedido.proprietarios
+              .split('|')
+              .filter(item => item.trim() !== '')
+              .map(p => p.trim())
+              .join('\n');
+      } else {
+          textoPedido += `Nenhum proprietário adicionado\n`;
+      }
 
-        // 3. Copiar para a área de transferência
-        navigator.clipboard.writeText(textoPedido).then(() => {
-            alert("Pedido copiado para a área de transferência!");
-        }, () => {
-            alert("Erro ao copiar o pedido!");
-        });
-    } else {
-        alert("Pedido não encontrado!");
-    }
+      // Adiciona a linha de separação
+      textoPedido += `\n----------------------------------------\n`;
+
+      // 3. Copiar para a área de transferência
+      navigator.clipboard.writeText(textoPedido).then(() => {
+          alert("Pedido copiado para a área de transferência!");
+      }, () => {
+          alert("Erro ao copiar o pedido!");
+      });
+  } else {
+      alert("Pedido não encontrado!");
+  }
 }
 
 // Abrir o modal
