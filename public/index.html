@@ -43,6 +43,16 @@
                     </label>
                     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="matricula" type="text" placeholder="Ex. 12345 (máx. 5 dígitos)">
                 </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="onus">
+                        Ônus:
+                    </label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="onus">
+                        <option value="NEGATIVA">NEGATIVA</option>
+                        <option value="POSITIVA">POSITIVA</option>
+						<option value="INDETERMINADA">INDETERMINADA</option>
+                    </select>
+                </div>
 				<div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="folhas">
                         N.º Folhas:
@@ -226,7 +236,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="cpf">
-                            CPF/CNPJ:
+                            CPF:
                         </label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="cpf" type="text">
                     </div>
