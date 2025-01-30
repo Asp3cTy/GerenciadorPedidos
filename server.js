@@ -7,10 +7,10 @@ const port = process.env.PORT || 3000;
 
 // Configurações do banco de dados (ajuste conforme necessário)
 const dbConfig = {
-  host: 'database-2.cfs2cmiaucif.sa-east-1.rds.amazonaws.com',
-  user: 'admin',
-  password: 'palmares',
-  database: 'certidoes_db'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 };
 
 // Middleware para lidar com CORS
