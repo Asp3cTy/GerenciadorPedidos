@@ -122,7 +122,7 @@ function renderPedidos(pedidos) {
   // Adiciona os pedidos à tela
   pedidos.forEach((pedido) => {
     const pedidoDiv = document.createElement('div');
-    pedidoDiv.classList.add('bg-white', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-center');
+    pedidoDiv.classList.add('bg-secondary', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-center');
     pedidoDiv.innerHTML = `
         <div>
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
@@ -168,7 +168,7 @@ function renderPedidos(pedidos) {
             }
           </div>
         </div>
-        <button class="excluir-button text-red-500 hover:text-red-700 font-bold px-2" data-id="${pedido.id}">
+        <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-4" data-id="${pedido.id}">
           Excluir
         </button>
       `;
@@ -279,7 +279,7 @@ function renderizarProtocolos() {
 
   protocolosArray.forEach((protocoloTexto, index) => {
     const protocoloSpan = document.createElement('span');
-    protocoloSpan.classList.add('text-gray-700');
+    protocoloSpan.classList.add('text-white');
     protocoloSpan.textContent = protocoloTexto;
 
     // Botão Editar
@@ -414,7 +414,7 @@ function renderizarProprietarios() {
 
   proprietariosArray.forEach((proprietarioTexto, index) => {
     const proprietarioSpan = document.createElement('span');
-    proprietarioSpan.classList.add('text-gray-700');
+    proprietarioSpan.classList.add('text-white');
     proprietarioSpan.textContent = proprietarioTexto;
 
     // Botão Editar
