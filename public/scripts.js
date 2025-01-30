@@ -378,38 +378,34 @@ document.getElementById('openModal').addEventListener('click', function () {
 document.getElementById('closeModal').addEventListener('click', function () {
   console.log("Fechando o modal");
   document.getElementById('modal').classList.add('hidden');
-
-  // Limpar campos do formulário
-  document.getElementById('pedido').value = '';
-  document.getElementById('matricula').value = '';
-  document.getElementById('onus').value = 'NEGATIVA';
-  document.getElementById('folhas').value = '';
-  document.getElementById('imagens').value = '';
-  document.getElementById('tipoCertidao').value = 'BALCAO';
-  document.getElementById('codigoArirj').value = '';
-  document.getElementById('codigoEcartorio').value = '';
-  document.getElementById('protocolosAdicionados').innerHTML = '';
-  document.getElementById('proprietariosAdicionados').innerHTML = '';
-  document.getElementById('protocolosAdicionados').dataset.protocolos = '';
-  document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
-  document.getElementById('data').valueAsDate = new Date();
+// Limpar campos do formulário
+document.getElementById('pedido').value = '';
+document.getElementById('matricula').value = '';
+document.getElementById('onus').value = 'NEGATIVA';     
+document.getElementById('folhas').value = '';
+document.getElementById('imagens').value = '';
+document.getElementById('tipoCertidao').value = 'BALCAO';
+document.getElementById('codigoArirj').value = '';
+document.getElementById('codigoEcartorio').value = '';
+document.getElementById('protocolosAdicionados').innerHTML = '';
+document.getElementById('proprietariosAdicionados').innerHTML = '';
+document.getElementById('protocolosAdicionados').dataset.protocolos = '';
+document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
+document.getElementById('data').valueAsDate = new Date();
 });
 
 // Funções para abrir e fechar popups
 function abrirPopupProtocolos() {
-  document.getElementById('popupProtocolos').classList.remove('hidden');
+document.getElementById('popupProtocolos').classList.remove('hidden');
 }
-
 function fecharPopupProtocolos() {
-  document.getElementById('popupProtocolos').classList.add('hidden');
+document.getElementById('popupProtocolos').classList.add('hidden');
 }
-
 function abrirPopupProprietarios() {
-  document.getElementById('popupProprietarios').classList.remove('hidden');
+document.getElementById('popupProprietarios').classList.remove('hidden');
 }
-
 function fecharPopupProprietarios() {
-  document.getElementById('popupProprietarios').classList.add('hidden');
+document.getElementById('popupProprietarios').classList.add('hidden');
 }
 
 // Ações dos botões
@@ -418,256 +414,256 @@ document.getElementById('abrirPopupProprietarios').addEventListener('click', abr
 
 // Adicionar protocolo
 document.getElementById('confirmarProtocolo').addEventListener('click', function () {
-  const protocolo = document.getElementById('novoProtocolo').value.trim();
-  if (protocolo) {
-    // Armazenar os protocolos em um array
-    let protocolosArray = [];
-    if (document.getElementById('protocolosAdicionados').dataset.protocolos) {
-      protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-    }
+const protocolo = document.getElementById('novoProtocolo').value.trim();
+if (protocolo) {
+// Armazenar os protocolos em um array
+let protocolosArray = [];
+if (document.getElementById('protocolosAdicionados').dataset.protocolos) {
+protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+}
 
-    // Adiciona o novo protocolo ao array
-    protocolosArray.push(protocolo);
+// Adiciona o novo protocolo ao array
+protocolosArray.push(protocolo);
 
-    // Atualiza o dataset com os protocolos
-    document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+// Atualiza o dataset com os protocolos
+document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
 
-    // Renderizar a lista de protocolos
-    renderizarProtocolos();
+// Renderizar a lista de protocolos
+renderizarProtocolos();
 
-    document.getElementById('novoProtocolo').value = ''; // Limpar campo
-  }
+document.getElementById('novoProtocolo').value = ''; // Limpar campo
+}
 });
 
 // Função para renderizar a lista de protocolos
 function renderizarProtocolos() {
-  const protocolosAdicionadosDiv = document.getElementById('protocolosAdicionados');
-  protocolosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
+const protocolosAdicionadosDiv = document.getElementById('protocolosAdicionados');
+protocolosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
 
-  let protocolosArray = [];
-  if (protocolosAdicionadosDiv.dataset.protocolos) {
-    protocolosArray = protocolosAdicionadosDiv.dataset.protocolos.split('|');
-  }
+let protocolosArray = [];
+if (protocolosAdicionadosDiv.dataset.protocolos) {
+protocolosArray = protocolosAdicionadosDiv.dataset.protocolos.split('|');
+}
 
-  protocolosArray.forEach((protocoloTexto, index) => {
-    const protocoloSpan = document.createElement('span');
-    protocoloSpan.classList.add('text-black');
-    protocoloSpan.textContent = protocoloTexto;
+protocolosArray.forEach((protocoloTexto, index) => {
+const protocoloSpan = document.createElement('span');
+protocoloSpan.classList.add('text-black');
+protocoloSpan.textContent = protocoloTexto;
 
-    // Botão Editar
-    const editButton = document.createElement('button');
-    editButton.classList.add('edit-protocolo-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    editButton.textContent = 'Editar';
-    editButton.dataset.index = index; // Armazena o índice do protocolo
+// Botão Editar
+const editButton = document.createElement('button');
+editButton.classList.add('edit-protocolo-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+editButton.textContent = 'Editar';
+editButton.dataset.index = index; // Armazena o índice do protocolo
 
-    // Botão Excluir
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('delete-protocolo-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    deleteButton.textContent = 'Excluir';
-    deleteButton.dataset.index = index; // Armazena o índice do protocolo
+// Botão Excluir
+const deleteButton = document.createElement('button');
+deleteButton.classList.add('delete-protocolo-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+deleteButton.textContent = 'Excluir';
+deleteButton.dataset.index = index; // Armazena o índice do protocolo
 
-    const container = document.createElement('div');
-    container.appendChild(protocoloSpan);
-    container.appendChild(editButton);
-    container.appendChild(deleteButton);
+const container = document.createElement('div');
+container.appendChild(protocoloSpan);
+container.appendChild(editButton);
+container.appendChild(deleteButton);
 
-    protocolosAdicionadosDiv.appendChild(container);
-    protocolosAdicionadosDiv.appendChild(document.createElement('br'));
-  });
+protocolosAdicionadosDiv.appendChild(container);
+protocolosAdicionadosDiv.appendChild(document.createElement('br'));
+});
 
-  // Adiciona event listeners para os botões de editar e excluir protocolos
-  const editButtons = document.querySelectorAll('.edit-protocolo-button');
-  editButtons.forEach(button => {
-    button.removeEventListener('click', handleEditProtocoloButtonClick);
-    button.addEventListener('click', handleEditProtocoloButtonClick);
-  });
+// Adiciona event listeners para os botões de editar e excluir protocolos
+const editButtons = document.querySelectorAll('.edit-protocolo-button');
+editButtons.forEach(button => {
+button.removeEventListener('click', handleEditProtocoloButtonClick);
+button.addEventListener('click', handleEditProtocoloButtonClick);
+});
 
-  const deleteButtons = document.querySelectorAll('.delete-protocolo-button');
-  deleteButtons.forEach(button => {
-    button.removeEventListener('click', handleDeleteProtocoloButtonClick);
-    button.addEventListener('click', handleDeleteProtocoloButtonClick);
-  });
+const deleteButtons = document.querySelectorAll('.delete-protocolo-button');
+deleteButtons.forEach(button => {
+button.removeEventListener('click', handleDeleteProtocoloButtonClick);
+button.addEventListener('click', handleDeleteProtocoloButtonClick);
+});
 }
 
 // Função para lidar com o clique no botão de editar protocolo
 function handleEditProtocoloButtonClick(event) {
-  const index = parseInt(event.target.dataset.index);
-  let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-  const protocoloTexto = protocolosArray[index];
+const index = parseInt(event.target.dataset.index);
+let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+const protocoloTexto = protocolosArray[index];
 
-  // Preencher o campo de protocolo com o valor atual
-  document.getElementById('novoProtocolo').value = protocoloTexto;
+// Preencher o campo de protocolo com o valor atual
+document.getElementById('novoProtocolo').value = protocoloTexto;
 
-  // Remover o protocolo da lista
-  protocolosArray.splice(index, 1);
-  document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
-  renderizarProtocolos();
+// Remover o protocolo da lista
+protocolosArray.splice(index, 1);
+document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+renderizarProtocolos();
 
-  // Abrir o popup de protocolos
-  abrirPopupProtocolos();
+// Abrir o popup de protocolos
+abrirPopupProtocolos();
 }
 
 // Função para lidar com o clique no botão de excluir protocolo
 function handleDeleteProtocoloButtonClick(event) {
-  const index = parseInt(event.target.dataset.index);
-  let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-  protocolosArray.splice(index, 1); // Remove o protocolo do array
-  document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
-  renderizarProtocolos(); // Renderiza a lista atualizada
+const index = parseInt(event.target.dataset.index);
+let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+protocolosArray.splice(index, 1); // Remove o protocolo do array
+document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+renderizarProtocolos(); // Renderiza a lista atualizada
 }
 
 // Alternar visibilidade de campos com base no tipo de documento
 document.getElementById('tipoDocumento').addEventListener('change', function () {
-  const tipo = this.value;
-  const camposPessoais = document.getElementById('camposPessoais');
-  if (tipo === 'cnpj') {
-    camposPessoais.style.display = 'none'; // Ocultar campos pessoais
-  } else {
-    camposPessoais.style.display = 'block'; // Mostrar campos pessoais
-  }
+const tipo = this.value;
+const camposPessoais = document.getElementById('camposPessoais');
+if (tipo === 'cnpj') {
+camposPessoais.style.display = 'none'; // Ocultar campos pessoais
+} else {
+camposPessoais.style.display = 'block'; // Mostrar campos pessoais
+}
 });
 
 // Confirmar proprietário
 document.getElementById('confirmarProprietario').addEventListener('click', function () {
-  const qualificacao = document.getElementById('qualificacao').value;
-  const nome = document.getElementById('nome').value;
-  const cpf = document.getElementById('cpf').value;
-  const tipoDocumento = document.getElementById('tipoDocumento').value;
+const qualificacao = document.getElementById('qualificacao').value;
+const nome = document.getElementById('nome').value;
+const cpf = document.getElementById('cpf').value;
+const tipoDocumento = document.getElementById('tipoDocumento').value;
 
-  let propietarioTexto = `${qualificacao} - ${nome} - ${cpf}`;
+let propietarioTexto = `${qualificacao} - ${nome} - ${cpf}`;
 
-  if (tipoDocumento === 'cpf') {
-    const sexo = document.getElementById('sexo').value;
-    const identidade = document.getElementById('identidade').value;
-    const orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
-    const estadoCivil = document.getElementById('estadoCivil').value;
-    propietarioTexto += ` - ${sexo} - ${identidade} - ${orgaoExpedidor} - ${estadoCivil}`;
-  }
+if (tipoDocumento === 'cpf') {
+const sexo = document.getElementById('sexo').value;
+const identidade = document.getElementById('identidade').value;
+const orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
+const estadoCivil = document.getElementById('estadoCivil').value;
+propietarioTexto += ` - ${sexo} - ${identidade} - ${orgaoExpedidor} - ${estadoCivil}`;
+}
 
-  // Obter a lista atual de proprietários do dataset
-  let proprietariosArray = [];
-  if (document.getElementById('proprietariosAdicionados').dataset.proprietarios) {
-    proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-  }
+// Obter a lista atual de proprietários do dataset
+let proprietariosArray = [];
+if (document.getElementById('proprietariosAdicionados').dataset.proprietarios) {
+proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+}
 
-  // Adicionar o novo proprietário ao array
-  proprietariosArray.push(propietarioTexto);
+// Adicionar o novo proprietário ao array
+proprietariosArray.push(propietarioTexto);
 
-  // Atualizar o dataset com os proprietários
-  document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+// Atualizar o dataset com os proprietários
+document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
 
-  // Renderizar a lista de proprietários
-  renderizarProprietarios();
+// Renderizar a lista de proprietários
+renderizarProprietarios();
 
-  // Limpar campos
-  document.getElementById('nome').value = '';
-  document.getElementById('cpf').value = '';
-  document.getElementById('tipoDocumento').value = 'cpf';
-  document.getElementById('sexo').value = 'Masculino';
-  document.getElementById('identidade').value = '';
-  document.getElementById('orgaoExpedidor').value = '';
-  document.getElementById('estadoCivil').value = 'Solteiro';
-  document.getElementById('camposPessoais').style.display = 'block';
+// Limpar campos
+document.getElementById('nome').value = '';
+document.getElementById('cpf').value = '';
+document.getElementById('tipoDocumento').value = 'cpf';
+document.getElementById('sexo').value = 'Masculino';
+document.getElementById('identidade').value = '';
+document.getElementById('orgaoExpedidor').value = '';
+document.getElementById('estadoCivil').value = 'Solteiro';
+document.getElementById('camposPessoais').style.display = 'block';
 });
 
 // Função para renderizar a lista de proprietários
 function renderizarProprietarios() {
-  const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
-  proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
+const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
+proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
 
-  let proprietariosArray = [];
-  if (proprietariosAdicionadosDiv.dataset.proprietarios) {
-    proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
-  }
+let proprietariosArray = [];
+if (proprietariosAdicionadosDiv.dataset.proprietarios) {
+proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
+}
 
-  proprietariosArray.forEach((proprietarioTexto, index) => {
-    const proprietarioSpan = document.createElement('span');
-    proprietarioSpan.classList.add('text-black');
-    proprietarioSpan.textContent = proprietarioTexto;
+proprietariosArray.forEach((proprietarioTexto, index) => {
+const proprietarioSpan = document.createElement('span');
+proprietarioSpan.classList.add('text-black');
+proprietarioSpan.textContent = proprietarioTexto;
 
-    // Botão Editar
-    const editButton = document.createElement('button');
-    editButton.classList.add('edit-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    editButton.textContent = 'Editar';
-    editButton.dataset.index = index; // Armazena o índice do proprietário
+// Botão Editar
+const editButton = document.createElement('button');
+editButton.classList.add('edit-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+editButton.textContent = 'Editar';
+editButton.dataset.index = index; // Armazena o índice do proprietário
 
-    // Botão Excluir
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('delete-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    deleteButton.textContent = 'Excluir';
-    deleteButton.dataset.index = index; // Armazena o índice do proprietário
+// Botão Excluir
+const deleteButton = document.createElement('button');
+deleteButton.classList.add('delete-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+deleteButton.textContent = 'Excluir';
+deleteButton.dataset.index = index; // Armazena o índice do proprietário
 
-    const container = document.createElement('div');
-    container.appendChild(proprietarioSpan);
-    container.appendChild(editButton);
-    container.appendChild(deleteButton);
+const container = document.createElement('div');
+container.appendChild(proprietarioSpan);
+container.appendChild(editButton);
+container.appendChild(deleteButton);
 
-    proprietariosAdicionadosDiv.appendChild(container);
-    proprietariosAdicionadosDiv.appendChild(document.createElement('br'));
-  });
+proprietariosAdicionadosDiv.appendChild(container);
+proprietariosAdicionadosDiv.appendChild(document.createElement('br'));
+});
 
-  // Adiciona event listeners para os botões de editar e excluir
-  const editButtons = document.querySelectorAll('.edit-button');
-  editButtons.forEach(button => {
-    button.removeEventListener('click', handleEditButtonClick);
-    button.addEventListener('click', handleEditButtonClick);
-  });
+// Adiciona event listeners para os botões de editar e excluir
+const editButtons = document.querySelectorAll('.edit-button');
+editButtons.forEach(button => {
+button.removeEventListener('click', handleEditButtonClick);
+button.addEventListener('click', handleEditButtonClick);
+});
 
-  const deleteButtons = document.querySelectorAll('.delete-button');
-  deleteButtons.forEach(button => {
-    button.removeEventListener('click', handleDeleteButtonClick);
-    button.addEventListener('click', handleDeleteButtonClick);
-  });
+const deleteButtons = document.querySelectorAll('.delete-button');
+deleteButtons.forEach(button => {
+button.removeEventListener('click', handleDeleteButtonClick);
+button.addEventListener('click', handleDeleteButtonClick);
+});
 }
 
 // Função para lidar com o clique no botão de editar
 function handleEditButtonClick(event) {
-    const index = parseInt(event.target.dataset.index);
-    let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-    const proprietarioTexto = proprietariosArray[index];
-  
-    // Preencher o formulário com os dados do proprietário
-    const partes = proprietarioTexto.split(' - ');
-    document.getElementById('qualificacao').value = partes[0];
-    document.getElementById('nome').value = partes[1];
-    document.getElementById('cpf').value = partes[2];
-    document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
-  
-    if (document.getElementById('tipoDocumento').value === 'cpf') {
-      document.getElementById('sexo').value = partes[3];
-      document.getElementById('identidade').value = partes[4];
-      document.getElementById('orgaoExpedidor').value = partes[5];
-      document.getElementById('estadoCivil').value = partes[6];
-      document.getElementById('camposPessoais').style.display = 'block';
-    } else {
-      document.getElementById('camposPessoais').style.display = 'none';
-    }
-  
-    // Remover o proprietário da lista
-    proprietariosArray.splice(index, 1);
-    document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
-    renderizarProprietarios();
-  
-    // Abrir o popup de proprietários
-    abrirPopupProprietarios();
-  }
+const index = parseInt(event.target.dataset.index);
+let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+const proprietarioTexto = proprietariosArray[index];
+
+// Preencher o formulário com os dados do proprietário
+const partes = proprietarioTexto.split(' - ');
+document.getElementById('qualificacao').value = partes[0];
+document.getElementById('nome').value = partes[1];
+document.getElementById('cpf').value = partes[2];
+document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
+
+if (document.getElementById('tipoDocumento').value === 'cpf') {
+document.getElementById('sexo').value = partes[3];
+document.getElementById('identidade').value = partes[4];
+document.getElementById('orgaoExpedidor').value = partes[5];
+document.getElementById('estadoCivil').value = partes[6];
+document.getElementById('camposPessoais').style.display = 'block';
+} else {
+document.getElementById('camposPessoais').style.display = 'none';
+}
+
+// Remover o proprietário da lista
+proprietariosArray.splice(index, 1);
+document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+renderizarProprietarios();
+
+// Abrir o popup de proprietários
+abrirPopupProprietarios();
+}
 
 // Função para lidar com o clique no botão de excluir
 function handleDeleteButtonClick(event) {
-    const index = parseInt(event.target.dataset.index);
-    let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-    proprietariosArray.splice(index, 1); // Remove o proprietário do array
-    document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
-    renderizarProprietarios(); // Renderiza a lista atualizada
-  }
+const index = parseInt(event.target.dataset.index);
+let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+proprietariosArray.splice(index, 1); // Remove o proprietário do array
+document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+renderizarProprietarios(); // Renderiza a lista atualizada
+}
 
 // Função para permitir apenas números nos campos
 function permitirSomenteNumeros(idCampo) {
-  const campo = document.getElementById(idCampo);
-  campo.addEventListener('input', () => {
-    // Remove tudo que não seja dígito
-    campo.value = campo.value.replace(/\D/g, '');
-  });
+const campo = document.getElementById(idCampo);
+campo.addEventListener('input', () => {
+// Remove tudo que não seja dígito
+campo.value = campo.value.replace(/\D/g, '');
+});
 }
 
 // Aplicar a funcionalidade para CPF/CNPJ e Identidade
@@ -678,60 +674,60 @@ permitirSomenteNumeros('matricula');
 
 // Mostrar/ocultar Código ARIRJ e Código E-CARTORIO
 document.getElementById('tipoCertidao').addEventListener('change', function () {
-  const codigoArirjContainer = document.getElementById('codigoArirjContainer');
-  const codigoEcartorioContainer = document.getElementById('codigoEcartorioContainer');
+const codigoArirjContainer = document.getElementById('codigoArirjContainer');
+const codigoEcartorioContainer = document.getElementById('codigoEcartorioContainer');
 
-  // Exibe ou esconde os campos com base no tipo de certidão selecionado
-  if (this.value === 'ARIRJ') {
-    codigoArirjContainer.classList.remove('hidden');
-    codigoEcartorioContainer.classList.add('hidden');
-  } else if (this.value === 'E-CARTORIO') {
-    codigoArirjContainer.classList.add('hidden');
-    codigoEcartorioContainer.classList.remove('hidden');
-  } else {
-    // Caso não seja ARIRJ ou E-CARTORIO, esconde ambos
-    codigoArirjContainer.classList.add('hidden');
-    codigoEcartorioContainer.classList.add('hidden');
-  }
+// Exibe ou esconde os campos com base no tipo de certidão selecionado
+if (this.value === 'ARIRJ') {
+codigoArirjContainer.classList.remove('hidden');
+codigoEcartorioContainer.classList.add('hidden');
+} else if (this.value === 'E-CARTORIO') {
+codigoArirjContainer.classList.add('hidden');
+codigoEcartorioContainer.classList.remove('hidden');
+} else {
+// Caso não seja ARIRJ ou E-CARTORIO, esconde ambos
+codigoArirjContainer.classList.add('hidden');
+codigoEcartorioContainer.classList.add('hidden');
+}
 });
 
 document.getElementById('baixarPedidos').addEventListener('click', function () {
-  // Usa os pedidos carregados na variável global
-  const pedidosFormatados = pedidosCarregados.map(pedido => ({
-    pedido: pedido.pedido,
-    data: pedido.data,
-    matricula: pedido.matricula,
-    onus: pedido.onus,      
-    folhas: pedido.folhas,
-    imagens: pedido.imagens,
-    tipoCertidao: pedido.tipoCertidao,
-    codigoArirj: pedido.codigoArirj,
-    codigoEcartorio: pedido.codigoEcartorio,
-    protocolos: pedido.protocolos
-      ? pedido.protocolos
-        .replace(/<[^>]*>/g, '') // Remove tags HTML
-        .split('|') // Divide os protocolos em um array
-        .filter(item => item.trim() !== '') // Remove linhas vazias
-      : [],
-    proprietarios: pedido.proprietarios
-      ? pedido.proprietarios
-        .replace(/<[^>]*>/g, '') // Remove tags HTML
-        .split('|') // Divide os proprietarios em um array
-        .filter(item => item.trim() !== '') // Remove itens vazios
-        .map(item => `${item.trim()}`) // Formata
-      : []
-  }));
+// Usa os pedidos carregados na variável global
+const pedidosFormatados = pedidosCarregados.map(pedido => ({
+pedido: pedido.pedido,
+data: pedido.data,
+matricula: pedido.matricula,
+onus: pedido.onus,      
+folhas: pedido.folhas,
+imagens: pedido.imagens,
+tipoCertidao: pedido.tipoCertidao,
+codigoArirj: pedido.codigoArirj,
+codigoEcartorio: pedido.codigoEcartorio,
+protocolos: pedido.protocolos
+? pedido.protocolos
+.replace(/<[^>]*>/g, '') // Remove tags HTML
+.split('|') // Divide os protocolos em um array
+.filter(item => item.trim() !== '') // Remove linhas vazias
+: [],
+proprietarios: pedido.proprietarios
+? pedido.proprietarios
+.replace(/<[^>]*>/g, '') // Remove tags HTML
+.split('|') // Divide os proprietarios em um array
+.filter(item => item.trim() !== '') // Remove itens vazios
+.map(item => `${item.trim()}`) // Formata
+: []
+}));
 
-  // Converte os pedidos para JSON formatado
-  const conteudo = JSON.stringify(pedidosFormatados, null, 2);
+// Converte os pedidos para JSON formatado
+const conteudo = JSON.stringify(pedidosFormatados, null, 2);
 
-  // Cria um blob com o conteúdo em JSON e dispara o download
-  const blob = new Blob([conteudo], { type: 'application/json' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'pedidos.json'; // Nome do arquivo para download
-  link.click();
+// Cria um blob com o conteúdo em JSON e dispara o download
+const blob = new Blob([conteudo], { type: 'application/json' });
+const link = document.createElement('a');
+link.href = URL.createObjectURL(blob);
+link.download = 'pedidos.json'; // Nome do arquivo para download
+link.click();
 });
 
 // Carrega os pedidos quando a página é carregada
-carregarPedidos();
+carregarPedidos();  
