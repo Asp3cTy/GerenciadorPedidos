@@ -134,9 +134,9 @@
     </div>
 
     <div id="pagination" class="flex justify-center items-center gap-2 mt-4">
-        <button id="prevPage" class="bg-blue-500 hover:bg-white-600 text-white px-4 py-2 rounded" onclick="changePage(-1)">Anterior</button>
+        <button id="prevPage" class="bg-blue-500 hover:bg-white-600 text-white px-4 py-2 rounded-full" onclick="changePage(-1)">Anterior</button>
         <span id="pageNumber" class="font-semibold">Página 1</span>
-        <button id="nextPage" class="bg-blue-500 hover:bg-white-600 text-white px-4 py-2 rounded" onclick="changePage(1)">Próxima</button>
+        <button id="nextPage" class="bg-blue-500 hover:bg-white-600 text-white px-4 py-2 rounded-full" onclick="changePage(1)">Próxima</button>
     </div>
 
     <div class="flex items-center justify-center space-x-4 mt-4">
@@ -146,14 +146,6 @@
             </svg>
             <span class="font-semibold">Baixar Pedidos</span>
         </button>
-
-        <label for="uploadPedidos" class="cursor-pointer bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition duration-300 flex items-center space-x-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v4a1 1 0 001 1h14a1 1 0 001-1v-4m-5-4l-4-4m0 0L9 12m3-8v12" />
-            </svg>
-            <span class="font-semibold">Upload Pedidos</span>
-        </label>
-        <input type="file" id="uploadPedidos" class="hidden" accept=".json" />
     </div>
 
     <div id="popupProtocolos" class="hidden fixed z-10 inset-0 overflow-y-auto">
