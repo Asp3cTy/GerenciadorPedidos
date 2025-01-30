@@ -52,6 +52,9 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
     novoPedido.id = Date.now();
   }
 
+  // Formata a data para 'YYYY-MM-DD' antes de enviar
+  novoPedido.data = dayjs(novoPedido.data).format('YYYY-MM-DD');
+
   const xhr = new XMLHttpRequest();
   // Usa uma rota diferente para edição, por exemplo, /editar_pedido.php
   xhr.open("POST", pedidoId ? "/editar_pedido.php" : "/salvar_pedido.php", true);
@@ -110,7 +113,7 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
 
 // Função para formatar a data
 function formatarData(data) {
-    let dataFormatada;
+  let dataFormatada;
     if (!(data instanceof Date)) {
         dataFormatada = new Date(data);
         if (isNaN(dataFormatada.getTime())) {
@@ -124,7 +127,7 @@ function formatarData(data) {
     const dia = String(dataFormatada.getDate()).padStart(2, '0');
     const mes = String(dataFormatada.getMonth() + 1).padStart(2, '0');
     const ano = dataFormatada.getFullYear();
-    return `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
+    return `<p><strong>Data:</strong>${dia}/${mes}/${ano}</p>`;
 }
 
 // Função para renderizar os pedidos
@@ -136,11 +139,11 @@ function renderPedidos(pedidos) {
   // Adiciona os pedidos da página atual à tela
   pedidos.forEach((pedido) => {
     const pedidoDiv = document.createElement('div');
-    pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-start');
+    pedidoDiv.classList.add('bg-secondary', 'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-start');
     pedidoDiv.innerHTML = `
         <div class="flex-grow">
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
-          ${formatarData(pedido.data)}
+          <p><strong>Data:</strong> ${formatarData(pedido.data).replace(/<[^>]+>/g, '')}</p>
           <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
           <p><strong>Ônus:</strong> ${pedido.onus}</p>           
           <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
@@ -183,9 +186,9 @@ function renderPedidos(pedidos) {
         </div>
         <div class="flex flex-col space-y-2 ml-4">
             <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
-                Editar
-            </button>
-            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
+Editar
+</button\>
+<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data-id="${pedido.id}">
                 Copiar
             </button>
             <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
@@ -282,42 +285,55 @@ function editarPedido(pedidoId) {
 
     // 2. Preencher o formulário com os dados do pedido
     if (pedido) {
-        document.getElementById('pedido').value = pedido.pedido;
-        document.getElementById('data').valueAsDate = new Date(pedido.data);
-        document.getElementById('matricula').value = pedido.matricula;
-        document.getElementById('onus').value = pedido.onus;
-        document.getElementById('folhas').value = pedido.folhas;
-        document.getElementById('imagens').value = pedido.imagens;
-        document.getElementById('tipoCertidao').value = pedido.tipoCertidao;
-        document.getElementById('codigoArirj').value = pedido.codigoArirj;
-        document.getElementById('codigoEcartorio').value = pedido.codigoEcartorio;
+      document.getElementById('pedido').value = pedido.pedido;
+      if (pedido.data) {
+        let data = new Date(pedido.data);
 
-        // Tratar protocolos e proprietários
-        document.getElementById('protocolosAdicionados').dataset.protocolos = pedido.protocolos;
-        document.getElementById('proprietariosAdicionados').dataset.proprietarios = pedido.proprietarios;
-        renderizarProtocolos();
-        renderizarProprietarios();
+        // Tratar a data para que o navegador não faça nenhuma conversão indesejada:
+        const dataAjustada = new Date(
+          data.getTime() + data.getTimezoneOffset() * 60000
+        );
 
-        // 3. Disparar o evento 'change' no tipoCertidao
-        document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
+        let dia = String(dataAjustada.getDate()).padStart(2, "0");
+        let mes = String(dataAjustada.getMonth() + 1).padStart(2, "0"); // Janeiro é 0!
+        let ano = dataAjustada.getFullYear();
+        document.getElementById("data").value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
+      }
+      document.getElementById('matricula').value = pedido.matricula;
+      document.getElementById('onus').value = pedido.onus;
+      document.getElementById('folhas').value = pedido.folhas;
+      document.getElementById('imagens').value = pedido.imagens;
+      document.getElementById('tipoCertidao').value = pedido.tipoCertidao;
+      document.getElementById('codigoArirj').value = pedido.codigoArirj;
+      document.getElementById('codigoEcartorio').value = pedido.codigoEcartorio;
 
-        // Adiciona o data-pedido-id ao botão "Salvar Pedido"
-        document.getElementById('salvarPedido').setAttribute('data-pedido-id', pedidoId);
+      // Tratar protocolos e proprietários
+      document.getElementById('protocolosAdicionados').dataset.protocolos = pedido.protocolos;
+      document.getElementById('proprietariosAdicionados').dataset.proprietarios = pedido.proprietarios;
+      renderizarProtocolos();
+      renderizarProprietarios();
 
-        // 4. Abrir o modal
-        document.getElementById('modal').classList.remove('hidden');
-    } else {
-        alert("Pedido não encontrado!");
-    }
+      // 3. Disparar o evento 'change' no tipoCertidao
+      document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
+
+      // Adiciona o data-pedido-id ao botão "Salvar Pedido"
+      document.getElementById('salvarPedido').setAttribute('data-pedido-id', pedidoId);
+
+      // 4. Abrir o modal
+      document.getElementById('modal').classList.remove('hidden');
+  } else {
+      alert("Pedido não encontrado!");
+  }
 }
 
+// Função para copiar um pedido
 function copiarPedido(pedidoId) {
-  // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
-  const pedido = buscarPedidoPorId(pedidoId);
+    // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
+    const pedido = buscarPedidoPorId(pedidoId);
 
-  // 2. Formatar o texto do pedido
-  if (pedido) {
-      let textoPedido = `
+    // 2. Formatar o texto do pedido
+    if (pedido) {
+        let textoPedido = `
 Pedido: ${pedido.pedido}
 Data: ${formatarData(pedido.data).replace(/<[^>]+>/g, '')}
 Matrícula: ${pedido.matricula}
@@ -327,48 +343,48 @@ N.º Imagens: ${pedido.imagens}
 Tipo de Certidão: ${pedido.tipoCertidao}
 `;
 
-      if (pedido.tipoCertidao === 'ARIRJ') {
-          textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
-      }
+        if (pedido.tipoCertidao === 'ARIRJ') {
+            textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
+        }
 
-      if (pedido.tipoCertidao === 'E-CARTORIO') {
-          textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
-      }
+        if (pedido.tipoCertidao === 'E-CARTORIO') {
+            textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+        }
 
-      textoPedido += `Protocolos:\n`;
-      if (pedido.protocolos) {
-          textoPedido += pedido.protocolos
-              .split('|')
-              .filter(item => item.trim() !== '')
-              .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
-              .join('\n');
-      } else {
-          textoPedido += `Nenhum protocolo adicionado\n`;
-      }
+        textoPedido += `Protocolos:\n`;
+        if (pedido.protocolos) {
+            textoPedido += pedido.protocolos
+                .split('|')
+                .filter(item => item.trim() !== '')
+                .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
+                .join('\n');
+        } else {
+            textoPedido += `Nenhum protocolo adicionado\n`;
+        }
 
-      textoPedido += `\nProprietários:\n`;
-      if (pedido.proprietarios) {
-          textoPedido += pedido.proprietarios
-              .split('|')
-              .filter(item => item.trim() !== '')
-              .map(p => p.trim())
-              .join('\n');
-      } else {
-          textoPedido += `Nenhum proprietário adicionado\n`;
-      }
+        textoPedido += `\nProprietários:\n`;
+        if (pedido.proprietarios) {
+            textoPedido += pedido.proprietarios
+                .split('|')
+                .filter(item => item.trim() !== '')
+                .map(p => p.trim())
+                .join('\n');
+        } else {
+            textoPedido += `Nenhum proprietário adicionado\n`;
+        }
 
-      // Adiciona a linha de separação
-      textoPedido += `\n----------------------------------------\n`;
+        // Adiciona a linha de separação
+        textoPedido += `\n----------------------------------------\n`;
 
-      // 3. Copiar para a área de transferência
-      navigator.clipboard.writeText(textoPedido).then(() => {
-          alert("Pedido copiado para a área de transferência!");
-      }, () => {
-          alert("Erro ao copiar o pedido!");
-      });
-  } else {
-      alert("Pedido não encontrado!");
-  }
+        // 3. Copiar para a área de transferência
+        navigator.clipboard.writeText(textoPedido).then(() => {
+            alert("Pedido copiado para a área de transferência!");
+        }, () => {
+            alert("Erro ao copiar o pedido!");
+        });
+    } else {
+        alert("Pedido não encontrado!");
+    }
 }
 
 // Abrir o modal
@@ -380,34 +396,40 @@ document.getElementById('openModal').addEventListener('click', function () {
 document.getElementById('closeModal').addEventListener('click', function () {
   console.log("Fechando o modal");
   document.getElementById('modal').classList.add('hidden');
-// Limpar campos do formulário
-document.getElementById('pedido').value = '';
-document.getElementById('matricula').value = '';
-document.getElementById('onus').value = 'NEGATIVA';     
-document.getElementById('folhas').value = '';
-document.getElementById('imagens').value = '';
-document.getElementById('tipoCertidao').value = 'BALCAO';
-document.getElementById('codigoArirj').value = '';
-document.getElementById('codigoEcartorio').value = '';
-document.getElementById('protocolosAdicionados').innerHTML = '';
-document.getElementById('proprietariosAdicionados').innerHTML = '';
-document.getElementById('protocolosAdicionados').dataset.protocolos = '';
-document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
-document.getElementById('data').valueAsDate = new Date();
+
+  // Limpar campos do formulário e atribuir a data atual formatada
+  document.getElementById('pedido').value = '';
+  document.getElementById('matricula').value = '';
+  document.getElementById('onus').value = 'NEGATIVA';
+  document.getElementById('folhas').value = '';
+  document.getElementById('imagens').value = '';
+  document.getElementById('tipoCertidao').value = 'BALCAO';
+  document.getElementById('codigoArirj').value = '';
+  document.getElementById('codigoEcartorio').value = '';
+  document.getElementById('protocolosAdicionados').innerHTML = '';
+  document.getElementById('proprietariosAdicionados').innerHTML = '';
+  document.getElementById('protocolosAdicionados').dataset.protocolos = '';
+  document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
+  // Formata a data atual para রাখেYYYY-MM-DD
+  const dataAtual = new Date();
+  const ano = dataAtual.getFullYear();
+  const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+  const dia = String(dataAtual.getDate()).padStart(2, '0');
+  document.getElementById('data').value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
 });
 
 // Funções para abrir e fechar popups
 function abrirPopupProtocolos() {
-document.getElementById('popupProtocolos').classList.remove('hidden');
+  document.getElementById('popupProtocolos').classList.remove('hidden');
 }
 function fecharPopupProtocolos() {
-document.getElementById('popupProtocolos').classList.add('hidden');
+  document.getElementById('popupProtocolos').classList.add('hidden');
 }
 function abrirPopupProprietarios() {
-document.getElementById('popupProprietarios').classList.remove('hidden');
+  document.getElementById('popupProprietarios').classList.remove('hidden');
 }
 function fecharPopupProprietarios() {
-document.getElementById('popupProprietarios').classList.add('hidden');
+  document.getElementById('popupProprietarios').classList.add('hidden');
 }
 
 // Ações dos botões
@@ -416,255 +438,255 @@ document.getElementById('abrirPopupProprietarios').addEventListener('click', abr
 
 // Adicionar protocolo
 document.getElementById('confirmarProtocolo').addEventListener('click', function () {
-const protocolo = document.getElementById('novoProtocolo').value.trim();
-if (protocolo) {
-// Armazenar os protocolos em um array
-let protocolosArray = [];
-if (document.getElementById('protocolosAdicionados').dataset.protocolos) {
-protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-}
+  const protocolo = document.getElementById('novoProtocolo').value.trim();
+  if (protocolo) {
+    // Armazenar os protocolos em um array
+    let protocolosArray = [];
+    if (document.getElementById('protocolosAdicionados').dataset.protocolos) {
+      protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+    }
 
-// Adiciona o novo protocolo ao array
-protocolosArray.push(protocolo);
+    // Adiciona o novo protocolo ao array
+    protocolosArray.push(protocolo);
 
-// Atualiza o dataset com os protocolos
-document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+    // Atualiza o dataset com os protocolos
+    document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
 
-// Renderizar a lista de protocolos
-renderizarProtocolos();
+    // Renderizar a lista de protocolos
+    renderizarProtocolos();
 
-document.getElementById('novoProtocolo').value = ''; // Limpar campo
-}
+    document.getElementById('novoProtocolo').value = ''; // Limpar campo
+  }
 });
 
 // Função para renderizar a lista de protocolos
 function renderizarProtocolos() {
-const protocolosAdicionadosDiv = document.getElementById('protocolosAdicionados');
-protocolosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
+  const protocolosAdicionadosDiv = document.getElementById('protocolosAdicionados');
+  protocolosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
 
-let protocolosArray = [];
-if (protocolosAdicionadosDiv.dataset.protocolos) {
-protocolosArray = protocolosAdicionadosDiv.dataset.protocolos.split('|');
-}
+  let protocolosArray = [];
+  if (protocolosAdicionadosDiv.dataset.protocolos) {
+    protocolosArray = protocolosAdicionadosDiv.dataset.protocolos.split('|');
+  }
 
-protocolosArray.forEach((protocoloTexto, index) => {
-const protocoloSpan = document.createElement('span');
-protocoloSpan.classList.add('text-black');
-protocoloSpan.textContent = protocoloTexto;
+  protocolosArray.forEach((protocoloTexto, index) => {
+    const protocoloSpan = document.createElement('span');
+    protocoloSpan.classList.add('text-black');
+    protocoloSpan.textContent = protocoloTexto;
 
-// Botão Editar
-const editButton = document.createElement('button');
-editButton.classList.add('edit-protocolo-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-editButton.textContent = 'Editar';
-editButton.dataset.index = index; // Armazena o índice do protocolo
+    // Botão Editar
+    const editButton = document.createElement('button');
+    editButton.classList.add('edit-protocolo-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+    editButton.textContent = 'Editar';
+    editButton.dataset.index = index; // Armazena o índice do protocolo
 
-// Botão Excluir
-const deleteButton = document.createElement('button');
-deleteButton.classList.add('delete-protocolo-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-deleteButton.textContent = 'Excluir';
-deleteButton.dataset.index = index; // Armazena o índice do protocolo
+    // Botão Excluir
+    const deleteButton = document.createElement('button');
+    deleteButton.classList.add('delete-protocolo-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+    deleteButton.textContent = 'Excluir';
+    deleteButton.dataset.index = index; // Armazena o índice do protocolo
 
-const container = document.createElement('div');
-container.appendChild(protocoloSpan);
-container.appendChild(editButton);
-container.appendChild(deleteButton);
+    const container = document.createElement('div');
+    container.appendChild(protocoloSpan);
+    container.appendChild(editButton);
+    container.appendChild(deleteButton);
 
-protocolosAdicionadosDiv.appendChild(container);
-protocolosAdicionadosDiv.appendChild(document.createElement('br'));
-});
+    protocolosAdicionadosDiv.appendChild(container);
+    protocolosAdicionadosDiv.appendChild(document.createElement('br'));
+  });
 
-// Adiciona event listeners para os botões de editar e excluir protocolos
-const editButtons = document.querySelectorAll('.edit-protocolo-button');
-editButtons.forEach(button => {
-button.removeEventListener('click', handleEditProtocoloButtonClick);
-button.addEventListener('click', handleEditProtocoloButtonClick);
-});
+  // Adiciona event listeners para os botões de editar e excluir protocolos
+  const editButtons = document.querySelectorAll('.edit-protocolo-button');
+  editButtons.forEach(button => {
+    button.removeEventListener('click', handleEditProtocoloButtonClick);
+    button.addEventListener('click', handleEditProtocoloButtonClick);
+  });
 
-const deleteButtons = document.querySelectorAll('.delete-protocolo-button');
-deleteButtons.forEach(button => {
-button.removeEventListener('click', handleDeleteProtocoloButtonClick);
-button.addEventListener('click', handleDeleteProtocoloButtonClick);
-});
+  const deleteButtons = document.querySelectorAll('.delete-protocolo-button');
+  deleteButtons.forEach(button => {
+    button.removeEventListener('click', handleDeleteProtocoloButtonClick);
+    button.addEventListener('click', handleDeleteProtocoloButtonClick);
+  });
 }
 
 // Função para lidar com o clique no botão de editar protocolo
 function handleEditProtocoloButtonClick(event) {
-const index = parseInt(event.target.dataset.index);
-let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-const protocoloTexto = protocolosArray[index];
+  const index = parseInt(event.target.dataset.index);
+  let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+  const protocoloTexto = protocolosArray[index];
 
-// Preencher o campo de protocolo com o valor atual
-document.getElementById('novoProtocolo').value = protocoloTexto;
+  // Preencher o campo de protocolo com o valor atual
+  document.getElementById('novoProtocolo').value = protocoloTexto;
 
-// Remover o protocolo da lista
-protocolosArray.splice(index, 1);
-document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
-renderizarProtocolos();
+  // Remover o protocolo da lista
+  protocolosArray.splice(index, 1);
+  document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+  renderizarProtocolos();
 
-// Abrir o popup de protocolos
-abrirPopupProtocolos();
+  // Abrir o popup de protocolos
+  abrirPopupProtocolos();
 }
 
 // Função para lidar com o clique no botão de excluir protocolo
 function handleDeleteProtocoloButtonClick(event) {
-const index = parseInt(event.target.dataset.index);
-let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-protocolosArray.splice(index, 1); // Remove o protocolo do array
-document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
-renderizarProtocolos(); // Renderiza a lista atualizada
+  const index = parseInt(event.target.dataset.index);
+  let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+  protocolosArray.splice(index, 1); // Remove o protocolo do array
+  document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+  renderizarProtocolos(); // Renderiza a lista atualizada
 }
 
 // Alternar visibilidade de campos com base no tipo de documento
 document.getElementById('tipoDocumento').addEventListener('change', function () {
-const tipo = this.value;
-const camposPessoais = document.getElementById('camposPessoais');
-if (tipo === 'cnpj') {
-camposPessoais.style.display = 'none'; // Ocultar campos pessoais
-} else {
-camposPessoais.style.display = 'block'; // Mostrar campos pessoais
-}
+  const tipo = this.value;
+  const camposPessoais = document.getElementById('camposPessoais');
+  if (tipo === 'cnpj') {
+    camposPessoais.style.display = 'none'; // Ocultar campos pessoais
+  } else {
+    camposPessoais.style.display = 'block'; // Mostrar campos pessoais
+  }
 });
 
 // Confirmar proprietário
 document.getElementById('confirmarProprietario').addEventListener('click', function () {
-const qualificacao = document.getElementById('qualificacao').value;
-const nome = document.getElementById('nome').value;
-const cpf = document.getElementById('cpf').value;
-const tipoDocumento = document.getElementById('tipoDocumento').value;
+  const qualificacao = document.getElementById('qualificacao').value;
+  const nome = document.getElementById('nome').value;
+  const cpf = document.getElementById('cpf').value;
+  const tipoDocumento = document.getElementById('tipoDocumento').value;
 
-let propietarioTexto = `${qualificacao} - ${nome} - ${cpf}`;
+  let propietarioTexto = `${qualificacao} - ${nome} - ${cpf}`;
 
-if (tipoDocumento === 'cpf') {
-const sexo = document.getElementById('sexo').value;
-const identidade = document.getElementById('identidade').value;
-const orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
-const estadoCivil = document.getElementById('estadoCivil').value;
-propietarioTexto += ` - ${sexo} - ${identidade} - ${orgaoExpedidor} - ${estadoCivil}`;
-}
+  if (tipoDocumento === 'cpf') {
+    const sexo = document.getElementById('sexo').value;
+    const identidade = document.getElementById('identidade').value;
+    const orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
+    const estadoCivil = document.getElementById('estadoCivil').value;
+    propietarioTexto += ` - ${sexo} - ${identidade} - ${orgaoExpedidor} - ${estadoCivil}`;
+  }
 
-// Obter a lista atual de proprietários do dataset
-let proprietariosArray = [];
-if (document.getElementById('proprietariosAdicionados').dataset.proprietarios) {
-proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-}
+  // Obter a lista atual de proprietários do dataset
+  let proprietariosArray = [];
+  if (document.getElementById('proprietariosAdicionados').dataset.proprietarios) {
+    proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+  }
 
-// Adicionar o novo proprietário ao array
-proprietariosArray.push(propietarioTexto);
+  // Adicionar o novo proprietário ao array
+  proprietariosArray.push(propietarioTexto);
 
-// Atualizar o dataset com os proprietários
-document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+  // Atualizar o dataset com os proprietários
+  document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
 
-// Renderizar a lista de proprietários
-renderizarProprietarios();
+  // Renderizar a lista de proprietários
+  renderizarProprietarios();
 
-// Limpar campos
-document.getElementById('nome').value = '';
-document.getElementById('cpf').value = '';
-document.getElementById('tipoDocumento').value = 'cpf';
-document.getElementById('sexo').value = 'Masculino';
-document.getElementById('identidade').value = '';
-document.getElementById('orgaoExpedidor').value = '';
-document.getElementById('estadoCivil').value = 'Solteiro';
-document.getElementById('camposPessoais').style.display = 'block';
+  // Limpar campos
+  document.getElementById('nome').value = '';
+  document.getElementById('cpf').value = '';
+  document.getElementById('tipoDocumento').value = 'cpf';
+  document.getElementById('sexo').value = 'Masculino';
+  document.getElementById('identidade').value = '';
+  document.getElementById('orgaoExpedidor').value = '';
+  document.getElementById('estadoCivil').value = 'Solteiro';
+  document.getElementById('camposPessoais').style.display = 'block';
 });
 
 // Função para renderizar a lista de proprietários
 function renderizarProprietarios() {
-const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
-proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
+  const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
+  proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
 
-let proprietariosArray = [];
-if (proprietariosAdicionadosDiv.dataset.proprietarios) {
-proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
-}
+  let proprietariosArray = [];
+  if (proprietariosAdicionadosDiv.dataset.proprietarios) {
+    proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
+  }
 
-proprietariosArray.forEach((proprietarioTexto, index) => {
-const proprietarioSpan = document.createElement('span');
-proprietarioSpan.classList.add('text-black');
-proprietarioSpan.textContent = proprietarioTexto;
+  proprietariosArray.forEach((proprietarioTexto, index) => {
+    const proprietarioSpan = document.createElement('span');
+    proprietarioSpan.classList.add('text-black');
+    proprietarioSpan.textContent = proprietarioTexto;
 
-// Botão Editar
-const editButton = document.createElement('button');
-editButton.classList.add('edit-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-editButton.textContent = 'Editar';
-editButton.dataset.index = index; // Armazena o índice do proprietário
+    // Botão Editar
+    const editButton = document.createElement('button');
+    editButton.classList.add('edit-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+    editButton.textContent = 'Editar';
+    editButton.dataset.index = index; // Armazena o índice do proprietário
 
-// Botão Excluir
-const deleteButton = document.createElement('button');
-deleteButton.classList.add('delete-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-deleteButton.textContent = 'Excluir';
-deleteButton.dataset.index = index; // Armazena o índice do proprietário
+    // Botão Excluir
+    const deleteButton = document.createElement('button');
+    deleteButton.classList.add('delete-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+    deleteButton.textContent = 'Excluir';
+    deleteButton.dataset.index = index; // Armazena o índice do proprietário
 
-const container = document.createElement('div');
-container.appendChild(proprietarioSpan);
-container.appendChild(editButton);
-container.appendChild(deleteButton);
+    const container = document.createElement('div');
+    container.appendChild(proprietarioSpan);
+    container.appendChild(editButton);
+    container.appendChild(deleteButton);
 
-proprietariosAdicionadosDiv.appendChild(container);
-proprietariosAdicionadosDiv.appendChild(document.createElement('br'));
-});
+    proprietariosAdicionadosDiv.appendChild(container);
+    proprietariosAdicionadosDiv.appendChild(document.createElement('br'));
+  });
 
-// Adiciona event listeners para os botões de editar e excluir
-const editButtons = document.querySelectorAll('.edit-button');
-editButtons.forEach(button => {
-button.removeEventListener('click', handleEditButtonClick);
-button.addEventListener('click', handleEditButtonClick);
-});
+  // Adiciona event listeners para os botões de editar e excluir
+  const editButtons = document.querySelectorAll('.edit-button');
+  editButtons.forEach(button => {
+    button.removeEventListener('click', handleEditButtonClick);
+    button.addEventListener('click', handleEditButtonClick);
+  });
 
-const deleteButtons = document.querySelectorAll('.delete-button');
-deleteButtons.forEach(button => {
-button.removeEventListener('click', handleDeleteButtonClick);
-button.addEventListener('click', handleDeleteButtonClick);
-});
+  const deleteButtons = document.querySelectorAll('.delete-button');
+  deleteButtons.forEach(button => {
+    button.removeEventListener('click', handleDeleteButtonClick);
+    button.addEventListener('click', handleDeleteButtonClick);
+  });
 }
 
 // Função para lidar com o clique no botão de editar
 function handleEditButtonClick(event) {
-const index = parseInt(event.target.dataset.index);
-let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-const proprietarioTexto = proprietariosArray[index];
+  const index = parseInt(event.target.dataset.index);
+  let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+  const proprietarioTexto = proprietariosArray[index];
 
-// Preencher o formulário com os dados do proprietário
-const partes = proprietarioTexto.split(' - ');
-document.getElementById('qualificacao').value = partes[0];
-document.getElementById('nome').value = partes[1];
-document.getElementById('cpf').value = partes[2];
-document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
+  // Preencher o formulário com os dados do proprietário
+  const partes = proprietarioTexto.split(' - ');
+  document.getElementById('qualificacao').value = partes[0];
+  document.getElementById('nome').value = partes[1];
+  document.getElementById('cpf').value = partes[2];
+  document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
 
-if (document.getElementById('tipoDocumento').value === 'cpf') {
-document.getElementById('sexo').value = partes[3];
-document.getElementById('identidade').value = partes[4];
-document.getElementById('orgaoExpedidor').value = partes[5];
-document.getElementById('estadoCivil').value = partes[6];
-document.getElementById('camposPessoais').style.display = 'block';
-} else {
-document.getElementById('camposPessoais').style.display = 'none';
-}
+  if (document.getElementById('tipoDocumento').value === 'cpf') {
+    document.getElementById('sexo').value = partes[3];
+    document.getElementById('identidade').value = partes[4];
+    document.getElementById('orgaoExpedidor').value = partes[5];
+    document.getElementById('estadoCivil').value = partes[6];
+    document.getElementById('camposPessoais').style.display = 'block';
+  } else {
+    document.getElementById('camposPessoais').style.display = 'none';
+  }
 
-// Remover o proprietário da lista
-proprietariosArray.splice(index, 1);
-document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
-renderizarProprietarios();
+  // Remover o proprietário da lista
+  proprietariosArray.splice(index, 1);
+  document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+  renderizarProprietarios();
 
-// Abrir o popup de proprietários
-abrirPopupProprietarios();
+  // Abrir o popup de proprietários
+  abrirPopupProprietarios();
 }
 
 // Função para lidar com o clique no botão de excluir
 function handleDeleteButtonClick(event) {
-const index = parseInt(event.target.dataset.index);
-let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-proprietariosArray.splice(index, 1); // Remove o proprietário do array
-document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
-renderizarProprietarios(); // Renderiza a lista atualizada
+  const index = parseInt(event.target.dataset.index);
+  let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+  proprietariosArray.splice(index, 1); // Remove o proprietário do array
+  document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+  renderizarProprietarios(); // Renderiza a lista atualizada
 }
 
 // Função para permitir apenas números nos campos
 function permitirSomenteNumeros(idCampo) {
 const campo = document.getElementById(idCampo);
 campo.addEventListener('input', () => {
-// Remove tudo que não seja dígito
-campo.value = campo.value.replace(/\D/g, '');
+  // Remove tudo que não seja dígito
+  campo.value = campo.value.replace(/\D/g, '');
 });
 }
 
@@ -681,43 +703,43 @@ const codigoEcartorioContainer = document.getElementById('codigoEcartorioContain
 
 // Exibe ou esconde os campos com base no tipo de certidão selecionado
 if (this.value === 'ARIRJ') {
-codigoArirjContainer.classList.remove('hidden');
-codigoEcartorioContainer.classList.add('hidden');
+  codigoArirjContainer.classList.remove('hidden');
+  codigoEcartorioContainer.classList.add('hidden');
 } else if (this.value === 'E-CARTORIO') {
-codigoArirjContainer.classList.add('hidden');
-codigoEcartorioContainer.classList.remove('hidden');
+  codigoArirjContainer.classList.add('hidden');
+  codigoEcartorioContainer.classList.remove('hidden');
 } else {
-// Caso não seja ARIRJ ou E-CARTORIO, esconde ambos
-codigoArirjContainer.classList.add('hidden');
-codigoEcartorioContainer.classList.add('hidden');
+  // Caso não seja ARIRJ ou E-CARTORIO, esconde ambos
+  codigoArirjContainer.classList.add('hidden');
+  codigoEcartorioContainer.classList.add('hidden');
 }
 });
 
 document.getElementById('baixarPedidos').addEventListener('click', function () {
 // Usa os pedidos carregados na variável global
 const pedidosFormatados = pedidosCarregados.map(pedido => ({
-pedido: pedido.pedido,
-data: pedido.data,
-matricula: pedido.matricula,
-onus: pedido.onus,      
-folhas: pedido.folhas,
-imagens: pedido.imagens,
-tipoCertidao: pedido.tipoCertidao,
-codigoArirj: pedido.codigoArirj,
-codigoEcartorio: pedido.codigoEcartorio,
-protocolos: pedido.protocolos
-? pedido.protocolos
-.replace(/<[^>]*>/g, '') // Remove tags HTML
-.split('|') // Divide os protocolos em um array
-.filter(item => item.trim() !== '') // Remove linhas vazias
-: [],
-proprietarios: pedido.proprietarios
-? pedido.proprietarios
-.replace(/<[^>]*>/g, '') // Remove tags HTML
-.split('|') // Divide os proprietarios em um array
-.filter(item => item.trim() !== '') // Remove itens vazios
-.map(item => `${item.trim()}`) // Formata
-: []
+  pedido: pedido.pedido,
+  data: pedido.data,
+  matricula: pedido.matricula,
+  onus: pedido.onus,      
+  folhas: pedido.folhas,
+  imagens: pedido.imagens,
+  tipoCertidao: pedido.tipoCertidao,
+  codigoArirj: pedido.codigoArirj,
+  codigoEcartorio: pedido.codigoEcartorio,
+  protocolos: pedido.protocolos
+    ? pedido.protocolos
+      .replace(/<[^>]*>/g, '') // Remove tags HTML
+      .split('|') // Divide os protocolos em um array
+      .filter(item => item.trim() !== '') // Remove linhas vazias
+    : [],
+  proprietarios: pedido.proprietarios
+    ? pedido.proprietarios
+      .replace(/<[^>]*>/g, '') // Remove tags HTML
+      .split('|') // Divide os proprietarios em um array
+      .filter(item => item.trim() !== '') // Remove itens vazios
+      .map(item => `${item.trim()}`) // Formata
+    : []
 }));
 
 // Converte os pedidos para JSON formatado
@@ -732,4 +754,4 @@ link.click();
 });
 
 // Carrega os pedidos quando a página é carregada
-carregarPedidos();  
+carregarPedidos();
