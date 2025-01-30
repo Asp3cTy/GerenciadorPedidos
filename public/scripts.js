@@ -1,5 +1,6 @@
 let currentPage = 1; // Página atual
 let totalPages = 1; // Total de páginas (será calculado)
+let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
 // Função para formatar CPF e CNPJ
 function formatarCpfCnpj(numero) {
@@ -192,7 +193,7 @@ Editar
             </button>
         </div>
       `;
-    pedidosResumo.appendChild(pedidoDiv); // Agora usamos appendChild, já que a ordem é controlada pelo servidor
+    pedidosResumo.appendChild(pedidoDiv);
   });
 }
 
@@ -204,9 +205,9 @@ function carregarPedidos() {
     xhr.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             const resposta = JSON.parse(this.responseText);
-            const pedidos = resposta.pedidos;
+            pedidosCarregados = resposta.pedidos; // Atualiza a variável global
             totalPages = Math.ceil(resposta.totalPedidos / 3);
-            renderPedidos(pedidos);
+            renderPedidos(pedidosCarregados);
             updatePaginationButtons();
         }
     };
@@ -270,19 +271,8 @@ document.getElementById('pedidosResumo').addEventListener('click', function(even
 
 // Função para buscar um pedido pelo ID
 function buscarPedidoPorId(pedidoId) {
-    let pedidoEncontrado = null;
-    // Buscar o pedido na resposta atual do servidor
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", `/listar/_pedidos.php?page=${currentPage}`, false); // Requisição síncrona (não recomendado, mas simplifica o exemplo)
-    xhr.send();
-
-    if (xhr.status === 200) {
-        const resposta = JSON.parse(xhr.responseText);
-        const pedidos = resposta.pedidos;
-        pedidoEncontrado = pedidos.find(p => p.id === pedidoId);
-    }
-
-    return pedidoEncontrado;
+  const pedidoEncontrado = pedidosCarregados.find(p => p.id === pedidoId);
+  return pedidoEncontrado;
 }
 
 // Função para editar um pedido
@@ -655,19 +645,7 @@ function handleEditButtonClick(event) {
     }
   
     // Remover o proprietário da lista
-    proprietariosArray.splice(index, 1);
-    document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
-    renderizarProprietarios();
-  
-    // Abrir o popup de proprietários
-    abrirPopupProprietarios();
-  }
-
-// Função para lidar com o clique no botão de excluir
-function handleDeleteButtonClick(event) {
-    const index = parseInt(event.target.dataset.index);
-    let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-    proprietariosArray.splice(index, 1); // Remove o proprietário do array
+proprietariosArray.splice(index, 1); // Remove o proprietário do array
     document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
     renderizarProprietarios(); // Renderiza a lista atualizada
   }
@@ -707,8 +685,8 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
 });
 
 document.getElementById('baixarPedidos').addEventListener('click', function () {
-  // Clona o array de pedidos e ajusta o formato
-  const pedidosFormatados = pedidos.map(pedido => ({
+  // Usa os pedidos carregados na variável global
+  const pedidosFormatados = pedidosCarregados.map(pedido => ({
     pedido: pedido.pedido,
     data: pedido.data,
     matricula: pedido.matricula,
@@ -726,7 +704,7 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
       : [],
     proprietarios: pedido.proprietarios
       ? pedido.proprietarios
-.replace(/<[^>]*>/g, '') // Remove tags HTML
+        .replace(/<[^>]*>/g, '') // Remove tags HTML
         .split('|') // Divide os proprietarios em um array
         .filter(item => item.trim() !== '') // Remove itens vazios
         .map(item => `${item.trim()}`) // Formata
@@ -788,4 +766,4 @@ document.getElementById('uploadPedidos').addEventListener('change', function (ev
 });
 
 // Carrega os pedidos quando a página é carregada
-carregarPedidos();
+carregarPedidos();    
