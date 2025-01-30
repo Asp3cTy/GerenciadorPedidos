@@ -88,38 +88,44 @@ app.post('/salvar_pedido.php', (req, res) => {
 
 // Rota para lidar com requisições para listar pedidos
 app.get('/listar/_pedidos.php', (req, res) => {
-  console.log("Requisição GET para /listar/_pedidos.php recebida.");
-  // Cria uma conexão com o banco de dados
-  const connection = mysql.createConnection(dbConfig);
+    console.log("Requisição GET para /listar/_pedidos.php recebida.");
 
-  // Conecta ao banco de dados
-  connection.connect((err) => {
-    if (err) {
-      console.error('Erro ao conectar ao banco de dados:', err);
-      res.status(500).json({ status: 'erro', mensagem: 'Erro ao conectar ao banco de dados.' });
-      return;
-    }
+    // Obtém a página atual da query string, ou usa 1 como padrão
+    const page = parseInt(req.query.page) || 1;
+    const limit = 3; // Define o limite de pedidos por página
+    const offset = (page - 1) * limit; // Calcula o offset
 
-    console.log('Conectado ao banco de dados!');
+    // Cria uma conexão com o banco de dados
+    const connection = mysql.createConnection(dbConfig);
 
-    // Query SQL para buscar todos os pedidos, ordenando por data de forma descendente
-    const sql = `SELECT * FROM pedidos ORDER BY data ASC, id ASC`; // Ordena por data e ID para garantir consistência
+    // Conecta ao banco de dados
+    connection.connect((err) => {
+        if (err) {
+            console.error('Erro ao conectar ao banco de dados:', err);
+            res.status(500).json({ status: 'erro', mensagem: 'Erro ao conectar ao banco de dados.' });
+            return;
+        }
 
-    // Executa a query
-    connection.query(sql, (err, results) => {
-      if (err) {
-        console.error('Erro ao buscar pedidos do banco de dados:', err);
-        res.status(500).json({ status: 'erro', mensagem: 'Erro ao buscar os pedidos.' });
-      } else {
-        console.log('Pedidos encontrados com sucesso!');
-        // Envia os pedidos como JSON
-        res.json(results);
-      }
+        console.log('Conectado ao banco de dados!');
 
-      // Fecha a conexão com o banco de dados
-      connection.end();
+        // Query SQL para buscar pedidos com paginação
+        const sql = `SELECT * FROM pedidos ORDER BY data ASC, id ASC LIMIT ? OFFSET ?`;
+
+        // Executa a query
+        connection.query(sql, [limit, offset], (err, results) => {
+            if (err) {
+                console.error('Erro ao buscar pedidos do banco de dados:', err);
+                res.status(500).json({ status: 'erro', mensagem: 'Erro ao buscar os pedidos.' });
+            } else {
+                console.log('Pedidos encontrados com sucesso!');
+                // Envia os pedidos como JSON
+                res.json(results);
+            }
+
+            // Fecha a conexão com o banco de dados
+            connection.end();
+        });
     });
-  });
 });
 
 // Rota para excluir pedidos
