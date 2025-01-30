@@ -5,297 +5,283 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos de Certidão</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#0d1b2a',
+                        'secondary': '#1b263b',
+                        'tertiary': '#415a77',
+                        'quaternary': '#778da9',
+                        'light': '#e0e1dd',
+                    },
+                },
+            },
+        }
+    </script>
 </head>
-<body class="bg-gray-100 p-4">
+<body class="bg-primary text-light p-4 dark min-h-screen"> 
+    <div class="flex justify-center items-center min-h-[200px]">
+        <button id="openModal" class="bg-yellow-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline">
+            Novo Pedido
+        </button>
+    </div>
 
-<!-- Contêiner para centralizar o botão -->
-<div class="flex justify-center items-center min-h-[200px]">
-    <!-- Botão para abrir o modal -->
-    <button id="openModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Novo Pedido
-    </button>
-</div>
+    <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen bg-white-500 bg-opacity-50 backdrop-blur-sm dark:bg-primary dark:bg-opacity-75">
+            <div class="modal-content bg-secondary p-6 rounded shadow-lg w-11/12 md:w-2/3 text-light">
+                <h1 class="text-2xl font-bold mb-4">Novo Pedido</h1>
 
-
-<!-- O Modal -->
-<div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
-    <div class="flex items-center justify-center min-h-screen bg-gray-500 bg-opacity-50 backdrop-blur-sm">
-        <div class="modal-content bg-white p-6 rounded shadow-lg w-11/12 md:w-2/3">
-            <h1 class="text-2xl font-bold mb-4">Novo Pedido</h1>
-
-            <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <!-- Campos do formulário -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="pedido">
-                        Pedido:
-                    </label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="pedido" type="text" placeholder="Ex. 000123">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="data">
-                        Data:
-                    </label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="data" type="date">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="matricula">
-                        N.º Matrícula:
-                    </label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="matricula" type="text" placeholder="Ex. 12345 (máx. 5 dígitos)">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="onus">
-                        Ônus:
-                    </label>
-                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="onus">
-                        <option value="NEGATIVA">NEGATIVA</option>
-                        <option value="POSITIVA">POSITIVA</option>
-						<option value="INDETERMINADA">INDETERMINADA</option>
-                    </select>
-                </div>
-				<div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="folhas">
-                        N.º Folhas:
-                    </label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="folhas" type="text" placeholder="Quantas Folhas possui a Matrícula?">
-                </div>
-				<div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="imagens">
-                        N.º de Imagens:
-                    </label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="imagens" type="text" placeholder="Quantas Imagens possui a Matrícula?">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="tipoCertidao">
-                        Tipo de Certidão:
-                    </label>
-                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="tipoCertidao">
-                        <option value="BALCAO">BALCÃO</option>
-                        <option value="ARIRJ">ARIRJ</option>
-						<option value="E-CARTORIO">E-CARTORIO</option>
-                    </select>
-                    <div id="codigoArirjContainer" class="hidden mt-2">
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="codigoArirj" type="text" placeholder="Código ARIRJ (Ex. S25010390845D)">
+                <form class="bg-secondary shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2" for="pedido">
+                            Pedido:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="pedido" type="text" placeholder="Ex. 000123">
                     </div>
-					<div id="codigoEcartorioContainer" class="hidden mt-2">
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="codigoEcartorio" type="text" placeholder="Código E-CARTORIO (Ex. 20241254659545)">
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2" for="data">
+                            Data:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="data" type="date">
                     </div>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        Possui Protocolo?
-                    </label>
-                    <button type="button" id="abrirPopupProtocolos" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
-                        Adicionar Protocolos
-                    </button>
-                    <div id="protocolosAdicionados" class="mt-2"></div>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        Proprietários:
-                    </label>
-                    <button type="button" id="abrirPopupProprietarios" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">
-                        Adicionar Proprietários
-                    </button>
-                    <div id="proprietariosAdicionados" class="mt-2"></div>
-                </div>
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2" for="matricula">
+                            N.º Matrícula:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="matricula" type="text" placeholder="Ex. 12345 (máx. 5 dígitos)">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2" for="onus">
+                            Ônus:
+                        </label>
+                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="onus">
+                            <option value="NEGATIVA">NEGATIVA</option>
+                            <option value="POSITIVA">POSITIVA</option>
+                            <option value="INDETERMINADA">INDETERMINADA</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2" for="folhas">
+                            N.º Folhas:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="folhas" type="text" placeholder="Quantas Folhas possui a Matrícula?">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2" for="imagens">
+                            N.º de Imagens:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="imagens" type="text" placeholder="Quantas Imagens possui a Matrícula?">
+                    </div>
 
-                <div class="flex items-center justify-between">
-                    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" id="salvarPedido">
-                        Salvar Pedido
-                    </button>
-                </div>
-            </form>
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2" for="tipoCertidao">
+                            Tipo de Certidão:
+                        </label>
+                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="tipoCertidao">
+                            <option value="BALCAO">BALCÃO</option>
+                            <option value="ARIRJ">ARIRJ</option>
+                            <option value="E-CARTORIO">E-CARTORIO</option>
+                        </select>
+                        <div id="codigoArirjContainer" class="hidden mt-2">
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="codigoArirj" type="text" placeholder="Código ARIRJ (Ex. S25010390845D)">
+                        </div>
+                        <div id="codigoEcartorioContainer" class="hidden mt-2">
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="codigoEcartorio" type="text" placeholder="Código E-CARTORIO (Ex. 20241254659545)">
+                        </div>
+                    </div>
 
-            <!-- Botão para fechar o modal -->
-            <button id="closeModal" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
-                Fechar
-            </button>
+                    <div class="mb-4">
+                        <label class="block text-light text-sm font-bold mb-2">
+                            Possui Protocolo?
+                        </label>
+                        <button type="button" id="abrirPopupProtocolos" class="bg-blue-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
+                            Adicionar Protocolos
+                        </button>
+                        <div id="protocolosAdicionados" class="mt-2"></div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-light text-sm font-bold mb-2">
+                            Proprietários:
+                        </label>
+                        <button type="button" id="abrirPopupProprietarios" class="bg-blue-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
+                            Adicionar Proprietários
+                        </button>
+                        <div id="proprietariosAdicionados" class="mt-2"></div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" type="button" id="salvarPedido">
+                            Salvar Pedido
+                        </button>
+                    </div>
+                </form>
+
+                <button id="closeModal" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-4">
+                    Fechar
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-
-
-
-<!-- Resumo de Pedidos -->
-<div id="resumoPedidos" class="mt-4 w-full sm:w-[calc(100%-2rem)] md:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] mx-auto">
-    <h2 class="text-xl font-semibold mb-4">Resumo dos Pedidos</h2>
-    <div id="pedidosResumo" class="mt-4">
-        <!-- Os pedidos com botão de excluir serão adicionados dinamicamente aqui -->
+    <div id="resumoPedidos" class="mt-4 w-full sm:w-[calc(100%-2rem)] md:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] mx-auto">
+        <h2 class="text-xl font-semibold mb-4">Resumo dos Pedidos</h2>
+        <div id="pedidosResumo" class="mt-4 bg-secondary p-4 rounded">
+        </div>
     </div>
-</div>
 
-
-    <!-- Paginação -->
     <div id="pagination" class="flex justify-center items-center gap-2 mt-4">
-        <button id="prevPage" class="bg-gray-500 text-white px-4 py-2 rounded" onclick="changePage(-1)">Anterior</button>
+        <button id="prevPage" class="bg-blue-500 hover:bg-white-600 text-white px-4 py-2 rounded" onclick="changePage(-1)">Anterior</button>
         <span id="pageNumber" class="font-semibold">Página 1</span>
-        <button id="nextPage" class="bg-gray-500 text-white px-4 py-2 rounded" onclick="changePage(1)">Próxima</button>
+        <button id="nextPage" class="bg-blue-500 hover:bg-white-600 text-white px-4 py-2 rounded" onclick="changePage(1)">Próxima</button>
     </div>
-</div>
 
-<div class="flex items-center justify-center space-x-4 mt-4">
-	<!-- Botão de Baixar Pedidos -->
-    <button id="baixarPedidos" class="cursor-pointer bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 flex items-center space-x-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-        <span class="font-semibold">Baixar Pedidos</span>
-    </button>
-	
-	    <!-- Botão de Upload de Pedidos -->
-    <label for="uploadPedidos" class="cursor-pointer bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition duration-300 flex items-center space-x-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v4a1 1 0 001 1h14a1 1 0 001-1v-4m-5-4l-4-4m0 0L9 12m3-8v12" />
-        </svg>
-        <span class="font-semibold">Upload Pedidos</span>
-    </label>
-    <input type="file" id="uploadPedidos" class="hidden" accept=".json" />
-	
-</div>
+    <div class="flex items-center justify-center space-x-4 mt-4">
+        <button id="baixarPedidos" class="cursor-pointer bg-secondary text-light px-6 py-3 rounded-lg shadow-md hover:bg-tertiary transition duration-300 flex items-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="font-semibold">Baixar Pedidos</span>
+        </button>
 
+        <label for="uploadPedidos" class="cursor-pointer bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition duration-300 flex items-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v4a1 1 0 001 1h14a1 1 0 001-1v-4m-5-4l-4-4m0 0L9 12m3-8v12" />
+            </svg>
+            <span class="font-semibold">Upload Pedidos</span>
+        </label>
+        <input type="file" id="uploadPedidos" class="hidden" accept=".json" />
+    </div>
 
-
-
-
-
-
-
-
-
-
-
-<!-- Popup de Protocolos -->
     <div id="popupProtocolos" class="hidden fixed z-10 inset-0 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                <div class="absolute inset-0 bg-white-500 opacity-75 dark:bg-primary dark:bg-opacity-75"></div>
             </div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Adicionar Protocolos</h3>
+            <div class="inline-block align-bottom bg-secondary rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-secondary px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-light">Adicionar Protocolos</h3>
                     <div class="mt-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="novoProtocolo">
+                        <label class="block text-light text-sm font-bold mb-2" for="novoProtocolo">
                             Protocolo:
                         </label>
-                        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="novoProtocolo" rows="3"></textarea>
-                        <button type="button" id="confirmarProtocolo" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
+                        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="novoProtocolo" rows="3"></textarea>
+                        <button type="button" id="confirmarProtocolo" class="bg-tertiary hover:bg-quaternary text-light font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
                             Confirmar Protocolo
                         </button>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="fecharPopupProtocolos()">Fechar</button>
+                <div class="bg-white-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-white-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-white-700 hover:bg-white-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="fecharPopupProtocolos()">Fechar</button>
                 </div>
             </div>
         </div>
     </div>
 
-<!-- Popup de Proprietários -->
-<div id="popupProprietarios" class="hidden fixed z-10 inset-0 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Adicionar Proprietários</h3>
-                <div class="mt-2">
-                    <div class="mb-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="qualificacao">
-                            Qualificação:
-                        </label>
-                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="qualificacao">
-                            <option value="Proprietario">Proprietário</option>
-                            <option value="Conjuge">Cônjuge</option>
-                            <option value="Credor">Credor</option>
-                            <option value="Devedor">Devedor</option>
-                            <option value="Nu-Proprietario">NU-Proprietário</option>
-                            <option value="Usufrutuário">Usufrutuário</option>
-                            <option value="PromitenteComprador">Promitente Comprador</option>
-                            <option value="PromitenteVendedor">Promitente Vendedor</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="nome">
-                            Nome:
-                        </label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="nome" type="text">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="tipoDocumento">
-                            Tipo de Documento:
-                        </label>
-                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="tipoDocumento">
-                            <option value="cpf">CPF</option>
-                            <option value="cnpj">CNPJ</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="cpf">
-                            CPF:
-                        </label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="cpf" type="text">
-                    </div>
-                    <!-- Campos a serem ocultados para CNPJ -->
-                    <div id="camposPessoais">
-                        <div class="mb-2">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="sexo">
-                                Sexo:
-                            </label>
-                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sexo">
-                                <option value="Masculino">Masculino</option>
-                                <option value="Feminino">Feminino</option>
-                                <option value="Outro">Nenhuma</option>
-                            </select>
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="identidade">
-                                Identidade:
-                            </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="identidade" type="text">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="orgaoExpedidor">
-                                Órgão Expedidor:
-                            </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="orgaoExpedidor" type="text">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="estadoCivil">
-                                Estado Civil:
-                            </label>
-                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="estadoCivil">
-                                <option value="Solteiro">Solteiro</option>
-                                <option value="Casado">Casado</option>
-                                <option value="Viúvo">Viúvo</option>
-                                <option value="Separado Judicialmente">Separado Judicialmente</option>
-                                <option value="Divorciado">Divorciado</option>
-                                <option value="Separado Consensualmente">Separado Consensualmente</option>
-                                <option value="Desquitado">Desquitado</option>
-                                <option value="Nenhuma">Nenhuma</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="button" id="confirmarProprietario" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
-                        Confirmar Proprietário
-                    </button>
-                </div>
+    <div id="popupProprietarios" class="hidden fixed z-10 inset-0 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-white-500 opacity-75 dark:bg-primary dark:bg-opacity-75"></div>
             </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="fecharPopupProprietarios()">Fechar</button>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-secondary rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-secondary px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-light">Adicionar Proprietários</h3>
+                    <div class="mt-2">
+                        <div class="mb-2">
+                            <label class="block text-light text-sm font-bold mb-2" for="qualificacao">
+                                Qualificação:
+                            </label>
+                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="qualificacao">
+                                <option value="Proprietario">Proprietário</option>
+                                <option value="Conjuge">Cônjuge</option>
+                                <option value="Credor">Credor</option>
+                                <option value="Devedor">Devedor</option>
+                                <option value="Nu-Proprietario">NU-Proprietário</option>
+                                <option value="Usufrutuário">Usufrutuário</option>
+                                <option value="PromitenteComprador">Promitente Comprador</option>
+                                <option value="PromitenteVendedor">Promitente Vendedor</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-light text-sm font-bold mb-2" for="nome">
+                                Nome:
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="nome" type="text">
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-light text-sm font-bold mb-2" for="tipoDocumento">
+                                Tipo de Documento:
+                            </label>
+                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="tipoDocumento">
+                                <option value="cpf">CPF</option>
+                                <option value="cnpj">CNPJ</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-light text-sm font-bold mb-2" for="cpf">
+                                CPF/CNPJ:
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="cpf" type="text">
+                        </div>
+                        <div id="camposPessoais">
+                            <div class="mb-2">
+                                <label class="block text-light text-sm font-bold mb-2" for="sexo">
+                                    Sexo:
+                                </label>
+                                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="sexo">
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                    <option value="Outro">Nenhuma</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-light text-sm font-bold mb-2" for="identidade">
+                                    Identidade:
+                                </label>
+                                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="identidade" type="text">
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-light text-sm font-bold mb-2" for="orgaoExpedidor">
+                                    Órgão Expedidor:
+                                </label>
+                                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="orgaoExpedidor" type="text">
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-light text-sm font-bold mb-2" for="estadoCivil">
+                                    Estado Civil:
+                                </label>
+                                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 bg-tertiary leading-tight focus:outline-none focus:shadow-outline" id="estadoCivil">
+                                    <option value="Solteiro">Solteiro</option>
+                                    <option value="Casado">Casado</option>
+                                    <option value="Viúvo">Viúvo</option>
+                                    <option value="Separado Judicialmente">Separado Judicialmente</option>
+                                    <option value="Divorciado">Divorciado</option>
+                                    <option value="Separado Consensualmente">Separado Consensualmente</option>
+                                    <option value="Desquitado">Desquitado</option>
+                                    <option value="Nenhuma">Nenhuma</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" id="confirmarProprietario" class="bg-tertiary hover:bg-quaternary text-light font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
+                            Confirmar Proprietário
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-white-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-white-700 hover:bg-white-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="fecharPopupProprietarios()">Fechar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="scripts.js"></script>
-<script>
-    // Atualizar data automaticamente
-    document.getElementById('data').valueAsDate = new Date();
-</script>
+    <script src="scripts.js"></script>
+    <script>
+        document.getElementById('data').valueAsDate = new Date();
+    </script>
 </body>
-</html>
+</html>                                
