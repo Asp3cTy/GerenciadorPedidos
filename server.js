@@ -108,22 +108,40 @@ app.get('/listar/_pedidos.php', (req, res) => {
 
         console.log('Conectado ao banco de dados!');
 
-        // Query SQL para buscar pedidos com paginação
-        const sql = `SELECT * FROM pedidos ORDER BY data ASC, id ASC LIMIT ? OFFSET ?`;
+        // Query para contar o total de pedidos
+        const countSql = `SELECT COUNT(*) AS total FROM pedidos`;
 
-        // Executa a query
-        connection.query(sql, [limit, offset], (err, results) => {
-            if (err) {
-                console.error('Erro ao buscar pedidos do banco de dados:', err);
+        // Executa a query de contagem
+        connection.query(countSql, (countErr, countResults) => {
+            if (countErr) {
+                console.error('Erro ao contar o total de pedidos:', countErr);
                 res.status(500).json({ status: 'erro', mensagem: 'Erro ao buscar os pedidos.' });
-            } else {
-                console.log('Pedidos encontrados com sucesso!');
-                // Envia os pedidos como JSON
-                res.json(results);
+                connection.end();
+                return;
             }
 
-            // Fecha a conexão com o banco de dados
-            connection.end();
+            const totalPedidos = countResults[0].total;
+
+            // Query SQL para buscar pedidos com paginação
+            const sql = `SELECT * FROM pedidos ORDER BY data ASC, id ASC LIMIT ? OFFSET ?`;
+
+            // Executa a query paginada
+            connection.query(sql, [limit, offset], (err, results) => {
+                if (err) {
+                    console.error('Erro ao buscar pedidos do banco de dados:', err);
+                    res.status(500).json({ status: 'erro', mensagem: 'Erro ao buscar os pedidos.' });
+                } else {
+                    console.log('Pedidos encontrados com sucesso!');
+                    // Envia os pedidos e o total como JSON
+                    res.json({
+                        totalPedidos: totalPedidos,
+                        pedidos: results
+                    });
+                }
+
+                // Fecha a conexão com o banco de dados
+                connection.end();
+            });
         });
     });
 });
