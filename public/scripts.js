@@ -224,6 +224,21 @@ document.getElementById('openModal').addEventListener('click', function () {
 document.getElementById('closeModal').addEventListener('click', function () {
   console.log("Fechando o modal"); // Verifique se a função está sendo chamada
   document.getElementById('modal').classList.add('hidden');
+
+          // Limpar campos do formulário
+        document.getElementById('pedido').value = '';
+        document.getElementById('matricula').value = '';
+        document.getElementById('onus').value = 'NEGATIVA'; // Ou o valor padrão que você desejar        
+        document.getElementById('folhas').value = '';
+        document.getElementById('imagens').value = '';
+        document.getElementById('tipoCertidao').value = 'BALCAO'; // Ou o valor padrão que você desejar
+        document.getElementById('codigoArirj').value = '';
+        document.getElementById('codigoEcartorio').value = '';
+        document.getElementById('protocolosAdicionados').innerHTML = '';
+        document.getElementById('proprietariosAdicionados').innerHTML = '';
+        document.getElementById('protocolosAdicionados').dataset.protocolos = '';
+        document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
+        document.getElementById('data').valueAsDate = new Date();
 });
 
 // Funções para abrir e fechar popups
