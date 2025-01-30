@@ -123,7 +123,8 @@ app.get('/listar/_pedidos.php', (req, res) => {
             const totalPedidos = countResults[0].total;
 
             // Query SQL para buscar pedidos com paginação
-            const sql = `SELECT * FROM pedidos ORDER BY data ASC, id ASC LIMIT ? OFFSET ?`;
+            // Agora ordenando por ID DESC (mais recentes primeiro) e DATA também
+            const sql = `SELECT * FROM pedidos ORDER BY id DESC, data DESC LIMIT ? OFFSET ?`;
 
             // Executa a query paginada
             connection.query(sql, [limit, offset], (err, results) => {
