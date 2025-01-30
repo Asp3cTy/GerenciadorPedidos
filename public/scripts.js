@@ -364,7 +364,7 @@ Tipo de Certidão: ${pedido.tipoCertidao}
                 .filter(item => item.trim() !== '')
                 .map(p => p.trim())
                 .join('\n');
-        } } else {
+        } else {
             textoPedido += `Nenhum proprietário adicionado\n`;
         }
 
@@ -788,4 +788,4 @@ document.getElementById('uploadPedidos').addEventListener('change', function (ev
 });
 
 // Carrega os pedidos quando a página é carregada
-carregarPedidos();        
+carregarPedidos();
