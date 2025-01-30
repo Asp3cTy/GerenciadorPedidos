@@ -21,6 +21,13 @@
             },
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
+    <script>
+      dayjs.extend(window.dayjs_plugin_utc);
+      dayjs.extend(window.dayjs_plugin_timezone);
+    </script>    
 </head>
 <body class="bg-primary text-light p-4 dark min-h-screen">
     <div class="flex justify-center items-center min-h-[200px]">
