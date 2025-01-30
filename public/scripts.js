@@ -692,6 +692,78 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
   }
 });
 
+document.getElementById('baixarPedidos').addEventListener('click', function () {
+  // Usa os pedidos carregados na variável global
+  const pedidosFormatados = pedidosCarregados.map(pedido => ({
+    pedido: pedido.pedido,
+    data: pedido.data,
+    matricula: pedido.matricula,
+    onus: pedido.onus,      
+    folhas: pedido.folhas,
+    imagens: pedido.imagens,
+    tipoCertidao: pedido.tipoCertidao,
+    codigoArirj: pedido.codigoArirj,
+    codigoEcartorio: pedido.codigoEcartorio,
+    protocolos: pedido.protocolos
+      ? pedido.protocolos
+        .replace(/<[^>]*>/g, '') // Remove tags HTML
+        .split('|') // Divide os protocolos em um array
+        .filter(item => item.trim() !== '') // Remove linhas vazias
+      : [],
+    proprietarios: pedido.proprietarios
+      ? pedido.proprietarios
+        .replace(/<[^>]*>/g, '') // Remove tags HTML
+        .split('|') // Divide os proprietarios em um array
+        .filter(item => item.trim() !== '') // Remove itens vazios
+        .map(item => `${item.trim()}`) // Formata
+      : []
+  }));
+
+  // Converte os pedidos para JSON formatado
+  const conteudo = JSON.stringify(pedidosFormatados, null, 2);
+
+  // Cria um blob com o conteúdo em JSON e dispara o download
+  const blob = new Blob([conteudo], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'pedidos.json'; // Nome do arquivo para download
+  link.click();
+});
+
+document.getElementById('uploadPedidos').addEventListener('change', function (event) {
+  const file = event.target.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      try {
+        const data = JSON.parse(e.target.result);
+
+        if (Array.isArray(data)) {
+          // Para cada pedido no JSON, adicione ao array de pedidos
+          data.forEach(pedido => {
+            // Adiciona um ID único para cada pedido importado
+            pedido.id = Date.now() + Math.floor(Math.random() * 1000);
+            // Insere o novo pedido no início do array 'pedidosCarregados'
+            pedidosCarregados.unshift(pedido); 
+          });
+
+          // Atualiza a exibição com os pedidos importados
+          currentPage = 1;
+          carregarPedidos();
+          alert('Pedidos carregados com sucesso!');
+        } else {
+          alert('Arquivo inválido. O conteúdo deve ser um array JSON.');
+        }
+      } catch (error) {
+        alert('Erro ao processar o arquivo. Certifique-se de que o conteúdo é JSON válido.');
+      }
+    };
+
+    reader.readAsText(file); // Lê o arquivo como texto
+  }
+});
 
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
