@@ -24,6 +24,36 @@ function getDadosFormulario() {
   };
 }
 
+function validarFormulario(formulario) {
+  let isValid = true;
+  const campos = formulario.querySelectorAll('input, select, textarea');
+
+  campos.forEach(campo => {
+    // Verifica se o campo é obrigatório e se está vazio
+    if (campo.required && campo.value.trim() === '') {
+      isValid = false;
+      // Adiciona uma classe de erro ao campo (opcional)
+      campo.classList.add('border-red-500');
+      // Exibe uma mensagem de erro (opcional)
+      if (!campo.nextElementSibling ||!campo.nextElementSibling.classList.contains('erro')) {
+        const erroSpan = document.createElement('span');
+        erroSpan.textContent = 'Este campo é obrigatório.';
+        erroSpan.classList.add('erro', 'text-red-500', 'text-xs');
+        campo.parentNode.insertBefore(erroSpan, campo.nextSibling);
+      }
+    } else {
+      // Remove a classe de erro se o campo for preenchido (opcional)
+      campo.classList.remove('border-red-500');
+      // Remove a mensagem de erro (opcional)
+      if (campo.nextElementSibling && campo.nextElementSibling.classList.contains('erro')) {
+        campo.nextElementSibling.remove();
+      }
+    }
+  });
+
+  return isValid;
+}
+
 function toUpperCaseInputs() {
   const inputs = document.querySelectorAll('input[type="text"], textarea');
   inputs.forEach(input => {
@@ -45,79 +75,85 @@ console.log("Associando event listener ao botão salvarPedido");
 
 // Função que será chamada quando o pedido for salvo ou editado
 document.getElementById('salvarPedido').addEventListener('click', () => {
-  console.log("Botão salvarPedido clicado!");
-  const dadosPedido = getDadosFormulario();
+  const formulario = document.querySelector('form'); // Seleciona o formulário
 
-  // Verifica se está editando um pedido existente
-  const pedidoId = document.getElementById('salvarPedido').getAttribute('data-pedido-id');
-  const novoPedido = {
+  if (validarFormulario(formulario)) { // Chama a função de validação
+    console.log("Botão salvarPedido clicado!");
+    const dadosPedido = getDadosFormulario();
+
+    // Verifica se está editando um pedido existente
+    const pedidoId = document.getElementById('salvarPedido').getAttribute('data-pedido-id');
+    const novoPedido = {
     ...dadosPedido
-  };
+    };
 
-  // Se tiver pedidoId, é uma edição, então adiciona o ID ao objeto
-  if (pedidoId) {
-    novoPedido.id = parseInt(pedidoId);
-  } else {
-    novoPedido.id = Date.now();
-  }
-
-  // Formata a data para 'YYYY-MM-DD' antes de enviar
-  novoPedido.data = novoPedido.data
-
-  const xhr = new XMLHttpRequest();
-  // Usa uma rota diferente para edição, por exemplo, /editar_pedido.php
-  xhr.open("POST", pedidoId ? "/editar_pedido.php" : "/salvar_pedido.php", true);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.onreadystatechange = function () {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log("Resposta recebida (texto):", this.responseText);
-      let resposta;
-      try {
-        resposta = JSON.parse(this.responseText);
-        console.log("Resposta após o parse:", resposta);
-      } catch (error) {
-        console.error("Erro ao fazer o parse do JSON:", error);
-        console.error("Conteúdo da resposta:", this.responseText);
-        alert("Erro ao processar a resposta do servidor.");
-        return;
-      }
-
-      if (resposta.status === 'sucesso') {
-        // Remove o atributo data-pedido-id, já que a edição foi concluída
-        document.getElementById('salvarPedido').removeAttribute('data-pedido-id');
-
-        currentPage = 1; // Volta para a página 1 após salvar um pedido
-        carregarPedidos(); // Atualiza a lista de pedidos carregados
-        document.getElementById('closeModal').click();
-        alert(resposta.mensagem);
-        // Limpar campos do formulário
-        document.getElementById('pedido').value = '';
-        document.getElementById('matricula').value = '';
-        document.getElementById('onus').value = 'NEGATIVA';
-        document.getElementById('folhas').value = '';
-        document.getElementById('imagens').value = '';
-        document.getElementById('tipoCertidao').value = 'BALCAO';
-        document.getElementById('codigoArirj').value = '';
-        document.getElementById('codigoEcartorio').value = '';
-        document.getElementById('protocolosAdicionados').innerHTML = '';
-        document.getElementById('proprietariosAdicionados').innerHTML = '';
-        document.getElementById('protocolosAdicionados').dataset.protocolos = '';
-        document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
-        document.getElementById('data').valueAsDate = new Date();
-
-        // Disparar o evento 'change' no tipoCertidao para redefinir a visibilidade dos campos ARIRJ/E-CARTORIO
-        document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
-
-        // Fechar os popups, se estiverem abertos
-        fecharPopupProtocolos();
-        fecharPopupProprietarios();
-      } else {
-        alert(resposta.mensagem);
-      }
+    // Se tiver pedidoId, é uma edição, então adiciona o ID ao objeto
+    if (pedidoId) {
+      novoPedido.id = parseInt(pedidoId);
+    } else {
+      novoPedido.id = Date.now();
     }
-  };
 
-  xhr.send(JSON.stringify(novoPedido));
+    // Formata a data para 'YYYY-MM-DD' antes de enviar
+    novoPedido.data = novoPedido.data
+
+    const xhr = new XMLHttpRequest();
+    // Usa uma rota diferente para edição, por exemplo, /editar_pedido.php
+    xhr.open("POST", pedidoId? "/editar_pedido.php": "/salvar_pedido.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+        console.log("Resposta recebida (texto):", this.responseText);
+        let resposta;
+        try {
+          resposta = JSON.parse(this.responseText);
+          console.log("Resposta após o parse:", resposta);
+        } catch (error) {
+          console.error("Erro ao fazer o parse do JSON:", error);
+          console.error("Conteúdo da resposta:", this.responseText);
+          alert("Erro ao processar a resposta do servidor.");
+          return;
+        }
+
+        if (resposta.status === 'sucesso') {
+          // Remove o atributo data-pedido-id, já que a edição foi concluída
+          document.getElementById('salvarPedido').removeAttribute('data-pedido-id');
+
+          currentPage = 1; // Volta para a página 1 após salvar um pedido
+          carregarPedidos(); // Atualiza a lista de pedidos carregados
+          document.getElementById('closeModal').click();
+          alert(resposta.mensagem);
+          // Limpar campos do formulário
+          document.getElementById('pedido').value = '';
+          document.getElementById('matricula').value = '';
+          document.getElementById('onus').value = 'NEGATIVA';
+          document.getElementById('folhas').value = '';
+          document.getElementById('imagens').value = '';
+          document.getElementById('tipoCertidao').value = 'BALCAO';
+          document.getElementById('codigoArirj').value = '';
+          document.getElementById('codigoEcartorio').value = '';
+          document.getElementById('protocolosAdicionados').innerHTML = '';
+          document.getElementById('proprietariosAdicionados').innerHTML = '';
+          document.getElementById('protocolosAdicionados').dataset.protocolos = '';
+          document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
+          document.getElementById('data').valueAsDate = new Date();
+
+          // Disparar o evento 'change' no tipoCertidao para redefinir a visibilidade dos campos ARIRJ/E-CARTORIO
+          document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
+
+          // Fechar os popups, se estiverem abertos
+          fecharPopupProtocolos();
+          fecharPopupProprietarios();
+        } else {
+          alert(resposta.mensagem);
+        }
+      }
+    };
+
+    xhr.send(JSON.stringify(novoPedido));
+  } else {
+    alert('Por favor, preencha todos os campos obrigatórios.');
+  }
 });
 
 // Função para formatar a data
