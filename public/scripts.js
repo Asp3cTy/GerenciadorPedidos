@@ -254,9 +254,10 @@ function renderPedidos(pedidos) {
                   const cpfMatch = p.match(/\d{11,14}/); // Expressão regular para encontrar CPF ou CNPJ
                   const cpfCnpj = cpfMatch? cpfMatch: null;
 
+                  // Retornar o HTML de cada participante com o botão "lupinha" no final
                   return `
-                    <div class="participante flex items-center">
-                      <p class="flex-grow">${p.trim()}</p>
+                    <div class="participante">
+                      <p>${p.trim()}</p> 
                       ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
                     </div>
                   `;
