@@ -3,6 +3,19 @@ let totalPages = 1; // Total de páginas (será calculado)
 let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
 
+// Escutar mensagens do script Tampermonkey
+window.addEventListener("message", function(event) {
+    if (event.source!= window) return;
+    if (event.data.action == "getParticipanteData") {
+        // Obter CPF/CNPJ do participante (adapte o seletor)
+        let cpfCnpj = document.querySelector("#cpf").value;
+
+        // Enviar CPF/CNPJ para o script Tampermonkey
+        event.source.postMessage({ action: "participanteData", cpfCnpj: cpfCnpj }, event.origin);
+    }
+}, false);
+
+
 // Função para coletar dados do formulário
 function getDadosFormulario() {
   return {
