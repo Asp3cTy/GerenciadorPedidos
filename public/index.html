@@ -8,7 +8,19 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    
+        <script> 
+                // Escutar mensagens do script Tampermonkey
+        window.addEventListener("message", function(event) {
+            if (event.source!= window) return;
+            if (event.data.action == "getParticipanteData") {
+                // Obter CPF/CNPJ do participante (adapte o seletor)
+                let cpfCnpj = document.querySelector("#cpf").value;
+        
+                // Enviar CPF/CNPJ para o script Tampermonkey
+                event.source.postMessage({ action: "participanteData", cpfCnpj: cpfCnpj }, event.origin);
+            }
+        }, false);
+        </script>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
