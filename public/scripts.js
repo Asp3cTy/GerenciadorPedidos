@@ -256,7 +256,7 @@ function renderPedidos(pedidos) {
             }
           </div>
         </div>
-        <div class="flex flex-col items-center ml-4">
+        <div class="flex flex-col items-center space-y-2 ml-4">
             <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${
               pedido.id
             }">
