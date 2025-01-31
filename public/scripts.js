@@ -784,7 +784,7 @@ function renderizarProprietarios() {
   const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
   proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
 
-  let proprietariosArray =[]; // Corrigido: inicializa como um array vazio
+  let proprietariosArray =''; // Corrigido: inicializa como um array vazio
 
   if (proprietariosAdicionadosDiv.dataset.proprietarios) {
     proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
