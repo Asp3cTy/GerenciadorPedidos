@@ -190,6 +190,9 @@ document.addEventListener('click', function(event) {
     if (event.target.classList.contains('pesquisarCNIB')) {
         let cpfCnpj = event.target.dataset.cpf;
 
+                // Adiciona o console.log para exibir o CPF/CNPJ extraído
+        console.log("CPF/CNPJ extraído:", cpfCnpj); 
+
         // Enviar mensagem para a aba do CNIB
         for (let i = 0; i < window.length; i++) {
             if (window[i].location.href.startsWith('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada')) {
