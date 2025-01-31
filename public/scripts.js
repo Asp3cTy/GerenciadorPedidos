@@ -243,7 +243,7 @@ function renderPedidos(pedidos) {
             }
           </div>
           <div>
-            <p><strong>Proprietários:</strong></p>
+            <p><strong>Participantes:</strong></p>
             ${
               pedido.proprietarios
                 ? pedido.proprietarios
@@ -251,7 +251,7 @@ function renderPedidos(pedidos) {
                     .filter((item) => item.trim() !== "")
                     .map((p) => `<p>${p.trim()}</p>`)
                     .join("")
-                : "<p>Nenhum proprietário adicionado</p>"
+                : "<p>Nenhum participante adicionado</p>"
             }
           </div>
         </div>
