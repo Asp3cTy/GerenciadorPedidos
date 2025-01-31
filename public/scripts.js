@@ -912,7 +912,7 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
   // Usa os pedidos carregados na variável global
   const pedidosFormatados = pedidosCarregados.map(pedido => ({
     Pedido: pedido.pedido,
-    Data: pedido.data,
+    Data: new Date(pedido.data),
     Matrícula: pedido.matricula,
     Ônus: pedido.onus,      
     Folhas: pedido.folhas,
