@@ -247,6 +247,7 @@ function renderPedidos(pedidos) {
                 ${pedido.tipoCertidao === "ARIRJ"? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`: ""}
                 ${pedido.tipoCertidao === "E-CARTORIO"? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`: ""}
                 <div data-participantes>
+                <p><strong>Participantes:</strong></p>
                     ${participantesHTML} 
                 </div>
                 <div>
