@@ -251,7 +251,7 @@ function carregarPedidos() {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             const resposta = JSON.parse(this.responseText);
             pedidosCarregados = resposta.pedidos; // Atualiza a variável global com os pedidos carregados
-            totalPages = Math.ceil(resposta.totalPedidos / 10000);
+            totalPages = Math.ceil(resposta.totalPedidos);
             renderPedidos(pedidosCarregados);
             updatePaginationButtons();
         }
