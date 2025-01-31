@@ -250,8 +250,13 @@ function carregarPedidos() {
     xhr.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             const resposta = JSON.parse(this.responseText);
-            pedidosCarregados = resposta.pedidos; // Atualiza a variável global com os pedidos carregados
-            totalPages = Math.ceil(resposta.totalPedidos / 3);
+            pedidosCarregados = resposta.pedidos;
+
+            // Calcula o total de páginas com base no total de pedidos retornado pelo servidor
+            const totalPedidos = resposta.totalPedidos;
+            const limit = 2; // Ou use um limite dinâmico
+            totalPages = Math.ceil(totalPedidos / limit);
+
             renderPedidos(pedidosCarregados);
             updatePaginationButtons();
         }
