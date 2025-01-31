@@ -911,22 +911,22 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
 document.getElementById('baixarPedidos').addEventListener('click', function () {
   // Usa os pedidos carregados na variável global
   const pedidosFormatados = pedidosCarregados.map(pedido => ({
-    pedido: pedido.pedido,
-    data: pedido.data,
-    matricula: pedido.matricula,
-    onus: pedido.onus,      
-    folhas: pedido.folhas,
-    imagens: pedido.imagens,
+    Pedido: pedido.pedido,
+    Data: pedido.data,
+    Matrícula: pedido.matricula,
+    Ônus: pedido.onus,      
+    Folhas: pedido.folhas,
+    Imagens: pedido.imagens,
     tipoCertidao: pedido.tipoCertidao,
     codigoArirj: pedido.codigoArirj,
     codigoEcartorio: pedido.codigoEcartorio,
-    protocolos: pedido.protocolos
+    Protocolos: pedido.protocolos
       ? pedido.protocolos
         .replace(/<[^>]*>/g, '') // Remove tags HTML
         .split('|') // Divide os protocolos em um array
         .filter(item => item.trim() !== '') // Remove linhas vazias
       : [],
-    proprietarios: pedido.proprietarios
+    Participantes: pedido.proprietarios
       ? pedido.proprietarios
         .replace(/<[^>]*>/g, '') // Remove tags HTML
         .split('|') // Divide os proprietarios em um array
