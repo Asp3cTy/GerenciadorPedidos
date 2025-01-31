@@ -536,6 +536,18 @@ Tipo de Certidão: ${pedido.tipoCertidao}
 document.getElementById('openModal').addEventListener('click', function () {
   document.getElementById('modal').classList.remove('hidden');
 
+  // Define o limite de dígitos e o placeholder do campo "CPF/CNPJ" quando o modal é aberto
+  const tipoDocumento = document.getElementById('tipoDocumento').value;
+  const campoCpfCnpj = document.getElementById('cpf');
+
+  if (tipoDocumento === 'cpf') {
+    campoCpfCnpj.setAttribute('maxlength', '11');
+    campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
+  } else if (tipoDocumento === 'cnpj') {
+    campoCpfCnpj.setAttribute('maxlength', '14');
+    campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
+  }
+
     // Define a data atual no formato YYYY-MM-DD
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, '0');
@@ -580,18 +592,6 @@ function fecharPopupProtocolos() {
 // Função para abrir o popup de participantes
 function abrirPopupProprietarios() {
   document.getElementById('popupProprietarios').classList.remove('hidden');
-
-  // Define o limite de dígitos e o placeholder do campo "CPF/CNPJ" quando o modal é aberto
-  const tipoDocumento = document.getElementById('tipoDocumento').value;
-  const campoCpfCnpj = document.getElementById('cpf');
-
-  if (tipoDocumento === 'cpf') {
-    campoCpfCnpj.setAttribute('maxlength', '11');
-    campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
-  } else if (tipoDocumento === 'cnpj') {
-    campoCpfCnpj.setAttribute('maxlength', '14');
-    campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
-  }
 }
 
 function fecharPopupProprietarios() {
