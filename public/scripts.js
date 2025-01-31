@@ -689,13 +689,15 @@ function handleDeleteProtocoloButtonClick(event) {
 }
 
 // Alternar visibilidade de campos com base no tipo de documento
-document.getElementById('tipoDocumento').addEventListener('change', function () {
-  const tipo = this.value;
-  const camposPessoais = document.getElementById('camposPessoais');
-  if (tipo === 'cnpj') {
-    camposPessoais.style.display = 'none'; // Ocultar campos pessoais
-  } else {
-    camposPessoais.style.display = 'block'; // Mostrar campos pessoais
+// Event listener para o campo "Tipo de Documento"
+document.getElementById('tipoDocumento').addEventListener('change', function() {
+  const tipoDocumento = this.value;
+  const campoCpfCnpj = document.getElementById('cpf');
+
+  if (tipoDocumento === 'cpf') {
+    campoCpfCnpj.setAttribute('maxlength', '11');
+  } else if (tipoDocumento === 'cnpj') {
+    campoCpfCnpj.setAttribute('maxlength', '14');
   }
 });
 
