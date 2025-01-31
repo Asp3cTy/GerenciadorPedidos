@@ -689,15 +689,17 @@ function handleDeleteProtocoloButtonClick(event) {
 }
 
 // Alternar visibilidade de campos com base no tipo de documento
-// Event listener para o campo "Tipo de Documento" (mantém o maxlength)
+// Event listener para o campo "Tipo de Documento"
 document.getElementById('tipoDocumento').addEventListener('change', function() {
   const tipoDocumento = this.value;
   const campoCpfCnpj = document.getElementById('cpf');
 
   if (tipoDocumento === 'cpf') {
     campoCpfCnpj.setAttribute('maxlength', '11');
+    campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
   } else if (tipoDocumento === 'cnpj') {
     campoCpfCnpj.setAttribute('maxlength', '14');
+    campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
   }
 });
 
