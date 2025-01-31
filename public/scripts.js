@@ -171,23 +171,7 @@ function formatarData(data) {
 }
 
 
-// Adicionar evento de clique para os botões "Pesquisar CNIB"
-document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('pesquisarCNIB')) {
-        let cpfCnpj = event.target.dataset.cpf;
 
-                // Adiciona o console.log para exibir o CPF/CNPJ extraído
-        console.log("CPF/CNPJ extraído:", cpfCnpj); 
-
-        // Enviar mensagem para a aba do CNIB
-        for (let i = 0; i < window.length; i++) {
-            if (window[i].location.href.startsWith('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada')) {
-                window[i].postMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, "*");
-                break;
-            }
-        }
-    }
-});
 
 function renderPedidos(pedidos) {
     // Limpa os pedidos anteriores
@@ -253,12 +237,32 @@ function renderPedidos(pedidos) {
                       : "<p>Nenhum protocolo adicionado</p>"}
                 </div>
             </div>
+
+            
             <div class="flex flex-col space-y-2 items-center ml-4">
                 <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Editar</button>
                 <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Copiar</button>
                 <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Excluir</button>
             </div>
         `;
+
+      // Adicionar evento de clique para os botões "Pesquisar CNIB"
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('pesquisarCNIB')) {
+        let cpfCnpj = event.target.dataset.cpf;
+
+                // Adiciona o console.log para exibir o CPF/CNPJ extraído
+        console.log("CPF/CNPJ extraído:", cpfCnpj); 
+
+        // Enviar mensagem para a aba do CNIB
+        for (let i = 0; i < window.length; i++) {
+            if (window[i].location.href.startsWith('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada')) {
+                window[i].postMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, "*");
+                break;
+            }
+        }
+    }
+});
         pedidosResumo.appendChild(pedidoDiv);
     });
 }
