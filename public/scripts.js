@@ -284,9 +284,9 @@ function renderizarParticipantes(proprietarios) {
                 const cpfMatch = p.match(/\d{11,14}/);
                 const cpfCnpj = cpfMatch? cpfMatch: null;
 
-                // Retornar o HTML de cada participante com o botão "lupinha"
+                // Retornar o HTML de cada participante com o botão "lupinha" na mesma linha
                 return `
-                    <div class="participante">
+                    <div class="participante flex items-center"> 
                         <p>${p.trim()}</p>
                         ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
                     </div>
