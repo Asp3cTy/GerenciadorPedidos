@@ -184,7 +184,22 @@ function formatarData(data) {
   return `<p><strong>${dia}/${mes}/${ano}</strong></p>`;
 }
 
-// Função para renderizar os pedidos
+
+// Adicionar evento de clique para os botões "Pesquisar CNIB"
+document.addEventListener('click', function(event) {
+  if (event.target.classList.contains('pesquisarCNIB')) {
+    let cpfCnpj = event.target.dataset.cpf;
+
+    // Enviar mensagem para a aba do CNIB
+    for (let i = 0; i < window.length; i++) {
+      if (window[i].location.href.startsWith('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada')) {
+        window[i].postMessage({ action: "participanteData", cpfCnpj: cpfCnpj }, "*");
+        break;
+      }
+    }
+  }
+});
+
 function renderPedidos(pedidos) {
   // Limpa os pedidos anteriores
   const pedidosResumo = document.getElementById('pedidosResumo');
@@ -225,65 +240,48 @@ function renderPedidos(pedidos) {
           <p><strong>Ônus:</strong> ${pedido.onus}</p>
           <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
           <p><strong>N.º Imagens:</strong> ${pedido.imagens}</p>
-          <p><strong>Tipo de Certidão:</strong> ${
-            pedido.tipoCertidao
-          }</p>
-          ${
-            pedido.tipoCertidao === "ARIRJ"
-              ? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`
-              : ""
-          }
-          ${
-            pedido.tipoCertidao === "E-CARTORIO"
-              ? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`
-              : ""
-          }
-          <div>
-            <p><strong>Protocolos:</strong></p>
-            ${
-              pedido.protocolos
-                ? pedido.protocolos
-                    .split("|")
-                    .filter((item) => item.trim() !== "")
-                    .map((p) => {
-                      const protocoloText = p
-                        .replace(/<button.*?>.*?<\/button>/gi, "")
-                        .trim();
-                      return `<p>${protocoloText}</p>`;
-                    })
-                    .join("")
-                : "<p>Nenhum protocolo adicionado</p>"
-            }
+          <p><strong>Tipo de Certidão:</strong> ${pedido.tipoCertidao}</p>
+          ${pedido.tipoCertidao === "ARIRJ"? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`: ""}
+          ${pedido.tipoCertidao === "E-CARTORIO"? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`: ""}
+          <div data-participantes>
+            <p><strong>Participantes:</strong></p>
+            ${pedido.proprietarios
+            ? pedido.proprietarios
+              .split("|")
+              .filter((item) => item.trim()!== "")
+              .map((p) => {
+                  // Extrair o CPF (ou CNPJ) do participante
+                  const cpfMatch = p.match(/\d{11,14}/); // Expressão regular para encontrar CPF ou CNPJ
+                  const cpfCnpj = cpfMatch? cpfMatch: null;
+
+                  return `
+                    <div class="participante flex items-center">
+                      <p class="flex-grow">${p.trim()}</p>
+                      ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
+                    </div>
+                  `;
+                })
+              .join("")
+            : "<p>Nenhum participante adicionado</p>"}
           </div>
           <div>
-            <p><strong>Participantes:</strong></p>
-            ${
-              pedido.proprietarios
-                ? pedido.proprietarios
-                    .split("|")
-                    .filter((item) => item.trim() !== "")
-                    .map((p) => `<p>${p.trim()}</p>`)
-                    .join("")
-                : "<p>Nenhum participante adicionado</p>"
-            }
+            <p><strong>Protocolos:</strong></p>
+            ${pedido.protocolos
+            ? pedido.protocolos
+              .split("|")
+              .filter((item) => item.trim()!== "")
+              .map((p) => {
+                  const protocoloText = p.replace(/<button.*?>.*?<\/button>/gi, "").trim();
+                  return `<p>${protocoloText}</p>`;
+                })
+              .join("")
+            : "<p>Nenhum protocolo adicionado</p>"}
           </div>
         </div>
         <div class="flex flex-col space-y-2 items-center ml-4">
-            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${
-              pedido.id
-            }">
-                Editar
-            </button>
-            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${
-              pedido.id
-            }">
-                Copiar
-            </button>
-            <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${
-              pedido.id
-            }">
-                Excluir
-            </button>
+            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Editar</button>
+            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Copiar</button>
+            <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Excluir</button>
         </div>
       `;
     pedidosResumo.appendChild(pedidoDiv);
