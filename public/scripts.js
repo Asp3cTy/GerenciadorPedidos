@@ -3,7 +3,6 @@ let totalPages = 1; // Total de páginas (será calculado)
 let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
 
-
 // Função para coletar dados do formulário
 function getDadosFormulario() {
   return {
@@ -243,7 +242,6 @@ function renderPedidos(pedidos) {
                 : "<p>Nenhum protocolo adicionado</p>"
             }
           </div>
-
           <div>
             <p><strong>Proprietários:</strong></p>
             ${
@@ -540,7 +538,6 @@ document.getElementById('openModal').addEventListener('click', function () {
   // Define o limite de dígitos e o placeholder do campo "CPF/CNPJ" quando o modal é aberto
   const tipoDocumento = document.getElementById('tipoDocumento').value;
   const campoCpfCnpj = document.getElementById('cpf');
-
   if (tipoDocumento === 'cpf') {
     campoCpfCnpj.setAttribute('maxlength', '11');
     campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
@@ -548,7 +545,6 @@ document.getElementById('openModal').addEventListener('click', function () {
     campoCpfCnpj.setAttribute('maxlength', '14');
     campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
   }
-
     // Define a data atual no formato YYYY-MM-DD
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, '0');
@@ -593,6 +589,16 @@ function fecharPopupProtocolos() {
 // Função para abrir o popup de participantes
 function abrirPopupProprietarios() {
   document.getElementById('popupProprietarios').classList.remove('hidden');
+  // Define o limite de dígitos e o placeholder do campo "CPF/CNPJ" quando o modal é aberto
+  const tipoDocumento = document.getElementById('tipoDocumento').value;
+  const campoCpfCnpj = document.getElementById('cpf');
+  if (tipoDocumento === 'cpf') {
+    campoCpfCnpj.setAttribute('maxlength', '11');
+    campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
+  } else if (tipoDocumento === 'cnpj') {
+    campoCpfCnpj.setAttribute('maxlength', '14');
+    campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
+  }
 }
 
 function fecharPopupProprietarios() {
@@ -766,8 +772,6 @@ document.getElementById('confirmarProprietario').addEventListener('click', funct
   document.getElementById('camposPessoais').style.display = 'block';
 });
 
-
-
 // Função para renderizar a lista de proprietários
 function renderizarProprietarios() {
   const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
@@ -824,8 +828,8 @@ function handleEditButtonClick(event) {
     let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
     const proprietarioTexto = proprietariosArray[index];
 
-    
-    
+
+
 // Preencher o formulário com os dados do proprietário
 const partes = proprietarioTexto.split(' - ');
 document.getElementById('qualificacao').value = partes[0];
@@ -848,13 +852,13 @@ if (document.getElementById('tipoDocumento').value === 'cpf') {
   document.getElementById('camposPessoais').style.display = 'none';
 }
 
-    
-  
+
+
     // Remover o proprietário da lista
     proprietariosArray.splice(index, 1);
     document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
     renderizarProprietarios();
-  
+
     // Abrir o popup de proprietários
     abrirPopupProprietarios();
   }
