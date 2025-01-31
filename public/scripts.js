@@ -232,6 +232,9 @@ function renderPedidos(pedidos) {
             dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
         }
 
+        // Chama a função auxiliar para renderizar os participantes com a lupa
+        const participantesHTML = renderizarParticipantes(pedido.proprietarios);
+
         pedidoDiv.innerHTML = `
             <div class="flex-grow">
                 <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
@@ -244,27 +247,7 @@ function renderPedidos(pedidos) {
                 ${pedido.tipoCertidao === "ARIRJ"? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`: ""}
                 ${pedido.tipoCertidao === "E-CARTORIO"? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`: ""}
                 <div data-participantes>
-                    <p><strong>Participantes:</strong></p>
-                    ${pedido.proprietarios
-                      ? pedido.proprietarios
-                          .split("|")
-                          .filter((item) => item.trim()!== "")
-                          .map((p) => {
-                                // Extrair o CPF (ou CNPJ) do participante
-                                const cpfMatch = p.match(/\d{11,14}/);
-                                // Correção: Acessa o primeiro elemento do array
-                                const cpfCnpj = cpfMatch? cpfMatch: null; 
-
-                                // Retornar o HTML de cada participante com o botão "lupinha"
-                                return `
-                                    <div class="participante">
-                                        <p>${p.trim()}</p>
-                                        ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
-                                    </div>
-                                `;
-                            })
-                          .join("")
-                      : "<p>Nenhum participante adicionado</p>"}
+                    ${participantesHTML} 
                 </div>
                 <div>
                     <p><strong>Protocolos:</strong></p>
@@ -288,6 +271,29 @@ function renderPedidos(pedidos) {
         `;
         pedidosResumo.appendChild(pedidoDiv);
     });
+}
+
+// Função auxiliar para renderizar participantes com lupa
+function renderizarParticipantes(proprietarios) {
+    return proprietarios
+      ? proprietarios
+          .split("|")
+          .filter((item) => item.trim()!== "")
+          .map((p) => {
+                // Extrair o CPF (ou CNPJ) do participante
+                const cpfMatch = p.match(/\d{11,14}/);
+                const cpfCnpj = cpfMatch? cpfMatch: null;
+
+                // Retornar o HTML de cada participante com o botão "lupinha"
+                return `
+                    <div class="participante">
+                        <p>${p.trim()}</p>
+                        ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
+                    </div>
+                `;
+            })
+          .join("")
+      : "<p>Nenhum participante adicionado</p>";
 }
 
 // Função para carregar os pedidos do servidor
