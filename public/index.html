@@ -40,105 +40,105 @@
         </button>
     </div>
 
-    <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen bg-white-500 bg-opacity-50 backdrop-blur-sm dark:bg-primary dark:bg-opacity-75">
-            <div class="modal-content bg-primary p-6 rounded shadow-lg w-11/12 md:w-0/0.5 text-light">
-                <h1 class="text-2xl font-bold mb-4">Novo Pedido</h1>
-    
-                <form class="bg-primary shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                    <div style="max-height: 65vh; overflow-y: auto;" class="pr-4">
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2" for="pedido">
-                                Pedido:
-                            </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="pedido" type="text" maxlength="6" placeholder="Ex. 000123">
+<div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="flex items-center justify-center min-h-screen bg-white-500 bg-opacity-50 backdrop-blur-sm dark:bg-primary dark:bg-opacity-75">
+        <div class="modal-content bg-primary p-6 rounded shadow-lg w-11/12 md:w-0/0.5 text-light">
+            <h1 class="text-2xl font-bold mb-4">Novo Pedido</h1>
+
+            <form class="bg-primary shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <div style="max-height: 65vh; overflow-y: auto;" class="pr-4">
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="pedido">
+                            Pedido:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="pedido" type="text" maxlength="6" placeholder="Ex. 000123" required> 
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="data">
+                            Data:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="data" type="date" required> 
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="matricula">
+                            N.º Matrícula:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="matricula" type="text" maxlength="5" placeholder="Ex. 12345 (máx. 5 dígitos)" required> 
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="onus">
+                            Ônus:
+                        </label>
+                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="onus" required> 
+                            <option value="NEGATIVA">NEGATIVA</option>
+                            <option value="POSITIVA">POSITIVA</option>
+                            <option value="INDETERMINADA">INDETERMINADA</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="folhas">
+                            N.º Folhas:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="folhas" type="text" maxlength="2" placeholder="Quantas Folhas possui a Matrícula?" required> 
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="imagens">
+                            N.º de Imagens:
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="imagens" type="text" maxlength="2" placeholder="Quantas Imagens possui a Matrícula?" required> 
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="tipoCertidao">
+                            Tipo de Certidão:
+                        </label>
+                        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="tipoCertidao" required> 
+                            <option value="BALCAO">BALCÃO</option>
+                            <option value="ARIRJ">ARIRJ</option>
+                            <option value="E-CARTORIO">E-CARTORIO</option>
+                        </select>
+                        <div id="codigoArirjContainer" class="hidden mt-2">
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="codigoArirj" type="text" placeholder="Código ARIRJ (Ex. S25010390845D)">
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2" for="data">
-                                Data:
-                            </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="data" type="date">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2" for="matricula">
-                                N.º Matrícula:
-                            </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="matricula" type="text" maxlength="5" placeholder="Ex. 12345 (máx. 5 dígitos)">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2" for="onus">
-                                Ônus:
-                            </label>
-                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="onus">
-                                <option value="NEGATIVA">NEGATIVA</option>
-                                <option value="POSITIVA">POSITIVA</option>
-                                <option value="INDETERMINADA">INDETERMINADA</option>
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2" for="folhas">
-                                N.º Folhas:
-                            </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="folhas" type="text" maxlength="2" placeholder="Quantas Folhas possui a Matrícula?">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2" for="imagens">
-                                N.º de Imagens:
-                            </label>
-                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="imagens" type="text" maxlength="2" placeholder="Quantas Imagens possui a Matrícula?">
-                        </div>
-    
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2" for="tipoCertidao">
-                                Tipo de Certidão:
-                            </label>
-                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="tipoCertidao">
-                                <option value="BALCAO">BALCÃO</option>
-                                <option value="ARIRJ">ARIRJ</option>
-                                <option value="E-CARTORIO">E-CARTORIO</option>
-                            </select>
-                            <div id="codigoArirjContainer" class="hidden mt-2">
-                                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="codigoArirj" type="text" placeholder="Código ARIRJ (Ex. S25010390845D)">
-                            </div>
-                            <div id="codigoEcartorioContainer" class="hidden mt-2">
-                                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="codigoEcartorio" type="text" placeholder="Código E-CARTORIO (Ex. 20241254659545)">
-                            </div>
-                        </div>
-    
-                        <div class="mb-4">
-                            <label class="block text-white text-sm font-bold mb-2">
-                                Protocolos:
-                            </label>
-    
-                            <div id="protocolosAdicionados" class="mt-2"></div>
-                        </div>
-    
-                        <div class="mb-6">
-                            <label class="block text-white text-sm font-bold mb-2">
-                                Participantes:
-                            </label>
-    
-                            <div id="proprietariosAdicionados" class="mt-2"></div>
+                        <div id="codigoEcartorioContainer" class="hidden mt-2">
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-black bg-white leading-tight focus:outline-none focus:shadow-outline" id="codigoEcartorio" type="text" placeholder="Código E-CARTORIO (Ex. 20241254659545)">
                         </div>
                     </div>
-                    <div class="flex items-center justify-between py-10">
-                        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" type="button" id="salvarPedido">
-                            Salvar Pedido
-                        </button>
-                        <button type="button" id="abrirPopupProtocolos" class="bg-blue-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
-                            Adicionar Protocolos
-                        </button>
-                        <button type="button" id="abrirPopupProprietarios" class="bg-blue-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
-                            Adicionar Participantes
-                        </button>
-                        <button id="closeModal" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
-                            Fechar
-                        </button>
+
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2">
+                            Protocolos:
+                        </label>
+
+                        <div id="protocolosAdicionados" class="mt-2"></div>
                     </div>
-                </form>
-            </div>
+
+                    <div class="mb-6">
+                        <label class="block text-white text-sm font-bold mb-2">
+                            Participantes:
+                        </label>
+
+                        <div id="proprietariosAdicionados" class="mt-2"></div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between py-10">
+                    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" type="button" id="salvarPedido">
+                        Salvar Pedido
+                    </button>
+                    <button type="button" id="abrirPopupProtocolos" class="bg-blue-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
+                        Adicionar Protocolos
+                    </button>
+                    <button type="button" id="abrirPopupProprietarios" class="bg-blue-500 hover:bg-tertiary text-light font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
+                        Adicionar Participantes
+                    </button>
+                    <button id="closeModal" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline ml-2">
+                        Fechar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <div id="resumoPedidos" class="mt-4 w-full sm:w-[calc(100%-2rem)] md:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] mx-auto">
         <h2 class="text-xl flex justify-center font-bold mb-4">Resumo dos Pedidos</h2>
