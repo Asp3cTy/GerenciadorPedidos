@@ -689,7 +689,7 @@ function handleDeleteProtocoloButtonClick(event) {
 }
 
 // Alternar visibilidade de campos com base no tipo de documento
-// Event listener para o campo "Tipo de Documento"
+// Event listener para o campo "Tipo de Documento" (mantém o maxlength)
 document.getElementById('tipoDocumento').addEventListener('change', function() {
   const tipoDocumento = this.value;
   const campoCpfCnpj = document.getElementById('cpf');
@@ -699,6 +699,11 @@ document.getElementById('tipoDocumento').addEventListener('change', function() {
   } else if (tipoDocumento === 'cnpj') {
     campoCpfCnpj.setAttribute('maxlength', '14');
   }
+});
+
+// Event listener para o campo "CPF/CNPJ" (permite apenas números)
+document.getElementById('cpf').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g, ''); // Remove qualquer caractere que não seja um dígito
 });
 
 // Confirmar proprietário
