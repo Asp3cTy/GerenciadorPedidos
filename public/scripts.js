@@ -2,35 +2,44 @@ let currentPage = 1; // Página atual
 let totalPages = 1; // Total de páginas (será calculado)
 let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
-// Função para formatar CPF e CNPJ
-function formatarCpfCnpj(numero) {
-  const apenasNumeros = numero.replace(/\D/g, '');
-  if (apenasNumeros.length === 11) {
-    // Formatar como CPF (XXX.XXX.XXX-XX)
-    return apenasNumeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-  } else if (apenasNumeros.length === 14) {
-    // Formatar como CNPJ (XX.XXX.XXX/XXXX-XX)
-    return apenasNumeros.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-  }
-  return numero; // Retorna o número original se não for CPF ou CNPJ válido
-}
 
 // Função para coletar dados do formulário
 function getDadosFormulario() {
   return {
-    pedido: document.getElementById('pedido').value,
-    data: document.getElementById('data').valueAsDate,
-    matricula: document.getElementById('matricula').value,
-    onus: document.getElementById('onus').value,
-    folhas: document.getElementById('folhas').value,
-    imagens: document.getElementById('imagens').value,
-    tipoCertidao: document.getElementById('tipoCertidao').value,
-    codigoArirj: document.getElementById('codigoArirj').value,
-    codigoEcartorio: document.getElementById('codigoEcartorio').value,
-    protocolos: document.getElementById('protocolosAdicionados').dataset.protocolos || '',
-    proprietarios: document.getElementById('proprietariosAdicionados').dataset.proprietarios || ''
+    pedido: document.getElementById("pedido").value,
+    data: document.getElementById("data").value, // Já virá no formato correto
+    matricula: document.getElementById("matricula").value,
+    onus: document.getElementById("onus").value,
+    folhas: document.getElementById("folhas").value,
+    imagens: document.getElementById("imagens").value,
+    tipoCertidao: document.getElementById("tipoCertidao").value,
+    codigoArirj: document.getElementById("codigoArirj").value,
+    codigoEcartorio: document.getElementById("codigoEcartorio").value,
+    protocolos:
+      document.getElementById("protocolosAdicionados").dataset.protocolos ||
+      "",
+    proprietarios:
+      document.getElementById("proprietariosAdicionados").dataset
+        .proprietarios || "",
   };
 }
+
+function toUpperCaseInputs() {
+  const inputs = document.querySelectorAll('input[type="text"], textarea');
+  inputs.forEach(input => {
+    input.addEventListener('input', function(event) {
+      const start = this.selectionStart; // Guarda a posição do cursor
+      const end = this.selectionEnd;
+      this.value = this.value.toUpperCase();
+      this.setSelectionRange(start, end); // Restaura a posição do cursor
+    });
+  });
+}
+
+// Chame a função depois que o DOM estiver carregado:
+document.addEventListener('DOMContentLoaded', function() {
+    toUpperCaseInputs();
+});
 
 console.log("Associando event listener ao botão salvarPedido");
 
@@ -53,7 +62,7 @@ document.getElementById('salvarPedido').addEventListener('click', () => {
   }
 
   // Formata a data para 'YYYY-MM-DD' antes de enviar
-  novoPedido.data = dayjs(novoPedido.data).format('YYYY-MM-DD');
+  novoPedido.data = novoPedido.data
 
   const xhr = new XMLHttpRequest();
   // Usa uma rota diferente para edição, por exemplo, /editar_pedido.php
@@ -120,10 +129,10 @@ function formatarData(data) {
     return `<p><strong>Data:</strong> Data inválida</p>`;
   }
 
-  const dia = String(dataFormatada.getDate()).padStart(2, "0");
+  const dia = String(dataFormatada.getDate()).padStart(3, "0");
   const mes = String(dataFormatada.getMonth() + 1).padStart(2, "0");
   const ano = dataFormatada.getFullYear();
-  return `<p><strong>Data:</strong> <span class="math-inline">\{dia\}/</span>{mes}/${ano}</p>`;
+  return `<p><strong>${dia}/${mes}/${ano}</strong></p>`;
 }
 
 // Função para renderizar os pedidos
@@ -135,59 +144,96 @@ function renderPedidos(pedidos) {
   // Adiciona os pedidos da página atual à tela
   pedidos.forEach((pedido) => {
     const pedidoDiv = document.createElement('div');
-    pedidoDiv.classList.add('bg-secondary',  'text-black', 'p-4', 'rounded', 'shadow-md', 'mb-4', 'flex', 'justify-between', 'items-start');
+    pedidoDiv.classList.add(
+      "bg-secondary",
+      "text-black",
+      "p-4",
+      "rounded",
+      "shadow-md",
+      "mb-4",
+      "flex",
+      "justify-between",
+      "items-start"
+    );
+
+    // Formata a data manualmente e insere no HTML
+    let dataFormatada = "";
+    if (pedido.data) {
+      const data = new Date(pedido.data);
+      const dia = String(data.getUTCDate()).padStart(2, "0");
+      const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
+      const ano = data.getUTCFullYear();
+      dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
+    } else {
+      dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
+    }
+
     pedidoDiv.innerHTML = `
         <div class="flex-grow">
           <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
-          <p><strong>Data:</strong> ${new Date(pedido.data).toLocaleDateString('pt-BR')}</p>
+          ${dataFormatada}
           <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
-          <p><strong>Ônus:</strong> ${pedido.onus}</p>           
+          <p><strong>Ônus:</strong> ${pedido.onus}</p>
           <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
           <p><strong>N.º Imagens:</strong> ${pedido.imagens}</p>
-          <p><strong>Tipo de Certidão:</strong> ${pedido.tipoCertidao}</p>
-          ${pedido.tipoCertidao === 'ARIRJ'
-            ? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`
-            : ''
+          <p><strong>Tipo de Certidão:</strong> ${
+            pedido.tipoCertidao
+          }</p>
+          ${
+            pedido.tipoCertidao === "ARIRJ"
+              ? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`
+              : ""
           }
-          ${pedido.tipoCertidao === 'E-CARTORIO'
-            ? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`
-            : ''
+          ${
+            pedido.tipoCertidao === "E-CARTORIO"
+              ? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`
+              : ""
           }
           <div>
             <p><strong>Protocolos:</strong></p>
-            ${pedido.protocolos
-              ? pedido.protocolos
-                .split('|')
-                .filter(item => item.trim() !== '')
-                .map(p => {
-                  const protocoloText = p.replace(/<button.*?>.*?<\/button>/gi, '').trim();
-                  return `<p>${protocoloText}</p>`;
-                })
-                .join('')
-              : '<p>Nenhum protocolo adicionado</p>'
+            ${
+              pedido.protocolos
+                ? pedido.protocolos
+                    .split("|")
+                    .filter((item) => item.trim() !== "")
+                    .map((p) => {
+                      const protocoloText = p
+                        .replace(/<button.*?>.*?<\/button>/gi, "")
+                        .trim();
+                      return `<p>${protocoloText}</p>`;
+                    })
+                    .join("")
+                : "<p>Nenhum protocolo adicionado</p>"
             }
           </div>
 
           <div>
             <p><strong>Proprietários:</strong></p>
-            ${pedido.proprietarios
-              ? pedido.proprietarios
-                .split('|')
-                .filter(item => item.trim() !== '')
-                .map(p => `<p>${p.trim()}</p>`)
-                .join('')
-              : '<p>Nenhum proprietário adicionado</p>'
+            ${
+              pedido.proprietarios
+                ? pedido.proprietarios
+                    .split("|")
+                    .filter((item) => item.trim() !== "")
+                    .map((p) => `<p>${p.trim()}</p>`)
+                    .join("")
+                : "<p>Nenhum proprietário adicionado</p>"
             }
           </div>
         </div>
         <div class="flex flex-col space-y-2 ml-4">
-            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="<span class="math-inline">\{pedido\.id\}"\>
-Editar
-</button\>
-<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data\-id\="</span>{pedido.id}">
+            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${
+              pedido.id
+            }">
+                Editar
+            </button>
+            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${
+              pedido.id
+            }">
                 Copiar
             </button>
-            <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">
+            <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${
+              pedido.id
+            }">
                 Excluir
             </button>
         </div>
@@ -274,47 +320,52 @@ function buscarPedidoPorId(pedidoId) {
   return pedidoEncontrado;
 }
 
+
 // Função para editar um pedido
 function editarPedido(pedidoId) {
-    // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
-    const pedido = buscarPedidoPorId(pedidoId);
+  // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
+  const pedido = buscarPedidoPorId(pedidoId);
 
-    // 2. Preencher o formulário com os dados do pedido
-    if (pedido) {
-        document.getElementById('pedido').value = pedido.pedido;
-        if (pedido.data) {
-          let dataUTC = new Date(pedido.data);
-          let dia = String(dataUTC.getUTCDate()).padStart(2, '0');
-          let mes = String(dataUTC.getUTCMonth() + 1).padStart(2, '0');
-          let ano = dataUTC.getUTCFullYear();
-      
-          document.getElementById('data').value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
+  // 2. Preencher o formulário com os dados do pedido
+  if (pedido) {
+      document.getElementById('pedido').value = pedido.pedido;
+
+      // Preencher o campo de data formatando para YYYY-MM-DD
+      if (pedido.data) {
+          const data = new Date(pedido.data);
+          const dia = String(data.getUTCDate()).padStart(2, '0');
+          const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+          const ano = data.getUTCFullYear();
+          document.getElementById('data').value = `${ano}-${mes}-${dia}`;
+      } else {
+          document.getElementById('data').value = pedido.data; // Ou defina uma data padrão, se desejar
       }
-        document.getElementById('matricula').value = pedido.matricula;
-        document.getElementById('onus').value = pedido.onus;
-        document.getElementById('folhas').value = pedido.folhas;
-        document.getElementById('imagens').value = pedido.imagens;
-        document.getElementById('tipoCertidao').value = pedido.tipoCertidao;
-        document.getElementById('codigoArirj').value = pedido.codigoArirj;
-        document.getElementById('codigoEcartorio').value = pedido.codigoEcartorio;
 
-        // Tratar protocolos e proprietários
-        document.getElementById('protocolosAdicionados').dataset.protocolos = pedido.protocolos;
-        document.getElementById('proprietariosAdicionados').dataset.proprietarios = pedido.proprietarios;
-        renderizarProtocolos();
-        renderizarProprietarios();
+      document.getElementById('matricula').value = pedido.matricula;
+      document.getElementById('onus').value = pedido.onus;
+      document.getElementById('folhas').value = pedido.folhas;
+      document.getElementById('imagens').value = pedido.imagens;
+      document.getElementById('tipoCertidao').value = pedido.tipoCertidao;
+      document.getElementById('codigoArirj').value = pedido.codigoArirj;
+      document.getElementById('codigoEcartorio').value = pedido.codigoEcartorio;
 
-        // 3. Disparar o evento 'change' no tipoCertidao
-        document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
+      // Tratar protocolos e proprietários
+      document.getElementById('protocolosAdicionados').dataset.protocolos = pedido.protocolos;
+      document.getElementById('proprietariosAdicionados').dataset.proprietarios = pedido.proprietarios;
+      renderizarProtocolos();
+      renderizarProprietarios();
 
-        // Adiciona o data-pedido-id ao botão "Salvar Pedido"
-        document.getElementById('salvarPedido').setAttribute('data-pedido-id', pedidoId);
+      // 3. Disparar o evento 'change' no tipoCertidao
+      document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
 
-        // 4. Abrir o modal
-        document.getElementById('modal').classList.remove('hidden');
-    } else {
-        alert("Pedido não encontrado!");
-    }
+      // Adiciona o data-pedido-id ao botão "Salvar Pedido"
+      document.getElementById('salvarPedido').setAttribute('data-pedido-id', pedidoId);
+
+      // 4. Abrir o modal
+      document.getElementById('modal').classList.remove('hidden');
+  } else {
+      alert("Pedido não encontrado!");
+  }
 }
 
 // Função para copiar um pedido
@@ -379,9 +430,77 @@ Tipo de Certidão: ${pedido.tipoCertidao}
   }
 }
 
+function copiarTodosPedidos() {
+  let textoTodosPedidos = "";
+
+  pedidosCarregados.forEach((pedido) => {
+    const dataFormatada = pedido.data
+      ? new Date(pedido.data).toLocaleDateString("pt-BR")
+      : "Data inválida";
+    let textoPedido = `
+Pedido: ${pedido.pedido}
+Data: ${dataFormatada}
+Matrícula: ${pedido.matricula}
+Ônus: ${pedido.onus}
+N.º Folhas: ${pedido.folhas}
+N.º Imagens: ${pedido.imagens}
+Tipo de Certidão: ${pedido.tipoCertidao}
+`;
+
+    if (pedido.tipoCertidao === "ARIRJ") {
+      textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
+    }
+
+    if (pedido.tipoCertidao === "E-CARTORIO") {
+      textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+    }
+
+    textoPedido += `Protocolos:\n`;
+    if (pedido.protocolos) {
+      textoPedido += pedido.protocolos
+        .split("|")
+        .filter((item) => item.trim() !== "")
+        .map((p) => p.replace(/<button.*?>.*?<\/button>/gi, "").trim())
+        .join("\n");
+    } else {
+      textoPedido += "Nenhum protocolo adicionado\n";
+    }
+
+    textoPedido += `\nProprietários:\n`;
+    if (pedido.proprietarios) {
+      textoPedido += pedido.proprietarios
+        .split("|")
+        .filter((item) => item.trim() !== "")
+        .map((p) => p.trim())
+        .join("\n");
+    } else {
+      textoPedido += "Nenhum proprietário adicionado\n";
+    }
+
+    textoPedido += `\n----------------------------------------\n`;
+    textoTodosPedidos += textoPedido;
+  });
+
+  navigator.clipboard
+    .writeText(textoTodosPedidos)
+    .then(() => {
+      alert("Todos os pedidos copiados para a área de transferência!");
+    })
+    .catch(() => {
+      alert("Erro ao copiar os pedidos!");
+    });
+}
+
 // Abrir o modal
 document.getElementById('openModal').addEventListener('click', function () {
   document.getElementById('modal').classList.remove('hidden');
+
+    // Define a data atual no formato YYYY-MM-DD
+    const hoje = new Date();
+    const dia = String(hoje.getDate()).padStart(2, '0');
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+    const ano = hoje.getFullYear();
+    document.getElementById('data').value = `${ano}-${mes}-${dia}`;
 });
 
 // Fechar o modal
@@ -463,7 +582,7 @@ function renderizarProtocolos() {
 
   protocolosArray.forEach((protocoloTexto, index) => {
     const protocoloSpan = document.createElement('span');
-    protocoloSpan.classList.add('text-black');
+    protocoloSpan.classList.add('text-white');
     protocoloSpan.textContent = protocoloTexto;
 
     // Botão Editar
@@ -594,7 +713,7 @@ function renderizarProprietarios() {
 
   proprietariosArray.forEach((proprietarioTexto, index) => {
     const proprietarioSpan = document.createElement('span');
-    proprietarioSpan.classList.add('text-black');
+    proprietarioSpan.classList.add('text-white');
     proprietarioSpan.textContent = proprietarioTexto;
 
     // Botão Editar
@@ -637,23 +756,32 @@ function handleEditButtonClick(event) {
     const index = parseInt(event.target.dataset.index);
     let proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
     const proprietarioTexto = proprietariosArray[index];
-  
-    // Preencher o formulário com os dados do proprietário
-    const partes = proprietarioTexto.split(' - ');
-    document.getElementById('qualificacao').value = partes[0];
-    document.getElementById('nome').value = partes[1];
-    document.getElementById('cpf').value = partes[2];
-    document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
-  
-    if (document.getElementById('tipoDocumento').value === 'cpf') {
-      document.getElementById('sexo').value = partes[3];
-      document.getElementById('identidade').value = partes[4];
-      document.getElementById('orgaoExpedidor').value = partes[5];
-      document.getElementById('estadoCivil').value = partes[6];
-      document.getElementById('camposPessoais').style.display = 'block';
-    } else {
-      document.getElementById('camposPessoais').style.display = 'none';
-    }
+
+    
+    
+// Preencher o formulário com os dados do proprietário
+const partes = proprietarioTexto.split(' - ');
+document.getElementById('qualificacao').value = partes[0];
+document.getElementById('nome').value = partes[1];
+document.getElementById('cpf').value = partes[2];
+document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
+
+const labelCpf = document.querySelector('label[for="cpf"]');
+
+// Atualizar o texto do label conforme o tipo de documento
+if (document.getElementById('tipoDocumento').value === 'cpf') {
+  labelCpf.textContent = 'CPF'; // Garante que o label seja CPF
+  document.getElementById('sexo').value = partes[3];
+  document.getElementById('identidade').value = partes[4];
+  document.getElementById('orgaoExpedidor').value = partes[5];
+  document.getElementById('estadoCivil').value = partes[6];
+  document.getElementById('camposPessoais').style.display = 'block';
+} else {
+  labelCpf.textContent = 'CNPJ'; // Atualiza o label para CNPJ
+  document.getElementById('camposPessoais').style.display = 'none';
+}
+
+    
   
     // Remover o proprietário da lista
     proprietariosArray.splice(index, 1);
@@ -687,6 +815,8 @@ permitirSomenteNumeros('cpf');
 permitirSomenteNumeros('identidade');
 permitirSomenteNumeros('pedido');
 permitirSomenteNumeros('matricula');
+permitirSomenteNumeros('folhas');
+permitirSomenteNumeros('imagens');
 
 // Mostrar/ocultar Código ARIRJ e Código E-CARTORIO
 document.getElementById('tipoCertidao').addEventListener('change', function () {
@@ -744,6 +874,9 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
   link.download = 'pedidos.json'; // Nome do arquivo para download
   link.click();
 });
+
+// Copiar todos os pedidos
+document.getElementById('copiarTodosPedidos').addEventListener('click', copiarTodosPedidos);
 
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
