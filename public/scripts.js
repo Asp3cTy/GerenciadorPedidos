@@ -201,92 +201,93 @@ document.addEventListener('click', function(event) {
 });
 
 function renderPedidos(pedidos) {
-  // Limpa os pedidos anteriores
-  const pedidosResumo = document.getElementById('pedidosResumo');
-  pedidosResumo.innerHTML = '';
+    // Limpa os pedidos anteriores
+    const pedidosResumo = document.getElementById('pedidosResumo');
+    pedidosResumo.innerHTML = '';
 
-  // Adiciona os pedidos da página atual à tela
-  pedidos.forEach((pedido) => {
-    const pedidoDiv = document.createElement('div');
-    pedidoDiv.classList.add(
-      "bg-secondary",
-      "text-black",
-      "p-4",
-      "rounded",
-      "shadow-md",
-      "mb-4",
-      "flex",
-      "justify-between",
-      "items-start"
-    );
+    // Adiciona os pedidos da página atual à tela
+    pedidos.forEach((pedido) => {
+        const pedidoDiv = document.createElement('div');
+        pedidoDiv.classList.add(
+            "bg-secondary",
+            "text-black",
+            "p-4",
+            "rounded",
+            "shadow-md",
+            "mb-4",
+            "flex",
+            "justify-between",
+            "items-start"
+        );
 
-    // Formata a data manualmente e insere no HTML
-    let dataFormatada = "";
-    if (pedido.data) {
-      const data = new Date(pedido.data);
-      const dia = String(data.getUTCDate()).padStart(2, "0");
-      const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
-      const ano = data.getUTCFullYear();
-      dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
-    } else {
-      dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
-    }
+        // Formata a data manualmente e insere no HTML
+        let dataFormatada = "";
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, "0");
+            const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
+            const ano = data.getUTCFullYear();
+            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
+        } else {
+            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
+        }
 
-    pedidoDiv.innerHTML = `
-        <div class="flex-grow">
-          <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
-          ${dataFormatada}
-          <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
-          <p><strong>Ônus:</strong> ${pedido.onus}</p>
-          <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
-          <p><strong>N.º Imagens:</strong> ${pedido.imagens}</p>
-          <p><strong>Tipo de Certidão:</strong> ${pedido.tipoCertidão}</p>
-          ${pedido.tipoCertidao === "ARIRJ"? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`: ""}
-          ${pedido.tipoCertidao === "E-CARTORIO"? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`: ""}
-          <div data-participantes>
-            <p><strong>Participantes:</strong></p>
-            ${pedido.proprietarios
-            ? pedido.proprietarios
-              .split("|")
-              .filter((item) => item.trim()!== "")
-              .map((p) => {
-                  // Extrair o CPF (ou CNPJ) do participante
-                  const cpfMatch = p.match(/\d{11,14}/); // Expressão regular para encontrar CPF ou CNPJ
-                  const cpfCnpj = cpfMatch? cpfMatch: null;
+        pedidoDiv.innerHTML = `
+            <div class="flex-grow">
+                <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
+                ${dataFormatada}
+                <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
+                <p><strong>Ônus:</strong> ${pedido.onus}</p>
+                <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
+                <p><strong>N.º Imagens:</strong> ${pedido.imagens}</p>
+                <p><strong>Tipo de Certidão:</strong> ${pedido.tipoCertidao}</p>
+                ${pedido.tipoCertidao === "ARIRJ"? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`: ""}
+                ${pedido.tipoCertidao === "E-CARTORIO"? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`: ""}
+                <div data-participantes>
+                    <p><strong>Participantes:</strong></p>
+                    ${pedido.proprietarios
+                      ? pedido.proprietarios
+                          .split("|")
+                          .filter((item) => item.trim()!== "")
+                          .map((p) => {
+                                // Extrair o CPF (ou CNPJ) do participante
+                                const cpfMatch = p.match(/\d{11,14}/);
+                                // Correção: Acessa o primeiro elemento do array
+                                const cpfCnpj = cpfMatch? cpfMatch: null; 
 
-                  // Retornar o HTML de cada participante com o botão "lupinha" no final
-                  return `
-                    <div class="participante">
-                      <p>${p.trim()}</p> 
-                      ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
-                    </div>
-                  `;
-                })
-              .join("")
-            : "<p>Nenhum participante adicionado</p>"}
-          </div>
-          <div>
-            <p><strong>Protocolos:</strong></p>
-            ${pedido.protocolos
-            ? pedido.protocolos
-              .split("|")
-              .filter((item) => item.trim()!== "")
-              .map((p) => {
-                  const protocoloText = p.replace(/<button.*?>.*?<\/button>/gi, "").trim();
-                  return `<p>${protocoloText}</p>`;
-                })
-              .join("")
-            : "<p>Nenhum protocolo adicionado</p>"}
-          </div>
-        </div>
-        <div class="flex flex-col space-y-2 items-center ml-4">
-            <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Editar</button>
-            <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Copiar</button>
-            <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Excluir</button>
-        </div>
-      `;
-    pedidosResumo.appendChild(pedidoDiv);
-  });
+                                // Retornar o HTML de cada participante com o botão "lupinha"
+                                return `
+                                    <div class="participante">
+                                        <p>${p.trim()}</p>
+                                        ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
+                                    </div>
+                                `;
+                            })
+                          .join("")
+                      : "<p>Nenhum participante adicionado</p>"}
+                </div>
+                <div>
+                    <p><strong>Protocolos:</strong></p>
+                    ${pedido.protocolos
+                      ? pedido.protocolos
+                          .split("|")
+                          .filter((item) => item.trim()!== "")
+                          .map((p) => {
+                                const protocoloText = p.replace(/<button.*?>.*?<\/button>/gi, "").trim();
+                                return `<p>${protocoloText}</p>`;
+                            })
+                          .join("")
+                      : "<p>Nenhum protocolo adicionado</p>"}
+                </div>
+            </div>
+            <div class="flex flex-col space-y-2 items-center ml-4">
+                <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Editar</button>
+                <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Copiar</button>
+                <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Excluir</button>
+            </div>
+        `;
+        pedidosResumo.appendChild(pedidoDiv);
+    });
 }
 
 // Função para carregar os pedidos do servidor
