@@ -240,7 +240,7 @@ function renderPedidos(pedidos) {
           <p><strong>Ônus:</strong> ${pedido.onus}</p>
           <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
           <p><strong>N.º Imagens:</strong> ${pedido.imagens}</p>
-          <p><strong>Tipo de Certidão:</strong> ${pedido.tipoCertidao}</p>
+          <p><strong>Tipo de Certidão:</strong> ${pedido.tipoCertidão}</p>
           ${pedido.tipoCertidao === "ARIRJ"? `<p><strong>Código ARIRJ:</strong> ${pedido.codigoArirj}</p>`: ""}
           ${pedido.tipoCertidao === "E-CARTORIO"? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`: ""}
           <div data-participantes>
