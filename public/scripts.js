@@ -766,26 +766,14 @@ document.getElementById('confirmarProprietario').addEventListener('click', funct
   document.getElementById('camposPessoais').style.display = 'block';
 });
 
-function formatarCpfCnpj(cpfCnpj, tipo) {
-  // Converte cpfCnpj para string
-  cpfCnpj = String(cpfCnpj);
 
-  if (tipo === 'cpf') {
-    return cpfCnpj.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-  } else if (tipo === 'cnpj') {
-    return cpfCnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-  } else {
-    return cpfCnpj;
-  }
-}
 
 // Função para renderizar a lista de proprietários
 function renderizarProprietarios() {
   const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
   proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
 
-  let proprietariosArray =''; // Corrigido: inicializa como um array vazio
-
+  let proprietariosArray = [];
   if (proprietariosAdicionadosDiv.dataset.proprietarios) {
     proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
   }
@@ -793,14 +781,7 @@ function renderizarProprietarios() {
   proprietariosArray.forEach((proprietarioTexto, index) => {
     const proprietarioSpan = document.createElement('span');
     proprietarioSpan.classList.add('text-white');
-
-    // Formatar o CPF/CNPJ antes de exibir
-    const partes = proprietarioTexto.split(' - ');
-    const tipoDocumento = partes.length === 11? 'cpf': 'cnpj';
-    const cpfCnpjFormatado = formatarCpfCnpj(partes, tipoDocumento);
-
-    // Atualizar o texto do span com o CPF/CNPJ formatado
-    proprietarioSpan.textContent = `${partes} - ${partes} - ${cpfCnpjFormatado} - ${partes.slice(3).join(' - ')}`;
+    proprietarioSpan.textContent = proprietarioTexto;
 
     // Botão Editar
     const editButton = document.createElement('button');
