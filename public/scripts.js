@@ -246,6 +246,12 @@ function renderPedidos(pedidos) {
             </div>
         `;
 
+
+        pedidosResumo.appendChild(pedidoDiv);
+    });
+}
+
+
       // Adicionar evento de clique para os botões "Pesquisar CNIB"
 document.addEventListener('click', function(event) {
     if (event.target.classList.contains('pesquisarCNIB')) {
@@ -263,9 +269,6 @@ document.addEventListener('click', function(event) {
         }
     }
 });
-        pedidosResumo.appendChild(pedidoDiv);
-    });
-}
 
 // Função auxiliar para renderizar participantes com lupa
 function renderizarParticipantes(proprietarios) {
