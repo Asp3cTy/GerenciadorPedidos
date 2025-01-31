@@ -187,17 +187,17 @@ function formatarData(data) {
 
 // Adicionar evento de clique para os botões "Pesquisar CNIB"
 document.addEventListener('click', function(event) {
-  if (event.target.classList.contains('pesquisarCNIB')) {
-    let cpfCnpj = event.target.dataset.cpf;
+    if (event.target.classList.contains('pesquisarCNIB')) {
+        let cpfCnpj = event.target.dataset.cpf;
 
-    // Enviar mensagem para a aba do CNIB
-    for (let i = 0; i < window.length; i++) {
-      if (window[i].location.href.startsWith('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada')) {
-        window[i].postMessage({ action: "participanteData", cpfCnpj: cpfCnpj }, "*");
-        break;
-      }
+        // Enviar mensagem para a aba do CNIB
+        for (let i = 0; i < window.length; i++) {
+            if (window[i].location.href.startsWith('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada')) {
+                window[i].postMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, "*");
+                break;
+            }
+        }
     }
-  }
 });
 
 function renderPedidos(pedidos) {
