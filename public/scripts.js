@@ -854,7 +854,7 @@ function permitirSomenteNumeros(idCampo) {
 }
 
 // Aplicar a funcionalidade para CPF/CNPJ e Identidade
-permitirSomenteNumeros('cpf');
+
 permitirSomenteNumeros('identidade');
 permitirSomenteNumeros('pedido');
 permitirSomenteNumeros('matricula');
