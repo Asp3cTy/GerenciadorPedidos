@@ -766,8 +766,10 @@ document.getElementById('confirmarProprietario').addEventListener('click', funct
   document.getElementById('camposPessoais').style.display = 'block';
 });
 
-// Função para formatar CPF/CNPJ
 function formatarCpfCnpj(cpfCnpj, tipo) {
+  // Converte cpfCnpj para string
+  cpfCnpj = String(cpfCnpj);
+
   if (tipo === 'cpf') {
     return cpfCnpj.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   } else if (tipo === 'cnpj') {
