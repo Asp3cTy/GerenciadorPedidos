@@ -3,21 +3,38 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const path = require('path');
 const app = express();
+const { pesquisarCNIB } = require('./puppeteer_script.js'); // Importa a função do Puppeteer
 const port = process.env.PORT || 3000;
 
 // Configurações do banco de dados (ajuste conforme necessário)
 const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
-};
+    host: 'database-2.cfs2cmiaucif.sa-east-1.rds.amazonaws.com',
+    user: 'admin',
+    password: 'palmares',
+    database: 'certidoes_db'
+  };
+
+
+// Endpoint para executar o script Puppeteer
+app.get('/executar-puppeteer', async (req, res) => {
+    const cpfCnpj = req.query.cpfCnpj;
+    console.log("Requisição recebida para /executar-puppeteer com CPF/CNPJ:", cpfCnpj);
+    try {
+      await pesquisarCNIB(cpfCnpj);
+      res.send('Pesquisa com Puppeteer executada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao executar Puppeteer:', error);
+      res.status(500).send('Erro ao executar Puppeteer.');
+    }
+  });  
 
 // Pool de conexões
 const pool = mysql.createPool(dbConfig);
 
 // Middleware para lidar com CORS
-app.use(cors());
+app.use(cors({
+    origin: '*'
+  }));
 
 // Middleware para fazer o parse do corpo das requisições como JSON
 app.use(express.json());
@@ -97,7 +114,7 @@ app.post('/editar_pedido.php', (req, res) => {
 app.get('/listar/_pedidos.php', (req, res) => {
     console.log("Requisição GET para /listar/_pedidos.php recebida.");
     const page = parseInt(req.query.page) || 1;
-    const limit = 2;
+    const limit = 3;
     const offset = (page - 1) * limit;
 
     const countSql = `SELECT COUNT(*) AS total FROM pedidos`;
