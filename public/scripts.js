@@ -252,46 +252,60 @@ function renderPedidos(pedidos) {
 }
 
 
-      // Adicionar evento de clique para os botões "Pesquisar CNIB"
-document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('pesquisarCNIB')) {
-        let cpfCnpj = event.target.dataset.cpf;
 
-                // Adiciona o console.log para exibir o CPF/CNPJ extraído
-        console.log("CPF/CNPJ extraído:", cpfCnpj); 
-
-        // Enviar mensagem para a aba do CNIB
-        for (let i = 0; i < window.length; i++) {
-            if (window[i].location.href.startsWith('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada')) {
-                window[i].postMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, "*");
-                break;
-            }
-        }
-    }
-});
-
-// Função auxiliar para renderizar participantes com lupa
 function renderizarParticipantes(proprietarios) {
-    return proprietarios
-      ? proprietarios
-          .split("|")
-          .filter((item) => item.trim()!== "")
-          .map((p) => {
-                // Extrair o CPF (ou CNPJ) do participante
-                const cpfMatch = p.match(/\d{11,14}/);
-                const cpfCnpj = cpfMatch? cpfMatch: null;
+  if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
 
-                // Retornar o HTML de cada participante com o botão "lupinha" na mesma linha e com margem
-                return `
-                    <div class="participante flex items-center"> 
-                        <p class="mr-2">${p.trim()}</p> 
-                        ${cpfCnpj? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}"><i class="fas fa-search"></i></button>`: ''}
-                    </div>
-                `;
-            })
-          .join("")
-      : "<p>Nenhum participante adicionado</p>";
+  const participantesHTML = proprietarios
+    .split("|")
+    .filter((item) => item.trim() !== "")
+    .map(criarElementoParticipante)
+    .join("");
+
+  // Cria um novo Broadcast Channel
+  const channel = new BroadcastChannel("cnib_channel");
+
+  // Delegação de Eventos para os botões "pesquisarCNIB"
+  setTimeout(() => {
+    document.querySelectorAll('.pesquisarCNIB').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        const cpfCnpj = event.target.dataset.cpf;
+
+        // Enviar mensagem via Broadcast Channel (para qualquer aba que esteja escutando)
+        const mensagem = { action: "pesquisarCNIB", cpfCnpj: cpfCnpj };
+        channel.postMessage(mensagem);
+        console.log("Mensagem enviada via Broadcast Channel:", mensagem);
+      });
+    });
+  }, 0);
+
+  return participantesHTML;
 }
+
+
+function criarElementoParticipante(p) {
+  const { cpfCnpj, texto } = extrairDadosParticipante(p);
+  return `
+    <div class="participante flex items-center w-full flex-wrap">
+      <p class="mr-2">${texto}</p>
+      ${cpfCnpj ? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}" aria-label="Pesquisar CNIB para ${cpfCnpj}">CNIB</button>` : ''}
+    </div>
+  `;
+}
+
+function extrairDadosParticipante(textoParticipante) {
+  // Regex simplificada para capturar 11 ou 14 dígitos
+  const cpfCnpjMatch = textoParticipante.match(/\d{11,14}/);
+  const cpfCnpj = cpfCnpjMatch ? cpfCnpjMatch[0] : null;
+
+  // Mantém o texto original do participante, sem remover o CPF/CNPJ
+  const texto = textoParticipante;
+
+  return { cpfCnpj, texto };
+}
+
+
 
 // Função para carregar os pedidos do servidor
 function carregarPedidos() {
