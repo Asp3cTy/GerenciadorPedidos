@@ -264,29 +264,41 @@ function renderizarParticipantes(proprietarios) {
     .map(criarElementoParticipante)
     .join("");
 
- // Delegação de Eventos para os botões "pesquisarCNIB"
+  // Delegação de Eventos para os botões "pesquisarCNIB"
   setTimeout(() => {
     document.querySelectorAll('.pesquisarCNIB').forEach(button => {
-      button.addEventListener('click', async (event) => {
-        event.stopPropagation();
-        const cpfCnpj = event.target.dataset.cpf;
-
-        // Adicione console.log aqui para verificar se o evento está sendo acionado e o CPF/CNPJ capturado
-        console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
-
-        // Enviar mensagem via Broadcast Channel (para qualquer aba que esteja escutando)
-        const mensagem = { action: "pesquisarCNIB", cpfCnpj: cpfCnpj };
-        channel.postMessage(mensagem);
-
-        // Adicione console.log aqui para verificar se a mensagem está sendo construída corretamente
-        console.log("Mensagem enviada via Broadcast Channel:", mensagem);
-      });
+      button.removeEventListener('click', handleClickPesquisarCNIB); // Remova o listener antigo, se houver
+      button.addEventListener('click', handleClickPesquisarCNIB); // Adicione o novo listener
     });
   }, 0);
 
   return participantesHTML;
 }
 
+// Função separada para lidar com o clique no botão CNIB (para usar com BroadcastChannel)
+function handleClickPesquisarCNIB(event) {
+    event.stopPropagation();
+    const cpfCnpj = event.target.dataset.cpf;
+
+    console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
+
+    // Enviar mensagem via Broadcast Channel
+    const mensagem = { action: "pesquisarCNIB", cpfCnpj: cpfCnpj };
+    channel.postMessage(mensagem);
+    console.log("Mensagem enviada via Broadcast Channel:", mensagem);
+}
+
+// OU (função separada para lidar com o clique no botão CNIB, para usar com localStorage)
+function handleClickPesquisarCNIB(event) {
+    event.stopPropagation();
+    const cpfCnpj = event.target.dataset.cpf;
+
+    console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
+
+    // Salvar no localStorage
+    localStorage.setItem('cnibData', JSON.stringify({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }));
+    console.log("Dados salvos no localStorage:", localStorage.getItem('cnibData'));
+}
 
 function criarElementoParticipante(p) {
   const { cpfCnpj, texto } = extrairDadosParticipante(p);
