@@ -275,20 +275,7 @@ function renderizarParticipantes(proprietarios) {
   return participantesHTML;
 }
 
-// Função separada para lidar com o clique no botão CNIB (para usar com BroadcastChannel)
-function handleClickPesquisarCNIB(event) {
-    event.stopPropagation();
-    const cpfCnpj = event.target.dataset.cpf;
-
-    console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
-
-    // Enviar mensagem via Broadcast Channel
-    const mensagem = { action: "pesquisarCNIB", cpfCnpj: cpfCnpj };
-    channel.postMessage(mensagem);
-    console.log("Mensagem enviada via Broadcast Channel:", mensagem);
-}
-
-// OU (função separada para lidar com o clique no botão CNIB, para usar com localStorage)
+// Função separada para lidar com o clique no botão CNIB (para usar com localStorage)
 function handleClickPesquisarCNIB(event) {
     event.stopPropagation();
     const cpfCnpj = event.target.dataset.cpf;
@@ -300,6 +287,9 @@ function handleClickPesquisarCNIB(event) {
     console.log("Dados salvos no localStorage:", localStorage.getItem('cnibData'));
 }
 
+// A função criarElementoParticipante provavelmente está definida em outro lugar do seu código,
+// mas ela é chamada pela renderizarParticipantes para criar o HTML para cada participante.
+// Aqui está um exemplo de como ela pode ser:
 function criarElementoParticipante(p) {
   const { cpfCnpj, texto } = extrairDadosParticipante(p);
   return `
