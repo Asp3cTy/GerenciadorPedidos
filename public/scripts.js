@@ -275,22 +275,6 @@ function renderizarParticipantes(proprietarios) {
   return participantesHTML;
 }
 
-// Função para lidar com o clique no botão CNIB (modificada para enviar mensagem para a extensão)
-function handleClickPesquisarCNIB(event) {
-  event.stopPropagation();
-  const cpfCnpj = event.target.dataset.cpf;
-
-  console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
-
-  // Enviar mensagem para a extensão (em vez de usar localStorage diretamente)
-  chrome.runtime.sendMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, function(response) {
-    if (chrome.runtime.lastError) {
-      console.error("Erro ao enviar mensagem para a extensão:", chrome.runtime.lastError);
-    } else {
-      console.log("Mensagem enviada para a extensão com sucesso:", response);
-    }
-  });
-}
 
 
 
