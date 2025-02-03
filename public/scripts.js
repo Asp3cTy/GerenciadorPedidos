@@ -267,25 +267,32 @@ function renderizarParticipantes(proprietarios) {
   // Delegação de Eventos para os botões "pesquisarCNIB"
   setTimeout(() => {
     document.querySelectorAll('.pesquisarCNIB').forEach(button => {
-      button.removeEventListener('click', handleClickPesquisarCNIB); // Remova o listener antigo, se houver
-      button.addEventListener('click', handleClickPesquisarCNIB); // Adicione o novo listener
+      button.removeEventListener('click', handleClickPesquisarCNIB);
+      button.addEventListener('click', handleClickPesquisarCNIB);
     });
   }, 0);
 
   return participantesHTML;
 }
 
-// Função separada para lidar com o clique no botão CNIB (para usar com localStorage)
+// Função para lidar com o clique no botão CNIB (modificada para enviar mensagem para a extensão)
 function handleClickPesquisarCNIB(event) {
-    event.stopPropagation();
-    const cpfCnpj = event.target.dataset.cpf;
+  event.stopPropagation();
+  const cpfCnpj = event.target.dataset.cpf;
 
-    console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
+  console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
 
-    // Salvar no localStorage
-    localStorage.setItem('cnibData', JSON.stringify({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }));
-    console.log("Dados salvos no localStorage:", localStorage.getItem('cnibData'));
+  // Enviar mensagem para a extensão (em vez de usar localStorage diretamente)
+  chrome.runtime.sendMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, function(response) {
+    if (chrome.runtime.lastError) {
+      console.error("Erro ao enviar mensagem para a extensão:", chrome.runtime.lastError);
+    } else {
+      console.log("Mensagem enviada para a extensão com sucesso:", response);
+    }
+  });
 }
+
+
 
 // A função criarElementoParticipante provavelmente está definida em outro lugar do seu código,
 // mas ela é chamada pela renderizarParticipantes para criar o HTML para cada participante.
