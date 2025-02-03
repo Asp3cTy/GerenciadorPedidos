@@ -253,24 +253,24 @@ function renderPedidos(pedidos) {
 
 
 function renderizarParticipantes(proprietarios) {
-    if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
-  
-    const participantesHTML = proprietarios
-      .split("|")
-      .filter((item) => item.trim() !== "")
-      .map(criarElementoParticipante)
-      .join("");
-  
-    // Delegação de Eventos para os botões "pesquisarCNIB"
-    setTimeout(() => {
-      document.querySelectorAll('.pesquisarCNIB').forEach(button => {
-        button.removeEventListener('click', handleClickPesquisarCNIB); // Remova o listener antigo, se houver
-        button.addEventListener('click', handleClickPesquisarCNIB); // Adicione o novo listener
-      });
-    }, 0);
-  
-    return participantesHTML;
-  }
+  if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
+
+  const participantesHTML = proprietarios
+    .split("|")
+    .filter((item) => item.trim() !== "")
+    .map(criarElementoParticipante)
+    .join("");
+
+  // Delegação de Eventos para os botões "pesquisarCNIB"
+  setTimeout(() => {
+    document.querySelectorAll('.pesquisarCNIB').forEach(button => {
+      button.removeEventListener('click', handleClickPesquisarCNIB); // Remova o listener antigo, se houver
+      button.addEventListener('click', handleClickPesquisarCNIB); // Adicione o novo listener
+    });
+  }, 0);
+
+  return participantesHTML;
+}
   
 function handleClickPesquisarCNIB(event) {
   event.stopPropagation();
