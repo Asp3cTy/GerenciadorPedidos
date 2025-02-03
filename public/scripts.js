@@ -252,44 +252,50 @@ function renderPedidos(pedidos) {
 }
 
 
-  // Cria um novo Broadcast Channel
-  const channel = new BroadcastChannel("cnib_channel");
-
 function renderizarParticipantes(proprietarios) {
-  if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
-
-  const participantesHTML = proprietarios
-    .split("|")
-    .filter((item) => item.trim() !== "")
-    .map(criarElementoParticipante)
-    .join("");
-
-  // Delegação de Eventos para os botões "pesquisarCNIB"
-  setTimeout(() => {
-    document.querySelectorAll('.pesquisarCNIB').forEach(button => {
-      button.removeEventListener('click', handleClickPesquisarCNIB);
-      button.addEventListener('click', handleClickPesquisarCNIB);
-    });
-  }, 0);
-
-  return participantesHTML;
-}
-
-
-
-
-// A função criarElementoParticipante provavelmente está definida em outro lugar do seu código,
-// mas ela é chamada pela renderizarParticipantes para criar o HTML para cada participante.
-// Aqui está um exemplo de como ela pode ser:
-function criarElementoParticipante(p) {
-  const { cpfCnpj, texto } = extrairDadosParticipante(p);
-  return `
-    <div class="participante flex items-center w-full flex-wrap">
-      <p class="mr-2">${texto}</p>
-      ${cpfCnpj ? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}" aria-label="Pesquisar CNIB para ${cpfCnpj}">CNIB</button>` : ''}
-    </div>
-  `;
-}
+    if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
+  
+    const participantesHTML = proprietarios
+      .split("|")
+      .filter((item) => item.trim() !== "")
+      .map(criarElementoParticipante)
+      .join("");
+  
+    // Delegação de Eventos para os botões "pesquisarCNIB"
+    setTimeout(() => {
+      document.querySelectorAll('.pesquisarCNIB').forEach(button => {
+        button.removeEventListener('click', handleClickPesquisarCNIB); // Remova o listener antigo, se houver
+        button.addEventListener('click', handleClickPesquisarCNIB); // Adicione o novo listener
+      });
+    }, 0);
+  
+    return participantesHTML;
+  }
+  
+  // Função separada para lidar com o clique no botão CNIB (para usar com localStorage)
+  function handleClickPesquisarCNIB(event) {
+      event.stopPropagation();
+      const cpfCnpj = event.target.dataset.cpf;
+  
+      console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
+  
+      // Salvar no localStorage (Remova a parte do chrome.runtime.sendMessage)
+      localStorage.setItem('cnibData', JSON.stringify({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }));
+      console.log("Dados salvos no localStorage:", localStorage.getItem('cnibData'));
+  }
+  
+  // A função criarElementoParticipante provavelmente está definida em outro lugar do seu código,
+  // mas ela é chamada pela renderizarParticipantes para criar o HTML para cada participante.
+  // Aqui está um exemplo de como ela pode ser:
+  function criarElementoParticipante(p) {
+    const { cpfCnpj, texto } = extrairDadosParticipante(p);
+    return `
+      <div class="participante flex items-center w-full flex-wrap">
+        <p class="mr-2">${texto}</p>
+        ${cpfCnpj ? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}" aria-label="Pesquisar CNIB para ${cpfCnpj}">CNIB</button>` : ''}
+      </div>
+    `;
+  }
 
 function extrairDadosParticipante(textoParticipante) {
   // Regex simplificada para capturar 11 ou 14 dígitos
