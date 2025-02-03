@@ -278,7 +278,7 @@ function handleClickPesquisarCNIB(event) {
 
   console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
 
-  fetch('http://localhost:3000/pesquisar-cnib', { // Ajuste a URL se necessário
+  fetch('https://gerenciar-pedidos-de-certidao.onrender.com/pesquisar-cnib', { // Ajuste a URL se necessário
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
