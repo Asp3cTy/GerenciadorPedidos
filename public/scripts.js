@@ -252,6 +252,8 @@ function renderPedidos(pedidos) {
 }
 
 
+  // Cria um novo Broadcast Channel
+  const channel = new BroadcastChannel("cnib_channel");
 
 function renderizarParticipantes(proprietarios) {
   if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
@@ -261,9 +263,6 @@ function renderizarParticipantes(proprietarios) {
     .filter((item) => item.trim() !== "")
     .map(criarElementoParticipante)
     .join("");
-
-  // Cria um novo Broadcast Channel
-  const channel = new BroadcastChannel("cnib_channel");
 
   // Delegação de Eventos para os botões "pesquisarCNIB"
   setTimeout(() => {
