@@ -7,7 +7,7 @@ const cheerio = require('cheerio');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configurações do banco de dados (ajuste conforme necessário)
+// Configurações do banco de dados
 const dbConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
