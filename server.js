@@ -3,7 +3,6 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const path = require('path');
 const app = express();
-const { pesquisarCNIB } = require('./puppeteer_script.js'); // Importa a função do Puppeteer
 const port = process.env.PORT || 3000;
 
 // Configurações do banco de dados (ajuste conforme necessário)
