@@ -272,17 +272,78 @@ function renderizarParticipantes(proprietarios) {
     return participantesHTML;
   }
   
-  // Função separada para lidar com o clique no botão CNIB (para usar com localStorage)
-  function handleClickPesquisarCNIB(event) {
-      event.stopPropagation();
-      const cpfCnpj = event.target.dataset.cpf;
-  
-      console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
-  
-      // Salvar no localStorage (Remova a parte do chrome.runtime.sendMessage)
-      localStorage.setItem('cnibData', JSON.stringify({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }));
-      console.log("Dados salvos no localStorage:", localStorage.getItem('cnibData'));
-  }
+function handleClickPesquisarCNIB(event) {
+  event.stopPropagation();
+  const cpfCnpj = event.target.dataset.cpf;
+
+  console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
+
+  fetch('http://localhost:3000/pesquisar-cnib', { // Ajuste a URL se necessário
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ cpfCnpj: cpfCnpj })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Erro na requisição: ' + response.status); // Lança um erro se a resposta não for ok (status 200-299)
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Resposta do servidor:", data);
+    // Aqui você processa a resposta do servidor (que conterá os dados da pesquisa)
+    // e atualiza a interface da sua aplicação com os resultados.
+
+    // Exemplo de como você pode exibir os resultados em um elemento HTML:
+    const resultadosDiv = document.getElementById('resultados-pesquisa'); // Supondo que você tem um elemento com id="resultados-pesquisa"
+    if (resultadosDiv) {
+        resultadosDiv.innerHTML = ''; // Limpa os resultados anteriores
+
+        if (data.dados && data.dados.length > 0) {
+            // Cria uma tabela para exibir os resultados
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // Cria o cabeçalho da tabela com base nas chaves do primeiro objeto (se houver)
+            if (data.dados.length > 0) {
+                const headerRow = document.createElement('tr');
+                for (const key in data.dados[0]) {
+                    const th = document.createElement('th');
+                    th.textContent = key;
+                    headerRow.appendChild(th);
+                }
+                thead.appendChild(headerRow);
+            }
+
+            // Adiciona as linhas da tabela
+            data.dados.forEach(item => {
+                const row = document.createElement('tr');
+                for (const key in item) {
+                    const td = document.createElement('td');
+                    td.textContent = item[key];
+                    row.appendChild(td);
+                }
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            resultadosDiv.appendChild(table);
+        } else {
+            resultadosDiv.textContent = 'Nenhum resultado encontrado.';
+        }
+    } else {
+        console.error("Erro: Elemento 'resultados-pesquisa' não encontrado.");
+    }
+  })
+  .catch(error => {
+    console.error("Erro ao enviar requisição:", error);
+    // Aqui você pode tratar erros, como exibir uma mensagem de erro para o usuário
+  });
+}
   
   // A função criarElementoParticipante provavelmente está definida em outro lugar do seu código,
   // mas ela é chamada pela renderizarParticipantes para criar o HTML para cada participante.
