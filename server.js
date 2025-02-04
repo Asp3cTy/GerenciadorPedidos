@@ -101,7 +101,7 @@ app.post('/editar_pedido.php', (req, res) => {
 app.get('/listar/_pedidos.php', (req, res) => {
   console.log("Requisição GET para /listar/_pedidos.php recebida.");
   const page = parseInt(req.query.page) || 1;
-  const limit = 3;
+  const limit = 2;
   const offset = (page - 1) * limit;
 
   const countSql = `SELECT COUNT(*) AS total FROM pedidos`;
