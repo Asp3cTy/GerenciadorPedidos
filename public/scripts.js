@@ -282,7 +282,7 @@ function handleClickPesquisarCNIB(event) {
   const newWindow = window.open('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada', '_blank');
 
   // Envia a mensagem via postMessage após a nova aba ser carregada
-    newWindow.postMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, 'https://indisponibilidade.onr.org.br');
+    newWindow.postMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, 'https://indisponibilidade.onr.org.br/ordem/consulta/simplificada');
     console.log("Mensagem enviada via postMessage para a nova aba.");
 }
   
