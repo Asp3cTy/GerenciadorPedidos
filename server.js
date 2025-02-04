@@ -151,55 +151,20 @@ app.post('/excluir_pedido.php', (req, res) => {
   executeQuery(sql, values, res);
 });
 
-// Nova Rota para Pesquisar CNIB
+// Rota para lidar com a requisição POST do frontend
 app.post('/pesquisar-cnib', async (req, res) => {
   const cpfCnpj = req.body.cpfCnpj;
+
   if (!cpfCnpj) {
     return res.status(400).json({ error: 'CPF/CNPJ não fornecido' });
   }
 
-  const url = 'https://indisponibilidade.onr.org.br/ordem/consulta/simplificada';
-  const data = {
-    // Use o nome do campo que você identificou na página de indisponibilidade!
-    // Se for diferente de 'documento', altere aqui.
-    documento: cpfCnpj 
-  };
+  console.log("Requisição recebida para /pesquisar-cnib. CPF/CNPJ:", cpfCnpj);
 
-  try {
-    const response = await axios.post(url, new URLSearchParams(data).toString(), {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Safari/537.36',
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
+  // Aqui você não faz nada além de retornar uma resposta de sucesso.
+  // O processamento agora é feito pelo script do Tampermonkey na página de indisponibilidade.
 
-    const $ = cheerio.load(response.data);
-
-    // Aqui você precisará analisar a resposta HTML e extrair os dados da pesquisa.
-    // Isso vai depender da estrutura do HTML do site de indisponibilidade.
-    // Use as ferramentas de desenvolvedor do navegador para inspecionar o HTML
-    // e identificar os elementos que contêm os dados que você precisa.
-
-    // Exemplo (você precisará adaptar isso à estrutura do site):
-    const resultados = [];
-    $('table tr').each((i, row) => { // Exemplo: Se os resultados estiverem em uma tabela
-      const linha = {};
-      $(row).find('td').each((j, cell) => {
-        const key = `coluna${j + 1}`;
-        linha[key] = $(cell).text().trim();
-      });
-      resultados.push(linha);
-    });
-
-    return res.json({ mensagem: 'Pesquisa realizada com sucesso', dados: resultados });
-
-  } catch (error) {
-    console.error("Erro ao acessar o site:", error);
-    if (error.response) {
-        console.error("Resposta do site:", error.response.data);
-    }
-    return res.status(500).json({ error: 'Erro ao acessar o site de indisponibilidade' });
-  }
+  return res.json({ mensagem: 'Requisição recebida com sucesso!' });
 });
 
 // Inicia o servidor
