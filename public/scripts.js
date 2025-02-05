@@ -512,7 +512,7 @@ function copiarTodosPedidos() {
     const dataFormatada = pedido.data
       ? new Date(pedido.data).toLocaleDateString("pt-BR")
       : "Data inválida";
-let textoPedido = `
+    let textoPedido = `
 Pedido: ${pedido.pedido}
 Data: ${dataFormatada}
 Matrícula: ${pedido.matricula}
@@ -556,19 +556,14 @@ Tipo de Certidão: ${pedido.tipoCertidao}
     textoTodosPedidos += textoPedido;
   });
 
-        navigator.clipboard.writeText(textoTodosPedidos)
-          .then(() => {
-            alert("Todos os pedidos copiados para a área de transferência!");
-          })
-          .catch(() => {
-            alert("Erro ao copiar os pedidos!");
-          });
-
-    } catch (error) {
-    console.error("Erro ao copiar pedidos:", error);
-    alert("Erro ao copiar pedidos. Verifique o console para detalhes.");
-  }
-});
+  navigator.clipboard
+    .writeText(textoTodosPedidos)
+    .then(() => {
+      alert("Todos os pedidos copiados para a área de transferência!");
+    })
+    .catch(() => {
+      alert("Erro ao copiar os pedidos!");
+    });
 }
 
 // Abrir o modal
@@ -948,17 +943,8 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
   }
 });
 
-document.getElementById('baixarPedidos').addEventListener('click', async function () {
-    try {
-        const response = await fetch('/listar_todos_pedidos'); // Requisição para a nova rota
-        if (!response.ok) {
-            throw new Error(`Erro ao baixar pedidos: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        const pedidos = data.pedidos;  // Obtém TODOS os pedidos
-
-        //O restante do código continua o mesmo,
-        //mas agora você opera sobre a variável 'pedidos', e não mais 'pedidosCarregados'
+document.getElementById('baixarPedidos').addEventListener('click', function () {
+  // Usa os pedidos carregados na variável global
   const pedidosFormatados = pedidosCarregados.map(pedido => ({
     Pedido: pedido.pedido,
     Data: new Date(pedido.data),
@@ -984,28 +970,19 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
       : []
   }));
 
-        const conteudo = JSON.stringify(pedidosFormatados, null, 2);
-        const blob = new Blob([conteudo], { type: 'application/json' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'pedidos.json';
-        link.click();
+  // Converte os pedidos para JSON formatado
+  const conteudo = JSON.stringify(pedidosFormatados, null, 2);
 
-    } catch (error) {
-        console.error("Erro ao baixar pedidos:", error);
-        alert("Erro ao baixar pedidos. Verifique o console para detalhes.");
-    }
+  // Cria um blob com o conteúdo em JSON e dispara o download
+  const blob = new Blob([conteudo], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'pedidos.json'; // Nome do arquivo para download
+  link.click();
 });
 
 // Copiar todos os pedidos
-document.getElementById('copiarTodosPedidos').addEventListener('click', async function() {
-  try {
-        const response = await fetch('/listar_todos_pedidos'); // Requisição para a nova rota
-        if (!response.ok) {
-            throw new Error(`Erro ao obter pedidos: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        const pedidos = data.pedidos; //Obtem TODOS os pedidos.
+document.getElementById('copiarTodosPedidos').addEventListener('click', copiarTodosPedidos);
 
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
