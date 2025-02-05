@@ -140,6 +140,20 @@ app.get('/listar/_pedidos.php', (req, res) => {
   });
 });
 
+
+app.get('/listar_todos_pedidos', async (req, res) => {
+    try {
+        const connection = await pool.getConnection();
+        const [results] = await connection.query('SELECT * FROM pedidos ORDER BY id DESC, data DESC'); // Sem LIMIT e OFFSET
+        connection.release();
+        res.json({ status: 'sucesso', pedidos: results });
+    } catch (err) {
+        console.error('Erro ao listar todos os pedidos:', err);
+        res.status(500).json({ status: 'erro', mensagem: 'Erro ao buscar todos os pedidos.' });
+    }
+});
+
+
 // Rota para excluir pedidos
 app.post('/excluir_pedido.php', (req, res) => {
   const pedidoId = req.body.id;
