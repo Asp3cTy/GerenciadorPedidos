@@ -141,13 +141,19 @@ app.get('/listar/_pedidos.php', (req, res) => {
 });
 
 
+// Rota para listar *TODOS* os pedidos (sem paginação)
 app.get('/listar_todos_pedidos', async (req, res) => {
     try {
+        // Usa pool.getConnection e async/await para simplificar
         const connection = await pool.getConnection();
         const [results] = await connection.query('SELECT * FROM pedidos ORDER BY id DESC, data DESC'); // Sem LIMIT e OFFSET
-        connection.release();
+        connection.release(); // Libera a conexão de volta para o pool
+
+        // Retorna os pedidos em formato JSON
         res.json({ status: 'sucesso', pedidos: results });
+
     } catch (err) {
+        // Tratamento de erros
         console.error('Erro ao listar todos os pedidos:', err);
         res.status(500).json({ status: 'erro', mensagem: 'Erro ao buscar todos os pedidos.' });
     }
