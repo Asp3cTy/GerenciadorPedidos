@@ -4,172 +4,165 @@ let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
 // Função para coletar dados do formulário
 function getDadosFormulario() {
-  return {
-    pedido: document.getElementById("pedido").value,
-    data: document.getElementById("data").value, // Já virá no formato correto
-    matricula: document.getElementById("matricula").value,
-    onus: document.getElementById("onus").value,
-    folhas: document.getElementById("folhas").value,
-    imagens: document.getElementById("imagens").value,
-    tipoCertidao: document.getElementById("tipoCertidao").value,
-    codigoArirj: document.getElementById("codigoArirj").value,
-    codigoEcartorio: document.getElementById("codigoEcartorio").value,
-    protocolos:
-      document.getElementById("protocolosAdicionados").dataset.protocolos ||
-      "",
-    proprietarios:
-      document.getElementById("proprietariosAdicionados").dataset
-        .proprietarios || "",
-  };
+    return {
+        pedido: document.getElementById("pedido").value,
+        data: document.getElementById("data").value, // Já virá no formato correto
+        matricula: document.getElementById("matricula").value,
+        onus: document.getElementById("onus").value,
+        folhas: document.getElementById("folhas").value,
+        imagens: document.getElementById("imagens").value,
+        tipoCertidao: document.getElementById("tipoCertidao").value,
+        codigoArirj: document.getElementById("codigoArirj").value,
+        codigoEcartorio: document.getElementById("codigoEcartorio").value,
+        protocolos:
+            document.getElementById("protocolosAdicionados").dataset.protocolos ||
+            "",
+        proprietarios:
+            document.getElementById("proprietariosAdicionados").dataset
+                .proprietarios || "",
+    };
 }
 
 function validarFormulario(formulario) {
-  let isValid = true;
-  const campos = formulario.querySelectorAll('input, select, textarea');
+    let isValid = true;
+    const campos = formulario.querySelectorAll('input, select, textarea');
 
-  campos.forEach(campo => {
-    // Verifica se o campo é obrigatório e se está vazio
-    if (campo.required && campo.value.trim() === '') {
-      isValid = false;
-      // Adiciona uma classe de erro ao campo (opcional)
-      campo.classList.add('border-red-500');
-      // Exibe uma mensagem de erro (opcional)
-      if (!campo.nextElementSibling ||!campo.nextElementSibling.classList.contains('erro')) {
-        const erroSpan = document.createElement('span');
-        erroSpan.textContent = 'Este campo é obrigatório.';
-        erroSpan.classList.add('erro', 'text-red-500', 'text-xs');
-        campo.parentNode.insertBefore(erroSpan, campo.nextSibling);
-      }
-    } else {
-      // Remove a classe de erro se o campo for preenchido (opcional)
-      campo.classList.remove('border-red-500');
-      // Remove a mensagem de erro (opcional)
-      if (campo.nextElementSibling && campo.nextElementSibling.classList.contains('erro')) {
-        campo.nextElementSibling.remove();
-      }
-    }
-  });
+    campos.forEach(campo => {
+        // Verifica se o campo é obrigatório e se está vazio
+        if (campo.required && campo.value.trim() === '') {
+            isValid = false;
+            // Adiciona uma classe de erro ao campo (opcional)
+            campo.classList.add('border-red-500');
+            // Exibe uma mensagem de erro (opcional)
+            if (!campo.nextElementSibling || !campo.nextElementSibling.classList.contains('erro')) {
+                const erroSpan = document.createElement('span');
+                erroSpan.textContent = 'Este campo é obrigatório.';
+                erroSpan.classList.add('erro', 'text-red-500', 'text-xs');
+                campo.parentNode.insertBefore(erroSpan, campo.nextSibling);
+            }
+        } else {
+            // Remove a classe de erro se o campo for preenchido (opcional)
+            campo.classList.remove('border-red-500');
+            // Remove a mensagem de erro (opcional)
+            if (campo.nextElementSibling && campo.nextElementSibling.classList.contains('erro')) {
+                campo.nextElementSibling.remove();
+            }
+        }
+    });
 
-  return isValid;
+    return isValid;
 }
 
 function toUpperCaseInputs() {
-  const inputs = document.querySelectorAll('input[type="text"], textarea');
-  inputs.forEach(input => {
-    input.addEventListener('input', function(event) {
-      const start = this.selectionStart; // Guarda a posição do cursor
-      const end = this.selectionEnd;
-      this.value = this.value.toUpperCase();
-      this.setSelectionRange(start, end); // Restaura a posição do cursor
+    const inputs = document.querySelectorAll('input[type="text"], textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', function (event) {
+            const start = this.selectionStart; // Guarda a posição do cursor
+            const end = this.selectionEnd;
+            this.value = this.value.toUpperCase();
+            this.setSelectionRange(start, end); // Restaura a posição do cursor
+        });
     });
-  });
 }
 
 // Chame a função depois que o DOM estiver carregado:
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     toUpperCaseInputs();
 });
 
-console.log("Associando event listener ao botão salvarPedido");
+// Event listener do botão 'salvarPedido' com fetch e async/await
+document.getElementById('salvarPedido').addEventListener('click', async () => {
+    const formulario = document.querySelector('form');
 
-// Função que será chamada quando o pedido for salvo ou editado
-document.getElementById('salvarPedido').addEventListener('click', () => {
-  const formulario = document.querySelector('form'); // Seleciona o formulário
+    if (validarFormulario(formulario)) {
+        console.log("Botão salvarPedido clicado!");
+        const dadosPedido = getDadosFormulario();
 
-  if (validarFormulario(formulario)) { // Chama a função de validação
-    console.log("Botão salvarPedido clicado!");
-    const dadosPedido = getDadosFormulario();
+        const pedidoId = document.getElementById('salvarPedido').getAttribute('data-pedido-id');
+        const novoPedido = { ...dadosPedido };
 
-    // Verifica se está editando um pedido existente
-    const pedidoId = document.getElementById('salvarPedido').getAttribute('data-pedido-id');
-    const novoPedido = {
-    ...dadosPedido
-    };
+        if (pedidoId) {
+            novoPedido.id = parseInt(pedidoId);
+        }
+        // else {  Removido, pois o banco tem auto incremento
+        //     novoPedido.id = Date.now();
+        //}
 
-    // Se tiver pedidoId, é uma edição, então adiciona o ID ao objeto
-    if (pedidoId) {
-      novoPedido.id = parseInt(pedidoId);
-    } else {
-      novoPedido.id = Date.now();
-    }
+        novoPedido.data = novoPedido.data; // Data já está formatada
 
-    // Formata a data para 'YYYY-MM-DD' antes de enviar
-    novoPedido.data = novoPedido.data
-
-    const xhr = new XMLHttpRequest();
-    // Usa uma rota diferente para edição, por exemplo, /editar_pedido.php
-    xhr.open("POST", pedidoId? "/editar_pedido.php": "/salvar_pedido.php", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function() {
-      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-        console.log("Resposta recebida (texto):", this.responseText);
-        let resposta;
         try {
-          resposta = JSON.parse(this.responseText);
-          console.log("Resposta após o parse:", resposta);
+            const url = pedidoId ? "/editar_pedido.php" : "/salvar_pedido.php";
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(novoPedido),
+            });
+
+            if (!response.ok) {
+                //Pega a mensagem de erro do servidor, se houver.
+                throw new Error(`Erro ao salvar/editar pedido: ${response.status} - ${await response.text()}`);
+            }
+
+            const resposta = await response.json(); // Já converte para JSON
+
+            if (resposta.status === 'sucesso') {
+                document.getElementById('salvarPedido').removeAttribute('data-pedido-id');
+                currentPage = 1;
+                await carregarPedidos(); // Usa await aqui também
+                document.getElementById('closeModal').click();
+                alert(resposta.mensagem);
+
+                // Limpar campos do formulário
+                document.getElementById('pedido').value = '';
+                document.getElementById('matricula').value = '';
+                document.getElementById('onus').value = 'NEGATIVA';
+                document.getElementById('folhas').value = '';
+                document.getElementById('imagens').value = '';
+                document.getElementById('tipoCertidao').value = 'BALCAO';
+                document.getElementById('codigoArirj').value = '';
+                document.getElementById('codigoEcartorio').value = '';
+                document.getElementById('protocolosAdicionados').innerHTML = '';
+                document.getElementById('proprietariosAdicionados').innerHTML = '';
+                document.getElementById('protocolosAdicionados').dataset.protocolos = '';
+                document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
+                document.getElementById('data').valueAsDate = new Date();
+
+                // Disparar o evento 'change' no tipoCertidao
+                document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
+
+                // Fechar os popups
+                fecharPopupProtocolos();
+                fecharPopupProprietarios();
+
+            } else {
+                alert(resposta.mensagem); // Exibe mensagem de erro do servidor
+            }
+
         } catch (error) {
-          console.error("Erro ao fazer o parse do JSON:", error);
-          console.error("Conteúdo da resposta:", this.responseText);
-          alert("Erro ao processar a resposta do servidor.");
-          return;
+            console.error("Erro:", error);
+            alert(`Erro ao salvar/editar o pedido: ${error.message}`);
         }
-
-        if (resposta.status === 'sucesso') {
-          // Remove o atributo data-pedido-id, já que a edição foi concluída
-          document.getElementById('salvarPedido').removeAttribute('data-pedido-id');
-
-          currentPage = 1; // Volta para a página 1 após salvar um pedido
-          carregarPedidos(); // Atualiza a lista de pedidos carregados
-          document.getElementById('closeModal').click();
-          alert(resposta.mensagem);
-          // Limpar campos do formulário
-          document.getElementById('pedido').value = '';
-          document.getElementById('matricula').value = '';
-          document.getElementById('onus').value = 'NEGATIVA';
-          document.getElementById('folhas').value = '';
-          document.getElementById('imagens').value = '';
-          document.getElementById('tipoCertidao').value = 'BALCAO';
-          document.getElementById('codigoArirj').value = '';
-          document.getElementById('codigoEcartorio').value = '';
-          document.getElementById('protocolosAdicionados').innerHTML = '';
-          document.getElementById('proprietariosAdicionados').innerHTML = '';
-          document.getElementById('protocolosAdicionados').dataset.protocolos = '';
-          document.getElementById('proprietariosAdicionados').dataset.proprietarios = '';
-          document.getElementById('data').valueAsDate = new Date();
-
-          // Disparar o evento 'change' no tipoCertidao para redefinir a visibilidade dos campos ARIRJ/E-CARTORIO
-          document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
-
-          // Fechar os popups, se estiverem abertos
-          fecharPopupProtocolos();
-          fecharPopupProprietarios();
-        } else {
-          alert(resposta.mensagem);
-        }
-      }
-    };
-
-    xhr.send(JSON.stringify(novoPedido));
-  } else {
-    alert('Por favor, preencha todos os campos obrigatórios.');
-  }
+    } else {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+    }
 });
 
-// Função para formatar a data
-function formatarData(data) {
-  if (!data) return `<p><strong>Data:</strong> Data inválida</p>`;
 
-  let dataFormatada = new Date(data);
-  if (isNaN(dataFormatada.getTime())) {
-    return `<p><strong>Data:</strong> Data inválida</p>`;
-  }
 
-  const dia = String(dataFormatada.getDate()).padStart(3, "0");
-  const mes = String(dataFormatada.getMonth() + 1).padStart(2, "0");
-  const ano = dataFormatada.getFullYear();
-  return `<p><strong>${dia}/${mes}/${ano}</strong></p>`;
+// Função para formatar a data (Centralizada, para evitar duplicação)
+function formatarData(dataString) {
+    if (!dataString) return 'Data inválida';
+
+    const data = new Date(dataString);
+    if (isNaN(data.getTime())) return 'Data inválida';
+
+    const dia = String(data.getUTCDate()).padStart(2, '0');
+    const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+    const ano = data.getUTCFullYear();
+    return `<span class="math-inline">\{dia\}/</span>{mes}/${ano}`;
 }
-
 
 
 
@@ -193,17 +186,8 @@ function renderPedidos(pedidos) {
             "items-start"
         );
 
-        // Formata a data manualmente e insere no HTML
-        let dataFormatada = "";
-        if (pedido.data) {
-            const data = new Date(pedido.data);
-            const dia = String(data.getUTCDate()).padStart(2, "0");
-            const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
-            const ano = data.getUTCFullYear();
-            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
-        } else {
-            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
-        }
+        // Usa a função formatarData
+        const dataFormatada = formatarData(pedido.data);
 
         // Chama a função auxiliar para renderizar os participantes com a lupa
         const participantesHTML = renderizarParticipantes(pedido.proprietarios);
@@ -211,7 +195,7 @@ function renderPedidos(pedidos) {
         pedidoDiv.innerHTML = `
             <div class="flex-grow">
                 <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
-                ${dataFormatada}
+                <p><strong>Data:</strong> ${dataFormatada}</p>
                 <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
                 <p><strong>Ônus:</strong> ${pedido.onus}</p>
                 <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
@@ -240,8 +224,8 @@ function renderPedidos(pedidos) {
 
             
             <div class="flex flex-col space-y-2 items-center ml-4">
-                <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Editar</button>
-                <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Copiar</button>
+                <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="<span class="math-inline">\{pedido\.id\}"\>Editar</button\>
+<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data\-id\="</span>{pedido.id}">Copiar</button>
                 <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Excluir</button>
             </div>
         `;
@@ -252,44 +236,47 @@ function renderPedidos(pedidos) {
 }
 
 
+
 function renderizarParticipantes(proprietarios) {
-  if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
+    if (!proprietarios) return "<p>Nenhum participante adicionado</p>";
 
-  const participantesHTML = proprietarios
-    .split("|")
-    .filter((item) => item.trim() !== "")
-    .map(criarElementoParticipante)
-    .join("");
+    const participantesHTML = proprietarios
+        .split("|")
+        .filter((item) => item.trim() !== "")
+        .map(criarElementoParticipante)
+        .join("");
 
-  // Delegação de Eventos para os botões "pesquisarCNIB"
-  setTimeout(() => {
-    document.querySelectorAll('.pesquisarCNIB').forEach(button => {
-      button.removeEventListener('click', handleClickPesquisarCNIB); // Remova o listener antigo, se houver
-      button.addEventListener('click', handleClickPesquisarCNIB); // Adicione o novo listener
-    });
-  }, 0);
 
-  return participantesHTML;
+    // Delegação de Eventos para os botões "pesquisarCNIB"
+    setTimeout(() => {
+        document.querySelectorAll('.pesquisarCNIB').forEach(button => {
+            button.removeEventListener('click', handleClickPesquisarCNIB); // Remova o listener antigo
+            button.addEventListener('click', handleClickPesquisarCNIB); // Adicione o novo
+        });
+    }, 0);
+
+
+    return participantesHTML;
 }
-  
+
 function handleClickPesquisarCNIB(event) {
-  event.stopPropagation();
-  const cpfCnpj = event.target.dataset.cpf;
+    event.stopPropagation();
+    const cpfCnpj = event.target.dataset.cpf;
 
-  console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
+    console.log("Botão CNIB clicado. CPF/CNPJ:", cpfCnpj);
 
-  // Abre a página de indisponibilidade em uma nova aba
-  const newWindow = window.open('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada', '_blank');
+    // Abre a página de indisponibilidade em uma nova aba
+    const newWindow = window.open('https://indisponibilidade.onr.org.br/ordem/consulta/simplificada', '_blank');
 
-  // Envia a mensagem via postMessage após a nova aba ser carregada
+    // Envia a mensagem via postMessage após a nova aba ser carregada
     newWindow.postMessage({ action: "pesquisarCNIB", cpfCnpj: cpfCnpj }, 'https://indisponibilidade.onr.org.br/ordem/consulta/simplificada');
     console.log("Mensagem enviada via postMessage para a nova aba.");
 }
-  
-  // A função criarElementoParticipante provavelmente está definida em outro lugar do seu código,
-  // mas ela é chamada pela renderizarParticipantes para criar o HTML para cada participante.
-  // Aqui está um exemplo de como ela pode ser:
-  function criarElementoParticipante(p) {
+
+// A função criarElementoParticipante provavelmente está definida em outro lugar do seu código,
+// mas ela é chamada pela renderizarParticipantes para criar o HTML para cada participante.
+// Aqui está um exemplo de como ela pode ser:
+function criarElementoParticipante(p) {
     const { cpfCnpj, texto } = extrairDadosParticipante(p);
     return `
       <div class="participante flex items-center w-full flex-wrap">
@@ -297,41 +284,45 @@ function handleClickPesquisarCNIB(event) {
         ${cpfCnpj ? `<button class="pesquisarCNIB" data-cpf="${cpfCnpj}" aria-label="Pesquisar CNIB para ${cpfCnpj}">CNIB</button>` : ''}
       </div>
     `;
-  }
+}
 
 function extrairDadosParticipante(textoParticipante) {
-  // Regex simplificada para capturar 11 ou 14 dígitos
-  const cpfCnpjMatch = textoParticipante.match(/\d{11,14}/);
-  const cpfCnpj = cpfCnpjMatch ? cpfCnpjMatch[0] : null;
+    // Regex simplificada para capturar 11 ou 14 dígitos
+    const cpfCnpjMatch = textoParticipante.match(/\d{11,14}/);
+    const cpfCnpj = cpfCnpjMatch ? cpfCnpjMatch[0] : null;
 
-  // Mantém o texto original do participante, sem remover o CPF/CNPJ
-  const texto = textoParticipante;
+    // Mantém o texto original do participante, sem remover o CPF/CNPJ
+    const texto = textoParticipante;
 
-  return { cpfCnpj, texto };
+    return { cpfCnpj, texto };
 }
 
 
 
 // Função para carregar os pedidos do servidor
-function carregarPedidos() {
+async function carregarPedidos() {
     console.log("Carregando pedidos...");
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", `/listar/_pedidos.php?page=${currentPage}`, true);
-    xhr.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            const resposta = JSON.parse(this.responseText);
-            pedidosCarregados = resposta.pedidos;
+    try {
+        const response = await fetch(`/listar/_pedidos.php?page=${currentPage}`);
 
-            // Calcula o total de páginas com base no total de pedidos retornado pelo servidor
-            const totalPedidos = resposta.totalPedidos;
-            const limit = 2; // Ou use um limite dinâmico
-            totalPages = Math.ceil(totalPedidos / limit);
-
-            renderPedidos(pedidosCarregados);
-            updatePaginationButtons();
+        if (!response.ok) { // Verifica se a resposta do servidor não foi um erro (status 200-299)
+            throw new Error(`Erro ao carregar pedidos: ${response.status} ${response.statusText}`);
         }
-    };
-    xhr.send();
+
+        const data = await response.json();
+        pedidosCarregados = data.pedidos;
+
+        const totalPedidos = data.totalPedidos;
+        const limit = 2; // Ou use um limite dinâmico
+        totalPages = Math.ceil(totalPedidos / limit);
+
+        renderPedidos(pedidosCarregados);
+        updatePaginationButtons();
+
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao carregar pedidos. Verifique o console para detalhes."); // Mensagem de erro amigável
+    }
 }
 
 // Funções para mudar de página e atualizar botões
@@ -349,32 +340,38 @@ function updatePaginationButtons() {
 }
 
 // Evento para excluir pedido (usando delegação de eventos)
-document.getElementById('pedidosResumo').addEventListener('click', function (event) {
-  if (event.target.classList.contains('excluir-button')) {
-    const pedidoId = parseInt(event.target.getAttribute('data-id'));
+document.getElementById('pedidosResumo').addEventListener('click', async function (event) {
+    if (event.target.classList.contains('excluir-button')) {
+        const pedidoId = parseInt(event.target.getAttribute('data-id'));
 
-    // Envia uma requisição para o servidor para excluir o pedido
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/excluir_pedido.php", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function () {
-      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-        const resposta = JSON.parse(this.responseText);
-        if (resposta.status === 'sucesso') {
-          // Recarrega os pedidos após a exclusão
-          carregarPedidos();
-        } else {
-          // Exibe mensagem de erro
-          alert(resposta.mensagem);
+        try {
+            const response = await fetch("/excluir_pedido.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: pedidoId }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro ao excluir pedido: ${response.status} - ${await response.text()}`);
+            }
+
+            const resposta = await response.json();
+            if (resposta.status === 'sucesso') {
+                carregarPedidos(); // Recarrega após exclusão
+            } else {
+                alert(resposta.mensagem);
+            }
+        } catch (error) {
+            console.error("Erro ao excluir pedido:", error);
+            alert(`Erro ao excluir o pedido: ${error.message}`);
         }
-      }
-    };
-    xhr.send(JSON.stringify({ id: pedidoId }));
-  }
+    }
 });
 
 // Evento para editar pedido (usando delegação de eventos)
-document.getElementById('pedidosResumo').addEventListener('click', function(event) {
+document.getElementById('pedidosResumo').addEventListener('click', function (event) {
     if (event.target.classList.contains('editar-button')) {
         const pedidoId = parseInt(event.target.getAttribute('data-id'));
         editarPedido(pedidoId);
@@ -382,7 +379,7 @@ document.getElementById('pedidosResumo').addEventListener('click', function(even
 });
 
 // Evento para copiar pedido (usando delegação de eventos)
-document.getElementById('pedidosResumo').addEventListener('click', function(event) {
+document.getElementById('pedidosResumo').addEventListener('click', function (event) {
     if (event.target.classList.contains('copiar-button')) {
         const pedidoId = parseInt(event.target.getAttribute('data-id'));
         copiarPedido(pedidoId);
@@ -391,67 +388,67 @@ document.getElementById('pedidosResumo').addEventListener('click', function(even
 
 // Função para buscar um pedido pelo ID (CORRIGIDA)
 function buscarPedidoPorId(pedidoId) {
-  const pedidoEncontrado = pedidosCarregados.find(p => p.id === pedidoId);
-  return pedidoEncontrado;
+    const pedidoEncontrado = pedidosCarregados.find(p => p.id === pedidoId);
+    return pedidoEncontrado;
 }
 
 
 // Função para editar um pedido
 function editarPedido(pedidoId) {
-  // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
-  const pedido = buscarPedidoPorId(pedidoId);
+    // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
+    const pedido = buscarPedidoPorId(pedidoId);
 
-  // 2. Preencher o formulário com os dados do pedido
-  if (pedido) {
-      document.getElementById('pedido').value = pedido.pedido;
+    // 2. Preencher o formulário com os dados do pedido
+    if (pedido) {
+        document.getElementById('pedido').value = pedido.pedido;
 
-      // Preencher o campo de data formatando para YYYY-MM-DD
-      if (pedido.data) {
-          const data = new Date(pedido.data);
-          const dia = String(data.getUTCDate()).padStart(2, '0');
-          const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
-          const ano = data.getUTCFullYear();
-          document.getElementById('data').value = `${ano}-${mes}-${dia}`;
-      } else {
-          document.getElementById('data').value = pedido.data; // Ou defina uma data padrão, se desejar
-      }
+        // Preencher o campo de data formatando para yyyy-MM-dd
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, '0');
+const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+            const ano = data.getUTCFullYear();
+            document.getElementById('data').value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
+        } else {
+            document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
+        }
 
-      document.getElementById('matricula').value = pedido.matricula;
-      document.getElementById('onus').value = pedido.onus;
-      document.getElementById('folhas').value = pedido.folhas;
-      document.getElementById('imagens').value = pedido.imagens;
-      document.getElementById('tipoCertidao').value = pedido.tipoCertidao;
-      document.getElementById('codigoArirj').value = pedido.codigoArirj;
-      document.getElementById('codigoEcartorio').value = pedido.codigoEcartorio;
+        document.getElementById('matricula').value = pedido.matricula;
+        document.getElementById('onus').value = pedido.onus;
+        document.getElementById('folhas').value = pedido.folhas;
+        document.getElementById('imagens').value = pedido.imagens;
+        document.getElementById('tipoCertidao').value = pedido.tipoCertidao;
+        document.getElementById('codigoArirj').value = pedido.codigoArirj;
+        document.getElementById('codigoEcartorio').value = pedido.codigoEcartorio;
 
-      // Tratar protocolos e proprietários
-      document.getElementById('protocolosAdicionados').dataset.protocolos = pedido.protocolos;
-      document.getElementById('proprietariosAdicionados').dataset.proprietarios = pedido.proprietarios;
-      renderizarProtocolos();
-      renderizarProprietarios();
+        // Tratar protocolos e proprietários
+        document.getElementById('protocolosAdicionados').dataset.protocolos = pedido.protocolos;
+        document.getElementById('proprietariosAdicionados').dataset.proprietarios = pedido.proprietarios;
+        renderizarProtocolos();
+        renderizarProprietarios();
 
-      // 3. Disparar o evento 'change' no tipoCertidao
-      document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
+        // 3. Disparar o evento 'change' no tipoCertidao
+        document.getElementById('tipoCertidao').dispatchEvent(new Event('change'));
 
-      // Adiciona o data-pedido-id ao botão "Salvar Pedido"
-      document.getElementById('salvarPedido').setAttribute('data-pedido-id', pedidoId);
+        // Adiciona o data-pedido-id ao botão "Salvar Pedido"
+        document.getElementById('salvarPedido').setAttribute('data-pedido-id', pedidoId);
 
-      // 4. Abrir o modal
-      document.getElementById('modal').classList.remove('hidden');
-  } else {
-      alert("Pedido não encontrado!");
-  }
+        // 4. Abrir o modal
+        document.getElementById('modal').classList.remove('hidden');
+    } else {
+        alert("Pedido não encontrado!");
+    }
 }
 
 // Função para copiar um pedido
 function copiarPedido(pedidoId) {
-  // 1. Buscar o pedido pelo ID (agora usando a lista de pedidos carregados)
-  const pedido = buscarPedidoPorId(pedidoId);
+    // 1. Buscar o pedido pelo ID
+    const pedido = buscarPedidoPorId(pedidoId);
 
-  // 2. Formatar o texto do pedido
-  if (pedido) {
-      const dataFormatada = pedido.data ? new Date(pedido.data).toLocaleDateString('pt-BR') : 'Data inválida';
-      let textoPedido = `
+    // 2. Formatar o texto do pedido
+    if (pedido) {
+        const dataFormatada = formatarData(pedido.data); // Usa a função centralizada
+        let textoPedido = `
 Pedido: ${pedido.pedido}
 Data: ${dataFormatada}
 Matrícula: ${pedido.matricula}
@@ -461,123 +458,264 @@ N.º Imagens: ${pedido.imagens}
 Tipo de Certidão: ${pedido.tipoCertidao}
 `;
 
-      if (pedido.tipoCertidao === 'ARIRJ') {
-          textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
-      }
+        if (pedido.tipoCertidao === 'ARIRJ') {
+            textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
+        }
 
-      if (pedido.tipoCertidao === 'E-CARTORIO') {
-          textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
-      }
+        if (pedido.tipoCertidao === 'E-CARTORIO') {
+            textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+        }
 
-      textoPedido += `Protocolos:\n`;
-      if (pedido.protocolos) {
-          textoPedido += pedido.protocolos
-              .split('|')
-              .filter(item => item.trim() !== '')
-              .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
-              .join('\n');
-      } else {
-          textoPedido += `Nenhum protocolo adicionado\n`;
-      }
+        textoPedido += `Protocolos:\n`;
+        if (pedido.protocolos) {
+            textoPedido += pedido.protocolos
+                .split('|')
+                .filter(item => item.trim() !== '')
+                .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
+                .join('\n');
+        } else {
+            textoPedido += `Nenhum protocolo adicionado\n`;
+        }
 
-      textoPedido += `\nProprietários:\n`;
-      if (pedido.proprietarios) {
-          textoPedido += pedido.proprietarios
-              .split('|')
-              .filter(item => item.trim() !== '')
-              .map(p => p.trim())
-              .join('\n');
-      } else {
-          textoPedido += `Nenhum proprietário adicionado\n`;
-      }
+        textoPedido += `\nProprietários:\n`;
+        if (pedido.proprietarios) {
+            textoPedido += pedido.proprietarios
+                .split('|')
+                .filter(item => item.trim() !== '')
+                .map(p => p.trim())
+                .join('\n');
+        } else {
+            textoPedido += `Nenhum proprietário adicionado\n`;
+        }
 
-      // Adiciona a linha de separação
-      textoPedido += `\n----------------------------------------\n`;
+        // Adiciona a linha de separação
+        textoPedido += `\n----------------------------------------\n`;
 
-      // 3. Copiar para a área de transferência
-      navigator.clipboard.writeText(textoPedido).then(() => {
-          alert("Pedido copiado para a área de transferência!");
-      }, () => {
-          alert("Erro ao copiar o pedido!");
-      });
-  } else {
-      alert("Pedido não encontrado!");
-  }
+        // 3. Copiar para a área de transferência
+        navigator.clipboard.writeText(textoPedido).then(() => {
+            alert("Pedido copiado para a área de transferência!");
+        }, () => {
+            alert("Erro ao copiar o pedido!");
+        });
+    } else {
+        alert("Pedido não encontrado!");
+    }
 }
 
+// Função para baixar todos os pedidos em formato JSON
+document.getElementById('baixarPedidos').addEventListener('click', async function () {
+    try {
+        // Faz a requisição para a rota que retorna todos os pedidos
+        const response = await fetch('/listar_todos_pedidos');
+
+        // Verifica se a requisição foi bem-sucedida (status 200-299)
+        if (!response.ok) {
+            // Lança um erro com informações sobre o status da resposta
+            throw new Error(`Erro ao baixar pedidos: ${response.status} ${response.statusText}`);
+        }
+
+        // Converte a resposta para JSON
+        const data = await response.json();
+        const pedidos = data.pedidos; // Obtém o array de pedidos
+
+        // Formata os dados dos pedidos
+        const pedidosFormatados = pedidos.map(pedido => ({
+            Pedido: pedido.pedido,
+            Data: formatarData(pedido.data), //Usa a função de formatar data.
+            Matrícula: pedido.matricula,
+            Ônus: pedido.onus,
+            Folhas: pedido.folhas,
+            Imagens: pedido.imagens,
+            tipoCertidao: pedido.tipoCertidao,
+            codigoArirj: pedido.codigoArirj,
+            codigoEcartorio: pedido.codigoEcartorio,
+            Protocolos: pedido.protocolos
+                ? pedido.protocolos
+                    .replace(/<[^>]*>/g, '') // Remove tags HTML
+                    .split('|') // Divide os protocolos em um array
+                    .filter(item => item.trim() !== '') // Remove linhas vazias
+                : [],
+            Participantes: pedido.proprietarios
+                ? pedido.proprietarios
+                    .replace(/<[^>]*>/g, '') // Remove tags HTML
+                    .split('|') // Divide os proprietarios em um array
+                    .filter(item => item.trim() !== '') // Remove itens vazios
+                    .map(item => `${item.trim()}`) // Formata
+                : []
+        }));
+
+        // Converte o array de pedidos formatados para uma string JSON com indentação
+        const conteudo = JSON.stringify(pedidosFormatados, null, 2);
+
+        // Cria um Blob
+        const blob = new Blob([conteudo], { type: 'application/json' });
+
+        // Cria um elemento <a> temporário para fazer o download
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'pedidos.json';
+        link.click();
+        URL.revokeObjectURL(link.href); // Libera a URL
+
+    } catch (error) {
+        // Captura qualquer erro
+        console.error("Erro ao baixar pedidos:", error);
+        alert("Erro ao baixar pedidos. Verifique o console para detalhes.");
+    }
+});
+
+
+
+// Função para copiar todos os pedidos para a área de transferência
+document.getElementById('copiarTodosPedidos').addEventListener('click', async function() {
+    try {
+        // Faz a requisição para a rota que retorna todos os pedidos
+        const response = await fetch('/listar_todos_pedidos');
+
+        // Verifica se a requisição foi bem-sucedida
+        if (!response.ok) {
+            throw new Error(`Erro ao obter pedidos: ${response.status} ${response.statusText}`);
+        }
+
+        // Converte a resposta para JSON
+        const data = await response.json();
+        const pedidos = data.pedidos; // Obtém o array de pedidos
+
+        // Formata os dados em uma única string
+        let textoTodosPedidos = "";
+        pedidos.forEach((pedido) => {
+            const dataFormatada = formatarData(pedido.data);
+            let textoPedido = `
+Pedido: ${pedido.pedido}
+Data: ${dataFormatada}
+Matrícula: ${pedido.matricula}
+Ônus: ${pedido.onus}
+N.º Folhas: ${pedido.folhas}
+N.º Imagens: ${pedido.imagens}
+Tipo de Certidão: ${pedido.tipoCertidao}
+`;
+
+            if (pedido.tipoCertidao === "ARIRJ") {
+                textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
+            }
+
+            if (pedido.tipoCertidao === "E-CARTORIO") {
+                textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+            }
+
+            textoPedido += `Protocolos:\n`;
+            if (pedido.protocolos) {
+                textoPedido += pedido.protocolos
+                    .split("|")
+                    .filter((item) => item.trim() !== "")
+                    .map((p) => p.replace(/<button.*?>.*?<\/button>/gi, "").trim())
+                    .join("\n");
+            } else {
+                textoPedido += "Nenhum protocolo adicionado\n";
+            }
+
+            textoPedido += `\nProprietários:\n`;
+            if (pedido.proprietarios) {
+                textoPedido += pedido.proprietarios
+                    .split("|")
+                    .filter((item) => item.trim() !== "")
+                    .map((p) => p.trim())
+                    .join("\n");
+            } else {
+                textoPedido += "Nenhum proprietário adicionado\n";
+            }
+
+            textoPedido += `\n----------------------------------------\n`;
+            textoTodosPedidos += textoPedido;
+        });
+
+        // Copia para a área de transferência
+        navigator.clipboard.writeText(textoTodosPedidos)
+            .then(() => {
+                alert("Todos os pedidos copiados para a área de transferência!");
+            })
+            .catch(() => {
+                alert("Erro ao copiar os pedidos!");
+            });
+
+    } catch (error) {
+        console.error("Erro ao copiar pedidos:", error);
+        alert("Erro ao copiar pedidos. Verifique o console para detalhes.");
+    }
+});
 
 // Abrir o modal
 document.getElementById('openModal').addEventListener('click', function () {
-  document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('modal').classList.remove('hidden');
 
-  // Define o limite de dígitos e o placeholder do campo "CPF/CNPJ" quando o modal é aberto
-  const tipoDocumento = document.getElementById('tipoDocumento').value;
-  const campoCpfCnpj = document.getElementById('cpf');
-  if (tipoDocumento === 'cpf') {
-    campoCpfCnpj.setAttribute('maxlength', '11');
-    campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
-  } else if (tipoDocumento === 'cnpj') {
-    campoCpfCnpj.setAttribute('maxlength', '14');
-    campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
-  }
-    // Define a data atual no formato YYYY-MM-DD
+    // Define o limite de dígitos e o placeholder do campo "CPF/CNPJ"
+    const tipoDocumento = document.getElementById('tipoDocumento').value;
+    const campoCpfCnpj = document.getElementById('cpf');
+    if (tipoDocumento === 'cpf') {
+        campoCpfCnpj.setAttribute('maxlength', '11');
+        campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
+    } else if (tipoDocumento === 'cnpj') {
+        campoCpfCnpj.setAttribute('maxlength', '14');
+        campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
+    }
+    // Define a data atual no formato রাখেYYYY-MM-DD
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, '0');
     const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
     const ano = hoje.getFullYear();
-    document.getElementById('data').value = `${ano}-${mes}-${dia}`;
+    document.getElementById('data').value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
 });
 
 // Fechar o modal
 document.getElementById("closeModal").addEventListener("click", function () {
-  console.log("Fechando o modal");
-  document.getElementById("modal").classList.add("hidden");
+    console.log("Fechando o modal");
+    document.getElementById("modal").classList.add("hidden");
 
-  // Limpar campos do formulário e atribuir a data atual formatada
-  document.getElementById("pedido").value = "";
-  document.getElementById("matricula").value = "";
-  document.getElementById("onus").value = "NEGATIVA";
-  document.getElementById("folhas").value = "";
-  document.getElementById("imagens").value = "";
-  document.getElementById("tipoCertidao").value = "BALCAO";
-  document.getElementById("codigoArirj").value = "";
-  document.getElementById("codigoEcartorio").value = "";
-  document.getElementById("protocolosAdicionados").innerHTML = "";
-  document.getElementById("proprietariosAdicionados").innerHTML = "";
-  document.getElementById("protocolosAdicionados").dataset.protocolos = "";
-  document.getElementById("proprietariosAdicionados").dataset.proprietarios = "";
-  // Formata a data atual para রাখেYYYY-MM-DD
-  const hoje = new Date();
-  const dia = String(hoje.getDate()).padStart(2, "0");
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0"); // Janeiro é 0!
-  const ano = hoje.getFullYear();
-  document.getElementById("data").value = `${ano}-${mes}-${dia}`;
+    // Limpar campos e atribuir data atual formatada
+    document.getElementById("pedido").value = "";
+    document.getElementById("matricula").value = "";
+    document.getElementById("onus").value = "NEGATIVA";
+    document.getElementById("folhas").value = "";
+    document.getElementById("imagens").value = "";
+    document.getElementById("tipoCertidao").value = "BALCAO";
+    document.getElementById("codigoArirj").value = "";
+    document.getElementById("codigoEcartorio").value = "";
+    document.getElementById("protocolosAdicionados").innerHTML = "";
+    document.getElementById("proprietariosAdicionados").innerHTML = "";
+    document.getElementById("protocolosAdicionados").dataset.protocolos = "";
+    document.getElementById("proprietariosAdicionados").dataset.proprietarios = "";
+    // Formata a data atual para রাখেYYYY-MM-DD
+    const hoje = new Date();
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0"); // Janeiro é 0!
+    const ano = hoje.getFullYear();
+    document.getElementById("data").value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
 });
 
 // Funções para abrir e fechar popups
 function abrirPopupProtocolos() {
-  document.getElementById('popupProtocolos').classList.remove('hidden');
+    document.getElementById('popupProtocolos').classList.remove('hidden');
 }
 function fecharPopupProtocolos() {
-  document.getElementById('popupProtocolos').classList.add('hidden');
+    document.getElementById('popupProtocolos').classList.add('hidden');
 }
 // Função para abrir o popup de participantes
 function abrirPopupProprietarios() {
-  document.getElementById('popupProprietarios').classList.remove('hidden');
-  // Define o limite de dígitos e o placeholder do campo "CPF/CNPJ" quando o modal é aberto
-  const tipoDocumento = document.getElementById('tipoDocumento').value;
-  const campoCpfCnpj = document.getElementById('cpf');
-  if (tipoDocumento === 'cpf') {
-    campoCpfCnpj.setAttribute('maxlength', '11');
-    campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
-  } else if (tipoDocumento === 'cnpj') {
-    campoCpfCnpj.setAttribute('maxlength', '14');
-    campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
-  }
+    document.getElementById('popupProprietarios').classList.remove('hidden');
+    // Define o limite de dígitos e o placeholder
+    const tipoDocumento = document.getElementById('tipoDocumento').value;
+    const campoCpfCnpj = document.getElementById('cpf');
+    if (tipoDocumento === 'cpf') {
+        campoCpfCnpj.setAttribute('maxlength', '11');
+        campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
+    } else if (tipoDocumento === 'cnpj') {
+        campoCpfCnpj.setAttribute('maxlength', '14');
+        campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
+    }
 }
 
 function fecharPopupProprietarios() {
-  document.getElementById('popupProprietarios').classList.add('hidden');
+    document.getElementById('popupProprietarios').classList.add('hidden');
 }
 
 // Ações dos botões
@@ -586,81 +724,81 @@ document.getElementById('abrirPopupProprietarios').addEventListener('click', abr
 
 // Adicionar protocolo
 document.getElementById('confirmarProtocolo').addEventListener('click', function () {
-  const protocolo = document.getElementById('novoProtocolo').value.trim();
-  if (protocolo) {
-    // Armazenar os protocolos em um array
-    let protocolosArray = [];
-    if (document.getElementById('protocolosAdicionados').dataset.protocolos) {
-      protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+    const protocolo = document.getElementById('novoProtocolo').value.trim();
+    if (protocolo) {
+        // Armazenar os protocolos em um array
+        let protocolosArray = [];
+        if (document.getElementById('protocolosAdicionados').dataset.protocolos) {
+            protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+        }
+
+        // Adiciona o novo protocolo ao array
+        protocolosArray.push(protocolo);
+
+        // Atualiza o dataset com os protocolos
+        document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+
+        // Renderizar a lista de protocolos
+        renderizarProtocolos();
+
+        document.getElementById('novoProtocolo').value = ''; // Limpar campo
     }
-
-    // Adiciona o novo protocolo ao array
-    protocolosArray.push(protocolo);
-
-    // Atualiza o dataset com os protocolos
-    document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
-
-    // Renderizar a lista de protocolos
-    renderizarProtocolos();
-
-    document.getElementById('novoProtocolo').value = ''; // Limpar campo
-  }
 });
 
 // Função para renderizar a lista de protocolos
 function renderizarProtocolos() {
-  const protocolosAdicionadosDiv = document.getElementById('protocolosAdicionados');
-  protocolosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
+    const protocolosAdicionadosDiv = document.getElementById('protocolosAdicionados');
+    protocolosAdicionadosDiv.innerHTML = ''; // Limpa a lista
 
-  let protocolosArray = [];
-  if (protocolosAdicionadosDiv.dataset.protocolos) {
-    protocolosArray = protocolosAdicionadosDiv.dataset.protocolos.split('|');
-  }
+    let protocolosArray = [];
+    if (protocolosAdicionadosDiv.dataset.protocolos) {
+        protocolosArray = protocolosAdicionadosDiv.dataset.protocolos.split('|');
+    }
 
-  protocolosArray.forEach((protocoloTexto, index) => {
-    const protocoloSpan = document.createElement('span');
-    protocoloSpan.classList.add('text-white');
-    protocoloSpan.textContent = protocoloTexto;
+    protocolosArray.forEach((protocoloTexto, index) => {
+        const protocoloSpan = document.createElement('span');
+        protocoloSpan.classList.add('text-white');
+        protocoloSpan.textContent = protocoloTexto;
 
-    // Botão Editar
-    const editButton = document.createElement('button');
-    editButton.classList.add('edit-protocolo-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    editButton.textContent = 'Editar';
-    editButton.dataset.index = index; // Armazena o índice do protocolo
+        // Botão Editar
+        const editButton = document.createElement('button');
+        editButton.classList.add('edit-protocolo-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+        editButton.textContent = 'Editar';
+        editButton.dataset.index = index; // Armazena o índice
 
-    // Botão Excluir
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('delete-protocolo-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    deleteButton.textContent = 'Excluir';
-    deleteButton.dataset.index = index; // Armazena o índice do protocolo
+        // Botão Excluir
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-protocolo-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+        deleteButton.textContent = 'Excluir';
+        deleteButton.dataset.index = index; // Armazena o índice
 
-    const container = document.createElement('div');
-    container.appendChild(protocoloSpan);
-    container.appendChild(editButton);
-    container.appendChild(deleteButton);
+        const container = document.createElement('div');
+        container.appendChild(protocoloSpan);
+        container.appendChild(editButton);
+        container.appendChild(deleteButton);
 
-    protocolosAdicionadosDiv.appendChild(container);
-    protocolosAdicionadosDiv.appendChild(document.createElement('br'));
-  });
+        protocolosAdicionadosDiv.appendChild(container);
+        protocolosAdicionadosDiv.appendChild(document.createElement('br'));
+    });
 
-  // Adiciona event listeners para os botões de editar e excluir protocolos
-  const editButtons = document.querySelectorAll('.edit-protocolo-button');
-  editButtons.forEach(button => {
-    button.removeEventListener('click', handleEditProtocoloButtonClick);
-    button.addEventListener('click', handleEditProtocoloButtonClick);
-  });
+    // Event listeners para editar/excluir
+    const editButtons = document.querySelectorAll('.edit-protocolo-button');
+    editButtons.forEach(button => {
+        button.removeEventListener('click', handleEditProtocoloButtonClick);
+        button.addEventListener('click', handleEditProtocoloButtonClick);
+    });
 
-  const deleteButtons = document.querySelectorAll('.delete-protocolo-button');
-  deleteButtons.forEach(button => {
-    button.removeEventListener('click', handleDeleteProtocoloButtonClick);
-    button.addEventListener('click', handleDeleteProtocoloButtonClick);
-  });
+    const deleteButtons = document.querySelectorAll('.delete-protocolo-button');
+    deleteButtons.forEach(button => {
+        button.removeEventListener('click', handleDeleteProtocoloButtonClick);
+        button.addEventListener('click', handleDeleteProtocoloButtonClick);
+    });
 }
 
 // Função para lidar com o clique no botão de editar protocolo
 function handleEditProtocoloButtonClick(event) {
-  const index = parseInt(event.target.dataset.index);
-  let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+    const index = parseInt(event.target.dataset.index);
+    let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
   const protocoloTexto = protocolosArray[index];
 
   // Preencher o campo de protocolo com o valor atual
@@ -883,148 +1021,7 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
   }
 });
 
-// Função para baixar todos os pedidos em formato JSON
-document.getElementById('baixarPedidos').addEventListener('click', async function () {
-    try {
-        // Faz a requisição para a rota que retorna todos os pedidos
-        const response = await fetch('/listar_todos_pedidos');
 
-        // Verifica se a requisição foi bem-sucedida (status 200-299)
-        if (!response.ok) {
-            // Lança um erro com informações sobre o status da resposta
-            throw new Error(`Erro ao baixar pedidos: ${response.status} ${response.statusText}`);
-        }
 
-        // Converte a resposta para JSON
-        const data = await response.json();
-        const pedidos = data.pedidos; // Obtém o array de pedidos
-
-        // Formata os dados dos pedidos (mesma lógica que você já tinha)
-        const pedidosFormatados = pedidos.map(pedido => ({
-            Pedido: pedido.pedido,
-            Data: new Date(pedido.data),
-            Matrícula: pedido.matricula,
-            Ônus: pedido.onus,
-            Folhas: pedido.folhas,
-            Imagens: pedido.imagens,
-            tipoCertidao: pedido.tipoCertidao,
-            codigoArirj: pedido.codigoArirj,
-            codigoEcartorio: pedido.codigoEcartorio,
-            Protocolos: pedido.protocolos
-                ? pedido.protocolos
-                    .replace(/<[^>]*>/g, '') // Remove tags HTML
-                    .split('|') // Divide os protocolos em um array
-                    .filter(item => item.trim() !== '') // Remove linhas vazias
-                : [],
-            Participantes: pedido.proprietarios
-                ? pedido.proprietarios
-                    .replace(/<[^>]*>/g, '') // Remove tags HTML
-                    .split('|') // Divide os proprietarios em um array
-                    .filter(item => item.trim() !== '') // Remove itens vazios
-                    .map(item => `${item.trim()}`) // Formata
-                : []
-        }));
-
-        // Converte o array de pedidos formatados para uma string JSON com indentação (para ficar mais legível)
-        const conteudo = JSON.stringify(pedidosFormatados, null, 2);
-
-        // Cria um Blob (Binary Large Object) com o conteúdo JSON
-        const blob = new Blob([conteudo], { type: 'application/json' });
-
-        // Cria um elemento <a> temporário para fazer o download
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);  // Define a URL do Blob como a URL do link
-        link.download = 'pedidos.json'; // Define o nome do arquivo para download
-        link.click(); // Simula um clique no link para iniciar o download
-        URL.revokeObjectURL(link.href); // Libera a URL do Blob após o download
-
-    } catch (error) {
-        // Captura qualquer erro que ocorra durante o processo
-        console.error("Erro ao baixar pedidos:", error);
-        alert("Erro ao baixar pedidos. Verifique o console para detalhes."); // Exibe uma mensagem de erro amigável
-    }
-});
-
-// Copiar todos os pedidos
-// Função para copiar todos os pedidos para a área de transferência
-document.getElementById('copiarTodosPedidos').addEventListener('click', async function() {
-    try {
-        // Faz a requisição para a rota que retorna todos os pedidos
-        const response = await fetch('/listar_todos_pedidos');
-
-        // Verifica se a requisição foi bem-sucedida
-        if (!response.ok) {
-            throw new Error(`Erro ao obter pedidos: ${response.status} ${response.statusText}`);
-        }
-
-        // Converte a resposta para JSON
-        const data = await response.json();
-        const pedidos = data.pedidos; // Obtém o array de pedidos
-
-        // Formata os dados dos pedidos em uma única string (mesma lógica que você já tinha)
-        let textoTodosPedidos = "";
-        pedidos.forEach((pedido) => {
-            const dataFormatada = pedido.data
-                ? new Date(pedido.data).toLocaleDateString("pt-BR")
-                : "Data inválida";
-            let textoPedido = `
-Pedido: ${pedido.pedido}
-Data: ${dataFormatada}
-Matrícula: ${pedido.matricula}
-Ônus: ${pedido.onus}
-N.º Folhas: ${pedido.folhas}
-N.º Imagens: ${pedido.imagens}
-Tipo de Certidão: ${pedido.tipoCertidao}
-`;
-
-            if (pedido.tipoCertidao === "ARIRJ") {
-                textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
-            }
-
-            if (pedido.tipoCertidao === "E-CARTORIO") {
-                textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
-            }
-
-            textoPedido += `Protocolos:\n`;
-            if (pedido.protocolos) {
-                textoPedido += pedido.protocolos
-                    .split("|")
-                    .filter((item) => item.trim() !== "")
-                    .map((p) => p.replace(/<button.*?>.*?<\/button>/gi, "").trim())
-                    .join("\n");
-            } else {
-                textoPedido += "Nenhum protocolo adicionado\n";
-            }
-
-            textoPedido += `\nProprietários:\n`;
-            if (pedido.proprietarios) {
-                textoPedido += pedido.proprietarios
-                    .split("|")
-                    .filter((item) => item.trim() !== "")
-                    .map((p) => p.trim())
-                    .join("\n");
-            } else {
-                textoPedido += "Nenhum proprietário adicionado\n";
-            }
-
-            textoPedido += `\n----------------------------------------\n`;
-            textoTodosPedidos += textoPedido;
-        });
-
-        // Copia a string formatada para a área de transferência
-        navigator.clipboard.writeText(textoTodosPedidos)
-            .then(() => {
-                alert("Todos os pedidos copiados para a área de transferência!");
-            })
-            .catch(() => {
-                alert("Erro ao copiar os pedidos!");
-            });
-
-    } catch (error) {
-        // Captura qualquer erro que ocorra durante o processo
-        console.error("Erro ao copiar pedidos:", error);
-        alert("Erro ao copiar pedidos. Verifique o console para detalhes."); // Mensagem de erro amigável
-    }
-});
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
