@@ -505,66 +505,6 @@ Tipo de Certidão: ${pedido.tipoCertidao}
   }
 }
 
-function copiarTodosPedidos() {
-  let textoTodosPedidos = "";
-
-  pedidosCarregados.forEach((pedido) => {
-    const dataFormatada = pedido.data
-      ? new Date(pedido.data).toLocaleDateString("pt-BR")
-      : "Data inválida";
-    let textoPedido = `
-Pedido: ${pedido.pedido}
-Data: ${dataFormatada}
-Matrícula: ${pedido.matricula}
-Ônus: ${pedido.onus}
-N.º Folhas: ${pedido.folhas}
-N.º Imagens: ${pedido.imagens}
-Tipo de Certidão: ${pedido.tipoCertidao}
-`;
-
-    if (pedido.tipoCertidao === "ARIRJ") {
-      textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
-    }
-
-    if (pedido.tipoCertidao === "E-CARTORIO") {
-      textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
-    }
-
-    textoPedido += `Protocolos:\n`;
-    if (pedido.protocolos) {
-      textoPedido += pedido.protocolos
-        .split("|")
-        .filter((item) => item.trim() !== "")
-        .map((p) => p.replace(/<button.*?>.*?<\/button>/gi, "").trim())
-        .join("\n");
-    } else {
-      textoPedido += "Nenhum protocolo adicionado\n";
-    }
-
-    textoPedido += `\nProprietários:\n`;
-    if (pedido.proprietarios) {
-      textoPedido += pedido.proprietarios
-        .split("|")
-        .filter((item) => item.trim() !== "")
-        .map((p) => p.trim())
-        .join("\n");
-    } else {
-      textoPedido += "Nenhum proprietário adicionado\n";
-    }
-
-    textoPedido += `\n----------------------------------------\n`;
-    textoTodosPedidos += textoPedido;
-  });
-
-  navigator.clipboard
-    .writeText(textoTodosPedidos)
-    .then(() => {
-      alert("Todos os pedidos copiados para a área de transferência!");
-    })
-    .catch(() => {
-      alert("Erro ao copiar os pedidos!");
-    });
-}
 
 // Abrir o modal
 document.getElementById('openModal').addEventListener('click', function () {
@@ -888,6 +828,66 @@ if (document.getElementById('tipoDocumento').value === 'cpf') {
 }
 
 
+// No seu scripts.js
+document.getElementById('baixarPedidos').addEventListener('click', async function () {
+    try {
+        const response = await fetch('/listar_todos_pedidos'); // Requisição para a nova rota
+        if (!response.ok) {
+            throw new Error(`Erro ao baixar pedidos: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        const pedidos = data.pedidos;  // Obtém TODOS os pedidos
+
+        //O restante do código continua o mesmo,
+        //mas agora você opera sobre a variável 'pedidos', e não mais 'pedidosCarregados'
+        const pedidosFormatados = pedidos.map(pedido => ({
+           // ... (resto da formatação) ...
+        }));
+
+        const conteudo = JSON.stringify(pedidosFormatados, null, 2);
+        const blob = new Blob([conteudo], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'pedidos.json';
+        link.click();
+
+    } catch (error) {
+        console.error("Erro ao baixar pedidos:", error);
+        alert("Erro ao baixar pedidos. Verifique o console para detalhes.");
+    }
+});
+
+document.getElementById('copiarTodosPedidos').addEventListener('click', async function() {
+  try {
+        const response = await fetch('/listar_todos_pedidos'); // Requisição para a nova rota
+        if (!response.ok) {
+            throw new Error(`Erro ao obter pedidos: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        const pedidos = data.pedidos; //Obtem TODOS os pedidos.
+
+        //O restante do código continua o mesmo,
+        //mas agora você opera sobre a variável 'pedidos', e não mais 'pedidosCarregados'
+        let textoTodosPedidos = "";
+        pedidos.forEach((pedido) => {
+          // ... (resto da formatação) ...
+        });
+
+        navigator.clipboard.writeText(textoTodosPedidos)
+          .then(() => {
+            alert("Todos os pedidos copiados para a área de transferência!");
+          })
+          .catch(() => {
+            alert("Erro ao copiar os pedidos!");
+          });
+
+    } catch (error) {
+    console.error("Erro ao copiar pedidos:", error);
+    alert("Erro ao copiar pedidos. Verifique o console para detalhes.");
+  }
+});
+
+  
 
     // Remover o proprietário da lista
     proprietariosArray.splice(index, 1);
@@ -943,32 +943,7 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
   }
 });
 
-document.getElementById('baixarPedidos').addEventListener('click', function () {
-  // Usa os pedidos carregados na variável global
-  const pedidosFormatados = pedidosCarregados.map(pedido => ({
-    Pedido: pedido.pedido,
-    Data: new Date(pedido.data),
-    Matrícula: pedido.matricula,
-    Ônus: pedido.onus,      
-    Folhas: pedido.folhas,
-    Imagens: pedido.imagens,
-    tipoCertidao: pedido.tipoCertidao,
-    codigoArirj: pedido.codigoArirj,
-    codigoEcartorio: pedido.codigoEcartorio,
-    Protocolos: pedido.protocolos
-      ? pedido.protocolos
-        .replace(/<[^>]*>/g, '') // Remove tags HTML
-        .split('|') // Divide os protocolos em um array
-        .filter(item => item.trim() !== '') // Remove linhas vazias
-      : [],
-    Participantes: pedido.proprietarios
-      ? pedido.proprietarios
-        .replace(/<[^>]*>/g, '') // Remove tags HTML
-        .split('|') // Divide os proprietarios em um array
-        .filter(item => item.trim() !== '') // Remove itens vazios
-        .map(item => `${item.trim()}`) // Formata
-      : []
-  }));
+
 
   // Converte os pedidos para JSON formatado
   const conteudo = JSON.stringify(pedidosFormatados, null, 2);
@@ -981,8 +956,7 @@ document.getElementById('baixarPedidos').addEventListener('click', function () {
   link.click();
 });
 
-// Copiar todos os pedidos
-document.getElementById('copiarTodosPedidos').addEventListener('click', copiarTodosPedidos);
+
 
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
