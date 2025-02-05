@@ -505,66 +505,6 @@ Tipo de Certidão: ${pedido.tipoCertidao}
   }
 }
 
-function copiarTodosPedidos() {
-  let textoTodosPedidos = "";
-
-  pedidosCarregados.forEach((pedido) => {
-    const dataFormatada = pedido.data
-      ? new Date(pedido.data).toLocaleDateString("pt-BR")
-      : "Data inválida";
-    let textoPedido = `
-Pedido: ${pedido.pedido}
-Data: ${dataFormatada}
-Matrícula: ${pedido.matricula}
-Ônus: ${pedido.onus}
-N.º Folhas: ${pedido.folhas}
-N.º Imagens: ${pedido.imagens}
-Tipo de Certidão: ${pedido.tipoCertidao}
-`;
-
-    if (pedido.tipoCertidao === "ARIRJ") {
-      textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
-    }
-
-    if (pedido.tipoCertidao === "E-CARTORIO") {
-      textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
-    }
-
-    textoPedido += `Protocolos:\n`;
-    if (pedido.protocolos) {
-      textoPedido += pedido.protocolos
-        .split("|")
-        .filter((item) => item.trim() !== "")
-        .map((p) => p.replace(/<button.*?>.*?<\/button>/gi, "").trim())
-        .join("\n");
-    } else {
-      textoPedido += "Nenhum protocolo adicionado\n";
-    }
-
-    textoPedido += `\nProprietários:\n`;
-    if (pedido.proprietarios) {
-      textoPedido += pedido.proprietarios
-        .split("|")
-        .filter((item) => item.trim() !== "")
-        .map((p) => p.trim())
-        .join("\n");
-    } else {
-      textoPedido += "Nenhum proprietário adicionado\n";
-    }
-
-    textoPedido += `\n----------------------------------------\n`;
-    textoTodosPedidos += textoPedido;
-  });
-
-  navigator.clipboard
-    .writeText(textoTodosPedidos)
-    .then(() => {
-      alert("Todos os pedidos copiados para a área de transferência!");
-    })
-    .catch(() => {
-      alert("Erro ao copiar os pedidos!");
-    });
-}
 
 // Abrir o modal
 document.getElementById('openModal').addEventListener('click', function () {
@@ -943,46 +883,148 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
   }
 });
 
-document.getElementById('baixarPedidos').addEventListener('click', function () {
-  // Usa os pedidos carregados na variável global
-  const pedidosFormatados = pedidosCarregados.map(pedido => ({
-    Pedido: pedido.pedido,
-    Data: new Date(pedido.data),
-    Matrícula: pedido.matricula,
-    Ônus: pedido.onus,      
-    Folhas: pedido.folhas,
-    Imagens: pedido.imagens,
-    tipoCertidao: pedido.tipoCertidao,
-    codigoArirj: pedido.codigoArirj,
-    codigoEcartorio: pedido.codigoEcartorio,
-    Protocolos: pedido.protocolos
-      ? pedido.protocolos
-        .replace(/<[^>]*>/g, '') // Remove tags HTML
-        .split('|') // Divide os protocolos em um array
-        .filter(item => item.trim() !== '') // Remove linhas vazias
-      : [],
-    Participantes: pedido.proprietarios
-      ? pedido.proprietarios
-        .replace(/<[^>]*>/g, '') // Remove tags HTML
-        .split('|') // Divide os proprietarios em um array
-        .filter(item => item.trim() !== '') // Remove itens vazios
-        .map(item => `${item.trim()}`) // Formata
-      : []
-  }));
+// Função para baixar todos os pedidos em formato JSON
+document.getElementById('baixarPedidos').addEventListener('click', async function () {
+    try {
+        // Faz a requisição para a rota que retorna todos os pedidos
+        const response = await fetch('/listar_todos_pedidos');
 
-  // Converte os pedidos para JSON formatado
-  const conteudo = JSON.stringify(pedidosFormatados, null, 2);
+        // Verifica se a requisição foi bem-sucedida (status 200-299)
+        if (!response.ok) {
+            // Lança um erro com informações sobre o status da resposta
+            throw new Error(`Erro ao baixar pedidos: ${response.status} ${response.statusText}`);
+        }
 
-  // Cria um blob com o conteúdo em JSON e dispara o download
-  const blob = new Blob([conteudo], { type: 'application/json' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'pedidos.json'; // Nome do arquivo para download
-  link.click();
+        // Converte a resposta para JSON
+        const data = await response.json();
+        const pedidos = data.pedidos; // Obtém o array de pedidos
+
+        // Formata os dados dos pedidos (mesma lógica que você já tinha)
+        const pedidosFormatados = pedidos.map(pedido => ({
+            Pedido: pedido.pedido,
+            Data: new Date(pedido.data),
+            Matrícula: pedido.matricula,
+            Ônus: pedido.onus,
+            Folhas: pedido.folhas,
+            Imagens: pedido.imagens,
+            tipoCertidao: pedido.tipoCertidao,
+            codigoArirj: pedido.codigoArirj,
+            codigoEcartorio: pedido.codigoEcartorio,
+            Protocolos: pedido.protocolos
+                ? pedido.protocolos
+                    .replace(/<[^>]*>/g, '') // Remove tags HTML
+                    .split('|') // Divide os protocolos em um array
+                    .filter(item => item.trim() !== '') // Remove linhas vazias
+                : [],
+            Participantes: pedido.proprietarios
+                ? pedido.proprietarios
+                    .replace(/<[^>]*>/g, '') // Remove tags HTML
+                    .split('|') // Divide os proprietarios em um array
+                    .filter(item => item.trim() !== '') // Remove itens vazios
+                    .map(item => `${item.trim()}`) // Formata
+                : []
+        }));
+
+        // Converte o array de pedidos formatados para uma string JSON com indentação (para ficar mais legível)
+        const conteudo = JSON.stringify(pedidosFormatados, null, 2);
+
+        // Cria um Blob (Binary Large Object) com o conteúdo JSON
+        const blob = new Blob([conteudo], { type: 'application/json' });
+
+        // Cria um elemento <a> temporário para fazer o download
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);  // Define a URL do Blob como a URL do link
+        link.download = 'pedidos.json'; // Define o nome do arquivo para download
+        link.click(); // Simula um clique no link para iniciar o download
+        URL.revokeObjectURL(link.href); // Libera a URL do Blob após o download
+
+    } catch (error) {
+        // Captura qualquer erro que ocorra durante o processo
+        console.error("Erro ao baixar pedidos:", error);
+        alert("Erro ao baixar pedidos. Verifique o console para detalhes."); // Exibe uma mensagem de erro amigável
+    }
 });
 
 // Copiar todos os pedidos
-document.getElementById('copiarTodosPedidos').addEventListener('click', copiarTodosPedidos);
+// Função para copiar todos os pedidos para a área de transferência
+document.getElementById('copiarTodosPedidos').addEventListener('click', async function() {
+    try {
+        // Faz a requisição para a rota que retorna todos os pedidos
+        const response = await fetch('/listar_todos_pedidos');
 
+        // Verifica se a requisição foi bem-sucedida
+        if (!response.ok) {
+            throw new Error(`Erro ao obter pedidos: ${response.status} ${response.statusText}`);
+        }
+
+        // Converte a resposta para JSON
+        const data = await response.json();
+        const pedidos = data.pedidos; // Obtém o array de pedidos
+
+        // Formata os dados dos pedidos em uma única string (mesma lógica que você já tinha)
+        let textoTodosPedidos = "";
+        pedidos.forEach((pedido) => {
+            const dataFormatada = pedido.data
+                ? new Date(pedido.data).toLocaleDateString("pt-BR")
+                : "Data inválida";
+            let textoPedido = `
+Pedido: ${pedido.pedido}
+Data: ${dataFormatada}
+Matrícula: ${pedido.matricula}
+Ônus: ${pedido.onus}
+N.º Folhas: ${pedido.folhas}
+N.º Imagens: ${pedido.imagens}
+Tipo de Certidão: ${pedido.tipoCertidao}
+`;
+
+            if (pedido.tipoCertidao === "ARIRJ") {
+                textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
+            }
+
+            if (pedido.tipoCertidao === "E-CARTORIO") {
+                textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+            }
+
+            textoPedido += `Protocolos:\n`;
+            if (pedido.protocolos) {
+                textoPedido += pedido.protocolos
+                    .split("|")
+                    .filter((item) => item.trim() !== "")
+                    .map((p) => p.replace(/<button.*?>.*?<\/button>/gi, "").trim())
+                    .join("\n");
+            } else {
+                textoPedido += "Nenhum protocolo adicionado\n";
+            }
+
+            textoPedido += `\nProprietários:\n`;
+            if (pedido.proprietarios) {
+                textoPedido += pedido.proprietarios
+                    .split("|")
+                    .filter((item) => item.trim() !== "")
+                    .map((p) => p.trim())
+                    .join("\n");
+            } else {
+                textoPedido += "Nenhum proprietário adicionado\n";
+            }
+
+            textoPedido += `\n----------------------------------------\n`;
+            textoTodosPedidos += textoPedido;
+        });
+
+        // Copia a string formatada para a área de transferência
+        navigator.clipboard.writeText(textoTodosPedidos)
+            .then(() => {
+                alert("Todos os pedidos copiados para a área de transferência!");
+            })
+            .catch(() => {
+                alert("Erro ao copiar os pedidos!");
+            });
+
+    } catch (error) {
+        // Captura qualquer erro que ocorra durante o processo
+        console.error("Erro ao copiar pedidos:", error);
+        alert("Erro ao copiar pedidos. Verifique o console para detalhes."); // Mensagem de erro amigável
+    }
+});
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
