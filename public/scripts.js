@@ -419,7 +419,7 @@ function editarPedido(pedidoId) {
             const dia = String(data.getUTCDate()).padStart(2, '0');
 const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
             const ano = data.getUTCFullYear();
-            document.getElementById('data').value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
+            document.getElementById('data').value = `${ano}-${mes}-${dia}`;
         } else {
             document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
         }
