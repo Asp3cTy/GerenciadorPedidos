@@ -481,11 +481,11 @@ const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
 
         / 2. Formatar o texto do pedido
   if (pedido) {
-            const dataFormatada = pedido.data;
+            const dataFormatada = data;
       
         let textoPedido = `
 Pedido: ${pedido.pedido}
-Data: ${data}
+Data: ${dataFormatada}
 Matrícula: ${pedido.matricula}
 Ônus: ${pedido.onus}
 N.º Folhas: ${pedido.folhas}
