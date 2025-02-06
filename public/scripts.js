@@ -479,7 +479,7 @@ const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
             document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
         }
 
-        / 2. Formatar o texto do pedido
+        // 2. Formatar o texto do pedido
   if (pedido) {
             const dataFormatada = data;
       
