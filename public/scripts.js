@@ -491,7 +491,7 @@ const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
       
         let textoPedido = `
 Pedido: ${pedido.pedido}
-Data: ${pedido.data}
+Data: ${dataFormatada}
 Matrícula: ${pedido.matricula}
 Ônus: ${pedido.onus}
 N.º Folhas: ${pedido.folhas}
@@ -518,7 +518,7 @@ Tipo de Certidão: ${pedido.tipoCertidao}
             textoPedido += `Nenhum protocolo adicionado\n`;
         }
 
-        textoPedido += `\Participantes:\n`;
+        textoPedido += `\nProprietários:\n`;
         if (pedido.proprietarios) {
             textoPedido += pedido.proprietarios
                 .split('|')
@@ -555,6 +555,18 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
             throw new Error(`Erro ao baixar pedidos: ${response.status} ${response.statusText}`);
         }
 
+                // Formata a data manualmente e insere no HTML
+        let dataFormatada = "";
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, "0");
+            const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
+            const ano = data.getUTCFullYear();
+            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
+        } else {
+            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
+        }
+
         // Converte a resposta para JSON
         const data = await response.json();
         const pedidos = data.pedidos; // Obtém o array de pedidos
@@ -562,7 +574,7 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
         // Formata os dados dos pedidos
         const pedidosFormatados = pedidos.map(pedido => ({
             Pedido: pedido.pedido,
-            Data: new Date(pedido.data),
+            Data: pedido.data, //Usa a função de formatar data.
             Matrícula: pedido.matricula,
             Ônus: pedido.onus,
             Folhas: pedido.folhas,
@@ -622,7 +634,20 @@ document.getElementById('copiarTodosPedidos').addEventListener('click', async fu
         const data = await response.json();
         const pedidos = data.pedidos; // Obtém o array de pedidos
 
-
+        // Formata os dados em uma única string
+        let textoTodosPedidos = "";
+        pedidos.forEach((pedido) => {
+        // Formata a data manualmente e insere no HTML
+        let dataFormatada = "";
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, "0");
+            const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
+            const ano = data.getUTCFullYear();
+            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
+        } else {
+            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
+        }
             let textoPedido = `
 Pedido: ${pedido.pedido}
 Data: ${dataFormatada}
