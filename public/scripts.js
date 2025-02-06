@@ -8,8 +8,9 @@ function formatCpfCnpj(valor) {
 
     const digits = valor.replace(/\D/g, ''); // Remove tudo que não for número
 
-    if (digits.length === 14) {
-        return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5"); // CNPJ
+if (digits.length === 14) {
+    return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5"); // CNPJ
+}
     } else if (digits.length === 11) {
         return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4"); // CPF
     }
