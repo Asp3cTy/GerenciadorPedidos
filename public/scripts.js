@@ -572,6 +572,12 @@ Tipo de Certidão: ${pedido.tipoCertidao}
     });
 }
 
+// Função para extrair e formatar CPF/CNPJ dentro do texto do participante
+function formatarParticipante(participante) {
+    const regexCpfCnpj = /\d{11}|\d{14}/g; // Captura CPF (11 dígitos) ou CNPJ (14 dígitos)
+    return participante.replace(regexCpfCnpj, match => formatCpfCnpj(match));
+}
+
 // Evento para baixar os pedidos em JSON
 document.getElementById('baixarPedidos').addEventListener('click', async function () {
     try {
