@@ -394,6 +394,18 @@ document.getElementById('pedidosResumo').addEventListener('click', function (eve
     if (event.target.classList.contains('copiar-button')) {
         const pedidoId = parseInt(event.target.getAttribute('data-id'));
         copiarPedido(pedidoId);
+
+                // Preencher o campo de data formatando para YYYY-MM-dd
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, '0');
+const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+            const ano = data.getUTCFullYear();
+            document.getElementById('data').value = `${ano}-${mes}-${dia}`;
+        } else {
+            document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
+        }
+        
     }
 });
 
@@ -456,12 +468,20 @@ function copiarPedido(pedidoId) {
     // 1. Buscar o pedido pelo ID
     const pedido = buscarPedidoPorId(pedidoId);
 
-    // 2. Formatar o texto do pedido
-    if (pedido) {
-        const dataFormatada = formatarData(pedido.data); // Usa a função centralizada
+        // Preencher o campo de data formatando para YYYY-MM-dd
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, '0');
+const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+            const ano = data.getUTCFullYear();
+            document.getElementById('data').value = `${ano}-${mes}-${dia}`;
+        } else {
+            document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
+        }
+    
         let textoPedido = `
 Pedido: ${pedido.pedido}
-Data: ${dataFormatada}
+Data: ${pedido.data}
 Matrícula: ${pedido.matricula}
 Ônus: ${pedido.onus}
 N.º Folhas: ${pedido.folhas}
