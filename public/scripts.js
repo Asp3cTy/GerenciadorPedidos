@@ -562,9 +562,9 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
             const dia = String(data.getUTCDate()).padStart(2, "0");
             const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
             const ano = data.getUTCFullYear();
-            dataFormatada = `${dia}/${mes}/${ano}`;
+            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
         } else {
-            dataFormatada = `${dia}/${mes}/${ano}`;
+            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
         }
 
         // Converte a resposta para JSON
@@ -574,7 +574,7 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
         // Formata os dados dos pedidos
         const pedidosFormatados = pedidos.map(pedido => ({
             Pedido: pedido.pedido,
-            Data: pedido.data,
+            Data: dataFormatada,
             Matrícula: pedido.matricula,
             Ônus: pedido.onus,
             Folhas: pedido.folhas,
