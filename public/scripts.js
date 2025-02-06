@@ -564,7 +564,7 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
             const ano = data.getUTCFullYear();
             dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
         } else {
-            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
+            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
         }
 
         // Converte a resposta para JSON
