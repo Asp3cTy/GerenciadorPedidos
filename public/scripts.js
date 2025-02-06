@@ -169,9 +169,11 @@ function formatarData(data) {
 
 
 function renderPedidos(pedidos) {
+    // Limpa os pedidos anteriores
     const pedidosResumo = document.getElementById('pedidosResumo');
     pedidosResumo.innerHTML = '';
 
+    // Adiciona os pedidos da página atual à tela
     pedidos.forEach((pedido) => {
         const pedidoDiv = document.createElement('div');
         pedidoDiv.classList.add(
@@ -186,15 +188,26 @@ function renderPedidos(pedidos) {
             "items-start"
         );
 
-        // Usa a função formatarData.  O resultado JÁ VEM com <p><strong>
-        const dataFormatada = formatarData(pedido.data);
+        // Formata a data manualmente e insere no HTML
+        let dataFormatada = "";
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, "0");
+            const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
+            const ano = data.getUTCFullYear();
+            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
+        } else {
+            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
+        }
 
+        // Chama a função auxiliar para renderizar os participantes com a lupa
         const participantesHTML = renderizarParticipantes(pedido.proprietarios);
 
         pedidoDiv.innerHTML = `
             <div class="flex-grow">
                 <h3 class="font-bold">Pedido: ${pedido.pedido}</h3>
-                ${dataFormatada}   <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
+                ${dataFormatada}
+                <p><strong>Matrícula:</strong> ${pedido.matricula}</p>
                 <p><strong>Ônus:</strong> ${pedido.onus}</p>
                 <p><strong>N.º Folhas:</strong> ${pedido.folhas}</p>
                 <p><strong>N.º Imagens:</strong> ${pedido.imagens}</p>
@@ -203,7 +216,7 @@ function renderPedidos(pedidos) {
                 ${pedido.tipoCertidao === "E-CARTORIO"? `<p><strong>Código E-CARTORIO:</strong> ${pedido.codigoEcartorio}</p>`: ""}
                 <div data-participantes>
                 <p><strong>Participantes:</strong></p>
-                    ${participantesHTML}
+                    ${participantesHTML} 
                 </div>
                 <div>
                     <p><strong>Protocolos:</strong></p>
@@ -228,10 +241,10 @@ function renderPedidos(pedidos) {
             </div>
         `;
 
+
         pedidosResumo.appendChild(pedidoDiv);
     });
 }
-
 
 
 function renderizarParticipantes(proprietarios) {
