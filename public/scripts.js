@@ -2,6 +2,20 @@ let currentPage = 1; // Página atual
 let totalPages = 1; // Total de páginas (será calculado)
 let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
+function formatCpfCnpj(valor) {
+  // Remove tudo que não seja dígito
+  const digits = valor.replace(/\D/g, '');
+  if (digits.length === 11) {
+    // Formata CPF: xxx.xxx.xxx-xx
+    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  } else if (digits.length === 14) {
+    // Formata CNPJ: xx.xxx.xxx/xxxx-xx
+    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+  }
+  return valor; // Se não for 11 ou 14, retorna como está.
+}
+
+
 // Função para coletar dados do formulário
 function getDadosFormulario() {
     return {
@@ -288,6 +302,10 @@ function handleClickPesquisarCNIB(event) {
 // Aqui está um exemplo de como ela pode ser:
 function criarElementoParticipante(p) {
     const { cpfCnpj, texto } = extrairDadosParticipante(p);
+
+    // Se o cpfCnpj for encontrado, substitua-o no texto pelo formato
+  const textoFormatado = cpfCnpj ? texto.replace(cpfCnpj, formatCpfCnpj(cpfCnpj)) : texto;
+    
     return `
       <div class="participante flex items-center w-full flex-wrap">
         <p class="mr-2">${texto}</p>
@@ -393,6 +411,21 @@ document.getElementById('pedidosResumo').addEventListener('click', function (eve
     }
 });
 
+
+function formatParticipanteText(text) {
+  // Divide o texto do participante pelo separador " - "
+  const partes = text.split(' - ');
+  if (partes.length > 2) {
+    // Considera que a terceira parte é o CPF/CNPJ
+    const raw = partes[2].replace(/\D/g, '');
+    if (raw.length === 11 || raw.length === 14) {
+      partes[2] = formatCpfCnpj(raw);
+    }
+  }
+  return partes.join(' - ');
+}
+
+
 // Evento para copiar pedido (usando delegação de eventos)
 document.getElementById('pedidosResumo').addEventListener('click', function (event) {
     if (event.target.classList.contains('copiar-button')) {
@@ -472,22 +505,23 @@ function copiarPedido(pedidoId) {
     // 1. Buscar o pedido pelo ID
     const pedido = buscarPedidoPorId(pedidoId);
 
-            // Preencher o campo de data formatando para YYYY-MM-dd
-        if (pedido.data) {
-            const data = new Date(pedido.data);
-            const dia = String(data.getUTCDate()).padStart(2, '0');
-const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
-            const ano = data.getUTCFullYear();
-            document.getElementById('data').value = `${ano}-${mes}-${dia}`;
-        } else {
-            document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
-        }
+    if (!pedido) {
+        alert("Pedido não encontrado!");
+        return;
+    }
 
-        // 2. Formatar o texto do pedido
-  if (pedido) {
-            const dataFormatada = data;
-      
-        let textoPedido = `
+    // 2. Formatar a data para YYYY-MM-DD
+    let dataFormatada = "";
+    if (pedido.data) {
+        const data = new Date(pedido.data);
+        const dia = String(data.getUTCDate()).padStart(2, '0');
+        const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+        const ano = data.getUTCFullYear();
+        dataFormatada = `${ano}-${mes}-${dia}`;
+    }
+
+    // 3. Montar o texto do pedido
+    let textoPedido = `
 Pedido: ${pedido.pedido}
 Data: ${dataFormatada}
 Matrícula: ${pedido.matricula}
@@ -496,73 +530,57 @@ N.º Folhas: ${pedido.folhas}
 N.º Imagens: ${pedido.imagens}
 Tipo de Certidão: ${pedido.tipoCertidao}
 `;
- 
-        if (pedido.tipoCertidao === 'ARIRJ') {
-            textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
-        }
 
-        if (pedido.tipoCertidao === 'E-CARTORIO') {
-            textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
-        }
-
-        textoPedido += `Protocolos:\n`;
-        if (pedido.protocolos) {
-            textoPedido += pedido.protocolos
-                .split('|')
-                .filter(item => item.trim() !== '')
-                .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim())
-                .join('\n');
-        } else {
-            textoPedido += `Nenhum protocolo adicionado\n`;
-        }
-
-        textoPedido += `\nProprietários:\n`;
-        if (pedido.proprietarios) {
-            textoPedido += pedido.proprietarios
-                .split('|')
-                .filter(item => item.trim() !== '')
-                .map(p => p.trim())
-                .join('\n');
-        } else {
-            textoPedido += `Nenhum proprietário adicionado\n`;
-        }
-
-        // Adiciona a linha de separação
-        textoPedido += `\n----------------------------------------\n`;
-
-        // 3. Copiar para a área de transferência
-        navigator.clipboard.writeText(textoPedido).then(() => {
-            alert("Pedido copiado para a área de transferência!");
-        }, () => {
-            alert("Erro ao copiar o pedido!");
-        });
-    } else {
-        alert("Pedido não encontrado!");
+    if (pedido.tipoCertidao === 'ARIRJ') {
+        textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
     }
+
+    if (pedido.tipoCertidao === 'E-CARTORIO') {
+        textoPedido += `Código E-CARTORIO: ${pedido.codigoEcartorio}\n`;
+    }
+
+    textoPedido += `\nProtocolos:\n`;
+    if (pedido.protocolos) {
+        textoPedido += pedido.protocolos
+            .split('|')
+            .filter(item => item.trim() !== '')
+            .map(p => p.replace(/<button.*?>.*?<\/button>/gi, '').trim()) // Remove botões HTML
+            .join('\n');
+    } else {
+        textoPedido += `Nenhum protocolo adicionado\n`;
+    }
+
+    textoPedido += `\nProprietários:\n`;
+    if (pedido.proprietarios) {
+        textoPedido += pedido.proprietarios
+            .split('|')
+            .filter(item => item.trim() !== '')
+            .map(p => formatarProprietario(p.trim())) // Formata CPF/CNPJ
+            .join('\n');
+    } else {
+        textoPedido += `Nenhum proprietário adicionado\n`;
+    }
+
+    // Adiciona a linha de separação
+    textoPedido += `\n----------------------------------------\n`;
+
+    // 4. Copiar para a área de transferência
+    navigator.clipboard.writeText(textoPedido).then(() => {
+        alert("Pedido copiado para a área de transferência!");
+    }, () => {
+        alert("Erro ao copiar o pedido!");
+    });
 }
 
-// Função para baixar todos os pedidos em formato JSON
+// Evento para baixar os pedidos em JSON
 document.getElementById('baixarPedidos').addEventListener('click', async function () {
     try {
-        // Faz a requisição para a rota que retorna todos os pedidos
+        // Faz a requisição para obter todos os pedidos
         const response = await fetch('/listar_todos_pedidos');
 
-        // Verifica se a requisição foi bem-sucedida (status 200-299)
+        // Verifica se a requisição foi bem-sucedida
         if (!response.ok) {
-            // Lança um erro com informações sobre o status da resposta
             throw new Error(`Erro ao baixar pedidos: ${response.status} ${response.statusText}`);
-        }
-
-                // Formata a data manualmente e insere no HTML
-        let dataFormatada = "";
-        if (pedido.data) {
-            const data = new Date(pedido.data);
-            const dia = String(data.getUTCDate()).padStart(2, "0");
-            const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
-            const ano = data.getUTCFullYear();
-            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
-        } else {
-            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
         }
 
         // Converte a resposta para JSON
@@ -572,14 +590,14 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
         // Formata os dados dos pedidos
         const pedidosFormatados = pedidos.map(pedido => ({
             Pedido: pedido.pedido,
-            Data: pedido.data, //Usa a função de formatar data.
+            Data: formatarData(pedido.data), // Usa a função para formatar a data
             Matrícula: pedido.matricula,
             Ônus: pedido.onus,
             Folhas: pedido.folhas,
             Imagens: pedido.imagens,
-            tipoCertidao: pedido.tipoCertidao,
-            codigoArirj: pedido.codigoArirj,
-            codigoEcartorio: pedido.codigoEcartorio,
+            TipoCertidao: pedido.tipoCertidao,
+            CodigoARIRJ: pedido.tipoCertidao === 'ARIRJ' ? pedido.codigoArirj : null,
+            CodigoEcartorio: pedido.tipoCertidao === 'E-CARTORIO' ? pedido.codigoEcartorio : null,
             Protocolos: pedido.protocolos
                 ? pedido.protocolos
                     .replace(/<[^>]*>/g, '') // Remove tags HTML
@@ -589,19 +607,19 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
             Participantes: pedido.proprietarios
                 ? pedido.proprietarios
                     .replace(/<[^>]*>/g, '') // Remove tags HTML
-                    .split('|') // Divide os proprietarios em um array
+                    .split('|') // Divide os proprietários em um array
                     .filter(item => item.trim() !== '') // Remove itens vazios
-                    .map(item => `${item.trim()}`) // Formata
+                    .map(item => formatarParticipante(item.trim())) // Formata CPF/CNPJ
                 : []
         }));
 
         // Converte o array de pedidos formatados para uma string JSON com indentação
         const conteudo = JSON.stringify(pedidosFormatados, null, 2);
 
-        // Cria um Blob
+        // Cria um Blob para download
         const blob = new Blob([conteudo], { type: 'application/json' });
 
-        // Cria um elemento <a> temporário para fazer o download
+        // Cria um link temporário para download
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'pedidos.json';
@@ -609,7 +627,6 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
         URL.revokeObjectURL(link.href); // Libera a URL
 
     } catch (error) {
-        // Captura qualquer erro
         console.error("Erro ao baixar pedidos:", error);
         alert("Erro ao baixar pedidos. Verifique o console para detalhes.");
     }
