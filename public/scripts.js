@@ -564,7 +564,7 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
         // Formata os dados dos pedidos
         const pedidosFormatados = pedidos.map(pedido => ({
             Pedido: pedido.pedido,
-            Data: new Date(pedido.data), //Usa a função de formatar data.
+            Data: pedido.data, //Usa a função de formatar data.
             Matrícula: pedido.matricula,
             Ônus: pedido.onus,
             Folhas: pedido.folhas,
