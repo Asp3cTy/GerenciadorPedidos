@@ -518,7 +518,7 @@ Tipo de Certidão: ${pedido.tipoCertidao}
             textoPedido += `Nenhum protocolo adicionado\n`;
         }
 
-        textoPedido += `\nProprietários:\n`;
+        textoPedido += `\Participantes:\n`;
         if (pedido.proprietarios) {
             textoPedido += pedido.proprietarios
                 .split('|')
@@ -574,7 +574,7 @@ document.getElementById('baixarPedidos').addEventListener('click', async functio
         // Formata os dados dos pedidos
         const pedidosFormatados = pedidos.map(pedido => ({
             Pedido: pedido.pedido,
-            Data: pedido.data, //Usa a função de formatar data.
+            Data: formatarData(pedido.data),
             Matrícula: pedido.matricula,
             Ônus: pedido.onus,
             Folhas: pedido.folhas,
