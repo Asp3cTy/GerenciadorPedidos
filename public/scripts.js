@@ -27,11 +27,11 @@ function formatarCpfCnpj(input) {
         valor = valor.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
         valor = valor.replace(/\.(\d{3})(\d)/, ".$1-$2");
     } else {
-        // Formata como CNPJ: XX.XXX.XXX/XXXX-XX
-        valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
-        valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-        valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
-        valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+// Formata como CNPJ: XX.XXX.XXX/XXXX-XX
+valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
+valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
+valor = valor.replace(/(\d{4})(\d{2})$/, "$1-$2"); // <---  CORREÇÃO AQUI
     }
 
     input.value = valor; // Atualiza o campo com a formatação
@@ -39,7 +39,7 @@ function formatarCpfCnpj(input) {
 
 // Aplica a função de formatação automática ao campo CPF/CNPJ
 document.addEventListener("DOMContentLoaded", function () {
-    const cpfCnpjInputs = document.querySelectorAll("input[data-cpf-cnpj]"); // Seleciona os campos com atributo data-cpf-cnpj
+    const cpfCnpjInputs = document.querySelectorAll("input[cpf]"); // Seleciona os campos com atributo data-cpf-cnpj
 
     cpfCnpjInputs.forEach(input => {
         input.addEventListener("input", function () {
