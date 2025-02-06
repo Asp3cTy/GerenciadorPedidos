@@ -491,7 +491,7 @@ const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
       
         let textoPedido = `
 Pedido: ${pedido.pedido}
-Data: ${dataFormatada}
+Data: ${pedido.data}
 Matrícula: ${pedido.matricula}
 Ônus: ${pedido.onus}
 N.º Folhas: ${pedido.folhas}
