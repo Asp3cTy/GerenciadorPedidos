@@ -188,8 +188,17 @@ function renderPedidos(pedidos) {
             "items-start"
         );
 
-        // Usa a função formatarData
-        const dataFormatada = formatarData(pedido.data);
+// Formata a data manualmente e insere no HTML
+        let dataFormatada = "";
+        if (pedido.data) {
+            const data = new Date(pedido.data);
+            const dia = String(data.getUTCDate()).padStart(2, "0");
+            const mes = String(data.getUTCMonth() + 1).padStart(2, "0");
+            const ano = data.getUTCFullYear();
+            dataFormatada = `<p><strong>Data:</strong> ${dia}/${mes}/${ano}</p>`;
+        } else {
+            dataFormatada = `<p><strong>Data:</strong> Data inválida</p>`;
+        }
 
         // Chama a função auxiliar para renderizar os participantes com a lupa
         const participantesHTML = renderizarParticipantes(pedido.proprietarios);
