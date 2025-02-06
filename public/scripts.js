@@ -290,8 +290,6 @@ function handleClickPesquisarCNIB(event) {
 function criarElementoParticipante(p) {
     const { cpfCnpj, texto } = extrairDadosParticipante(p);
 
-    // Se o cpfCnpj for encontrado, substitua-o no texto pelo formato
-  const textoFormatado = cpfCnpj ? texto.replace(cpfCnpj, formatCpfCnpj(cpfCnpj)) : texto;
     
     return `
       <div class="participante flex items-center w-full flex-wrap">
@@ -399,18 +397,6 @@ document.getElementById('pedidosResumo').addEventListener('click', function (eve
 });
 
 
-function formatParticipanteText(text) {
-  // Divide o texto do participante pelo separador " - "
-  const partes = text.split(' - ');
-  if (partes.length > 2) {
-    // Considera que a terceira parte é o CPF/CNPJ
-    const raw = partes[2].replace(/\D/g, '');
-    if (raw.length === 11 || raw.length === 14) {
-      partes[2] = formatCpfCnpj(raw);
-    }
-  }
-  return partes.join(' - ');
-}
 
 
 // Evento para copiar pedido (usando delegação de eventos)
@@ -559,11 +545,6 @@ Tipo de Certidão: ${pedido.tipoCertidao}
     });
 }
 
-// Função para extrair e formatar CPF/CNPJ dentro do texto do participante
-function formatarParticipante(participante) {
-    const regexCpfCnpj = /\d{11}|\d{14}/g; // Captura CPF (11 dígitos) ou CNPJ (14 dígitos)
-    return participante.replace(regexCpfCnpj, match => formatCpfCnpj(match));
-}
 
 // Evento para baixar os pedidos em JSON
 document.getElementById('baixarPedidos').addEventListener('click', async function () {
