@@ -152,16 +152,18 @@ document.getElementById('salvarPedido').addEventListener('click', async () => {
 
 
 // Função para formatar a data (Centralizada, para evitar duplicação)
-function formatarData(dataString) {
-    if (!dataString) return 'Data inválida';
+function formatarData(data) {
+  if (!data) return `<p><strong>Data:</strong> Data inválida</p>`;
 
-    const data = new Date(dataString);
-    if (isNaN(data.getTime())) return 'Data inválida';
+  let dataFormatada = new Date(data);
+  if (isNaN(dataFormatada.getTime())) {
+    return `<p><strong>Data:</strong> Data inválida</p>`;
+  }
 
-    const dia = String(data.getUTCDate()).padStart(2, '0');
-    const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
-    const ano = data.getUTCFullYear();
-    return `<span class="math-inline">\{dia\}/</span>{mes}/${ano}`;
+  const dia = String(dataFormatada.getDate()).padStart(3, "0");
+  const mes = String(dataFormatada.getMonth() + 1).padStart(2, "0");
+  const ano = dataFormatada.getFullYear();
+  return `<p><strong>${dia}/${mes}/${ano}</strong></p>`;
 }
 
 
@@ -224,8 +226,8 @@ function renderPedidos(pedidos) {
 
             
             <div class="flex flex-col space-y-2 items-center ml-4">
-                <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="<span class="math-inline">\{pedido\.id\}"\>Editar</button\>
-<button class\="copiar\-button bg\-green\-500 hover\:bg\-green\-700 text\-white font\-bold py\-2 px\-4 rounded\-full focus\:outline\-none focus\:shadow\-outline" data\-id\="</span>{pedido.id}">Copiar</button>
+                <button class="editar-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Editar</button>
+                <button class="copiar-button bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Copiar</button>
                 <button class="excluir-button bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline" data-id="${pedido.id}">Excluir</button>
             </div>
         `;
