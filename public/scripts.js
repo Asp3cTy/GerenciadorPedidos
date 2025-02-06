@@ -402,7 +402,7 @@ function editarPedido(pedidoId) {
     if (pedido) {
         document.getElementById('pedido').value = pedido.pedido;
 
-        // Preencher o campo de data formatando para yyyy-MM-dd
+        // Preencher o campo de data formatando para YYYY-MM-dd
         if (pedido.data) {
             const data = new Date(pedido.data);
             const dia = String(data.getUTCDate()).padStart(2, '0');
@@ -658,7 +658,7 @@ document.getElementById('openModal').addEventListener('click', function () {
         campoCpfCnpj.setAttribute('maxlength', '14');
         campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
     }
-    // Define a data atual no formato রাখেYYYY-MM-DD
+    // Define a data atual no formato YYYY-MM-DD
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, '0');
     const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
@@ -684,7 +684,7 @@ document.getElementById("closeModal").addEventListener("click", function () {
     document.getElementById("proprietariosAdicionados").innerHTML = "";
     document.getElementById("protocolosAdicionados").dataset.protocolos = "";
     document.getElementById("proprietariosAdicionados").dataset.proprietarios = "";
-    // Formata a data atual para রাখেYYYY-MM-DD
+    // Formata a data atual para YYYY-MM-DD
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, "0");
     const mes = String(hoje.getMonth() + 1).padStart(2, "0"); // Janeiro é 0!
@@ -799,140 +799,140 @@ function renderizarProtocolos() {
 function handleEditProtocoloButtonClick(event) {
     const index = parseInt(event.target.dataset.index);
     let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-  const protocoloTexto = protocolosArray[index];
+    const protocoloTexto = protocolosArray[index];
 
-  // Preencher o campo de protocolo com o valor atual
-  document.getElementById('novoProtocolo').value = protocoloTexto;
+    // Preencher o campo de protocolo com o valor atual
+    document.getElementById('novoProtocolo').value = protocoloTexto;
 
-  // Remover o protocolo da lista
-  protocolosArray.splice(index, 1);
-  document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
-  renderizarProtocolos();
+    // Remover o protocolo da lista
+    protocolosArray.splice(index, 1);
+    document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+    renderizarProtocolos();
 
-  // Abrir o popup de protocolos
-  abrirPopupProtocolos();
+    // Abrir o popup de protocolos
+    abrirPopupProtocolos();
 }
 
 // Função para lidar com o clique no botão de excluir protocolo
 function handleDeleteProtocoloButtonClick(event) {
-  const index = parseInt(event.target.dataset.index);
-  let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
-  protocolosArray.splice(index, 1); // Remove o protocolo do array
-  document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
-  renderizarProtocolos(); // Renderiza a lista atualizada
+    const index = parseInt(event.target.dataset.index);
+    let protocolosArray = document.getElementById('protocolosAdicionados').dataset.protocolos.split('|');
+    protocolosArray.splice(index, 1); // Remove o protocolo do array
+    document.getElementById('protocolosAdicionados').dataset.protocolos = protocolosArray.join('|');
+    renderizarProtocolos(); // Renderiza a lista atualizada
 }
 
 // Alternar visibilidade de campos com base no tipo de documento
 // Event listener para o campo "Tipo de Documento"
 document.getElementById('tipoDocumento').addEventListener('change', function() {
-  const tipoDocumento = this.value;
-  const campoCpfCnpj = document.getElementById('cpf');
+    const tipoDocumento = this.value;
+    const campoCpfCnpj = document.getElementById('cpf');
 
-  if (tipoDocumento === 'cpf') {
-    campoCpfCnpj.setAttribute('maxlength', '11');
-    campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
-  } else if (tipoDocumento === 'cnpj') {
-    campoCpfCnpj.setAttribute('maxlength', '14');
-    campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
-  }
+    if (tipoDocumento === 'cpf') {
+        campoCpfCnpj.setAttribute('maxlength', '11');
+        campoCpfCnpj.setAttribute('placeholder', 'XXX.XXX.XXX-XX');
+    } else if (tipoDocumento === 'cnpj') {
+        campoCpfCnpj.setAttribute('maxlength', '14');
+        campoCpfCnpj.setAttribute('placeholder', 'XX.XXX.XXX/XXXX-XX');
+    }
 });
 
 // Event listener para o campo "CPF/CNPJ" (permite apenas números)
 document.getElementById('cpf').addEventListener('input', function() {
-  this.value = this.value.replace(/\D/g, ''); // Remove qualquer caractere que não seja um dígito
+    this.value = this.value.replace(/\D/g, ''); // Remove qualquer caractere que não seja um dígito
 });
 
 // Confirmar proprietário
 document.getElementById('confirmarProprietario').addEventListener('click', function () {
-  const qualificacao = document.getElementById('qualificacao').value;
-  const nome = document.getElementById('nome').value;
-  const cpf = document.getElementById('cpf').value;
-  const tipoDocumento = document.getElementById('tipoDocumento').value;
+    const qualificacao = document.getElementById('qualificacao').value;
+    const nome = document.getElementById('nome').value;
+    const cpf = document.getElementById('cpf').value;
+    const tipoDocumento = document.getElementById('tipoDocumento').value;
 
-  let propietarioTexto = `${qualificacao} - ${nome} - ${cpf}`;
+    let propietarioTexto = `${qualificacao} - ${nome} - ${cpf}`;
 
-  if (tipoDocumento === 'cpf') {
-    const sexo = document.getElementById('sexo').value;
-    const identidade = document.getElementById('identidade').value;
-    const orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
-    const estadoCivil = document.getElementById('estadoCivil').value;
-    propietarioTexto += ` - ${sexo} - ${identidade} - ${orgaoExpedidor} - ${estadoCivil}`;
-  }
+    if (tipoDocumento === 'cpf') {
+        const sexo = document.getElementById('sexo').value;
+        const identidade = document.getElementById('identidade').value;
+        const orgaoExpedidor = document.getElementById('orgaoExpedidor').value;
+        const estadoCivil = document.getElementById('estadoCivil').value;
+        propietarioTexto += ` - ${sexo} - ${identidade} - ${orgaoExpedidor} - ${estadoCivil}`;
+    }
 
-  // Obter a lista atual de proprietários do dataset
-  let proprietariosArray = [];
-  if (document.getElementById('proprietariosAdicionados').dataset.proprietarios) {
-    proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
-  }
+    // Obter a lista atual de proprietários do dataset
+    let proprietariosArray = [];
+    if (document.getElementById('proprietariosAdicionados').dataset.proprietarios) {
+        proprietariosArray = document.getElementById('proprietariosAdicionados').dataset.proprietarios.split('|');
+    }
 
-  // Adicionar o novo proprietário ao array
-  proprietariosArray.push(propietarioTexto);
+    // Adicionar o novo proprietário ao array
+    proprietariosArray.push(propietarioTexto);
 
-  // Atualizar o dataset com os proprietários
-  document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
+    // Atualizar o dataset com os proprietários
+    document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
 
-  // Renderizar a lista de proprietários
-  renderizarProprietarios();
+    // Renderizar a lista de proprietários
+    renderizarProprietarios();
 
-  // Limpar campos
-  document.getElementById('nome').value = '';
-  document.getElementById('cpf').value = '';
-  document.getElementById('tipoDocumento').value = 'cpf';
-  document.getElementById('sexo').value = 'Masculino';
-  document.getElementById('identidade').value = '';
-  document.getElementById('orgaoExpedidor').value = '';
-  document.getElementById('estadoCivil').value = 'Solteiro';
-  document.getElementById('camposPessoais').style.display = 'block';
+    // Limpar campos
+    document.getElementById('nome').value = '';
+    document.getElementById('cpf').value = '';
+    document.getElementById('tipoDocumento').value = 'cpf';
+    document.getElementById('sexo').value = 'Masculino';
+    document.getElementById('identidade').value = '';
+    document.getElementById('orgaoExpedidor').value = '';
+    document.getElementById('estadoCivil').value = 'Solteiro';
+    document.getElementById('camposPessoais').style.display = 'block';
 });
 
 // Função para renderizar a lista de proprietários
 function renderizarProprietarios() {
-  const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
-  proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
+    const proprietariosAdicionadosDiv = document.getElementById('proprietariosAdicionados');
+    proprietariosAdicionadosDiv.innerHTML = ''; // Limpa a lista atual
 
-  let proprietariosArray = [];
-  if (proprietariosAdicionadosDiv.dataset.proprietarios) {
-    proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
-  }
+    let proprietariosArray = [];
+    if (proprietariosAdicionadosDiv.dataset.proprietarios) {
+        proprietariosArray = proprietariosAdicionadosDiv.dataset.proprietarios.split('|');
+    }
 
-  proprietariosArray.forEach((proprietarioTexto, index) => {
-    const proprietarioSpan = document.createElement('span');
-    proprietarioSpan.classList.add('text-white');
-    proprietarioSpan.textContent = proprietarioTexto;
+    proprietariosArray.forEach((proprietarioTexto, index) => {
+        const proprietarioSpan = document.createElement('span');
+        proprietarioSpan.classList.add('text-white');
+        proprietarioSpan.textContent = proprietarioTexto;
 
-    // Botão Editar
-    const editButton = document.createElement('button');
-    editButton.classList.add('edit-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    editButton.textContent = 'Editar';
-    editButton.dataset.index = index; // Armazena o índice do proprietário
+        // Botão Editar
+        const editButton = document.createElement('button');
+        editButton.classList.add('edit-button', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+        editButton.textContent = 'Editar';
+        editButton.dataset.index = index; // Armazena o índice do proprietário
 
-    // Botão Excluir
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('delete-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
-    deleteButton.textContent = 'Excluir';
-    deleteButton.dataset.index = index; // Armazena o índice do proprietário
+        // Botão Excluir
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-button', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'ml-2', 'text-xs');
+        deleteButton.textContent = 'Excluir';
+        deleteButton.dataset.index = index; // Armazena o índice do proprietário
 
-    const container = document.createElement('div');
-    container.appendChild(proprietarioSpan);
-    container.appendChild(editButton);
-    container.appendChild(deleteButton);
+        const container = document.createElement('div');
+        container.appendChild(proprietarioSpan);
+        container.appendChild(editButton);
+        container.appendChild(deleteButton);
 
-    proprietariosAdicionadosDiv.appendChild(container);
-    proprietariosAdicionadosDiv.appendChild(document.createElement('br'));
-  });
+        proprietariosAdicionadosDiv.appendChild(container);
+        proprietariosAdicionadosDiv.appendChild(document.createElement('br'));
+    });
 
-  // Adiciona event listeners para os botões de editar e excluir
-  const editButtons = document.querySelectorAll('.edit-button');
-  editButtons.forEach(button => {
-    button.removeEventListener('click', handleEditButtonClick);
-    button.addEventListener('click', handleEditButtonClick);
-  });
+    // Adiciona event listeners para os botões de editar e excluir
+    const editButtons = document.querySelectorAll('.edit-button');
+    editButtons.forEach(button => {
+        button.removeEventListener('click', handleEditButtonClick);
+        button.addEventListener('click', handleEditButtonClick);
+    });
 
-  const deleteButtons = document.querySelectorAll('.delete-button');
-  deleteButtons.forEach(button => {
-    button.removeEventListener('click', handleDeleteButtonClick);
-    button.addEventListener('click', handleDeleteButtonClick);
-  });
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach(button => {
+        button.removeEventListener('click', handleDeleteButtonClick);
+        button.addEventListener('click', handleDeleteButtonClick);
+    });
 }
 
 // Função para lidar com o clique no botão de editar
@@ -943,27 +943,27 @@ function handleEditButtonClick(event) {
 
 
 
-// Preencher o formulário com os dados do proprietário
-const partes = proprietarioTexto.split(' - ');
-document.getElementById('qualificacao').value = partes[0];
-document.getElementById('nome').value = partes[1];
-document.getElementById('cpf').value = partes[2];
-document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
+    // Preencher o formulário com os dados do proprietário
+    const partes = proprietarioTexto.split(' - ');
+    document.getElementById('qualificacao').value = partes[0];
+    document.getElementById('nome').value = partes[1];
+    document.getElementById('cpf').value = partes[2];
+    document.getElementById('tipoDocumento').value = partes[2].length === 14 ? 'cnpj' : 'cpf';
 
-const labelCpf = document.querySelector('label[for="cpf"]');
+    const labelCpf = document.querySelector('label[for="cpf"]');
 
-// Atualizar o texto do label conforme o tipo de documento
-if (document.getElementById('tipoDocumento').value === 'cpf') {
-  labelCpf.textContent = 'CPF'; // Garante que o label seja CPF
-  document.getElementById('sexo').value = partes[3];
-  document.getElementById('identidade').value = partes[4];
-  document.getElementById('orgaoExpedidor').value = partes[5];
-  document.getElementById('estadoCivil').value = partes[6];
-  document.getElementById('camposPessoais').style.display = 'block';
-} else {
-  labelCpf.textContent = 'CNPJ'; // Atualiza o label para CNPJ
-  document.getElementById('camposPessoais').style.display = 'none';
-}
+    // Atualizar o texto do label conforme o tipo de documento
+    if (document.getElementById('tipoDocumento').value === 'cpf') {
+        labelCpf.textContent = 'CPF'; // Garante que o label seja CPF
+        document.getElementById('sexo').value = partes[3];
+        document.getElementById('identidade').value = partes[4];
+        document.getElementById('orgaoExpedidor').value = partes[5];
+        document.getElementById('estadoCivil').value = partes[6];
+        document.getElementById('camposPessoais').style.display = 'block';
+    } else {
+        labelCpf.textContent = 'CNPJ'; // Atualiza o label para CNPJ
+        document.getElementById('camposPessoais').style.display = 'none';
+    }
 
 
 
@@ -974,7 +974,7 @@ if (document.getElementById('tipoDocumento').value === 'cpf') {
 
     // Abrir o popup de proprietários
     abrirPopupProprietarios();
-  }
+}
 
 // Função para lidar com o clique no botão de excluir
 function handleDeleteButtonClick(event) {
@@ -983,15 +983,15 @@ function handleDeleteButtonClick(event) {
     proprietariosArray.splice(index, 1); // Remove o proprietário do array
     document.getElementById('proprietariosAdicionados').dataset.proprietarios = proprietariosArray.join('|');
     renderizarProprietarios(); // Renderiza a lista atualizada
-  }
+}
 
 // Função para permitir apenas números nos campos
 function permitirSomenteNumeros(idCampo) {
-  const campo = document.getElementById(idCampo);
-  campo.addEventListener('input', () => {
-    // Remove tudo que não seja dígito
-    campo.value = campo.value.replace(/\D/g, '');
-  });
+    const campo = document.getElementById(idCampo);
+    campo.addEventListener('input', () => {
+        // Remove tudo que não seja dígito
+        campo.value = campo.value.replace(/\D/g, '');
+    });
 }
 
 // Aplicar a funcionalidade para CPF/CNPJ e Identidade
@@ -1004,21 +1004,21 @@ permitirSomenteNumeros('imagens');
 
 // Mostrar/ocultar Código ARIRJ e Código E-CARTORIO
 document.getElementById('tipoCertidao').addEventListener('change', function () {
-  const codigoArirjContainer = document.getElementById('codigoArirjContainer');
-  const codigoEcartorioContainer = document.getElementById('codigoEcartorioContainer');
+    const codigoArirjContainer = document.getElementById('codigoArirjContainer');
+    const codigoEcartorioContainer = document.getElementById('codigoEcartorioContainer');
 
-  // Exibe ou esconde os campos com base no tipo de certidão selecionado
-  if (this.value === 'ARIRJ') {
-    codigoArirjContainer.classList.remove('hidden');
-    codigoEcartorioContainer.classList.add('hidden');
-  } else if (this.value === 'E-CARTORIO') {
-    codigoArirjContainer.classList.add('hidden');
-    codigoEcartorioContainer.classList.remove('hidden');
-  } else {
-    // Caso não seja ARIRJ ou E-CARTORIO, esconde ambos
-    codigoArirjContainer.classList.add('hidden');
-    codigoEcartorioContainer.classList.add('hidden');
-  }
+    // Exibe ou esconde os campos com base no tipo de certidão selecionado
+    if (this.value === 'ARIRJ') {
+        codigoArirjContainer.classList.remove('hidden');
+        codigoEcartorioContainer.classList.add('hidden');
+    } else if (this.value === 'E-CARTORIO') {
+        codigoArirjContainer.classList.add('hidden');
+        codigoEcartorioContainer.classList.remove('hidden');
+    } else {
+        // Caso não seja ARIRJ ou E-CARTORIO, esconde ambos
+        codigoArirjContainer.classList.add('hidden');
+        codigoEcartorioContainer.classList.add('hidden');
+    }
 });
 
 
