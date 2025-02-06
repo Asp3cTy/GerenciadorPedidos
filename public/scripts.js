@@ -2,56 +2,43 @@ let currentPage = 1; // Página atual
 let totalPages = 1; // Total de páginas (será calculado)
 let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
-// Função para formatar CPF e CNPJ corretamente
-function formatCpfCnpj(valor) {
-    if (!valor) return '';
+// Função PURA para formatar um CPF ou CNPJ (recebe string, retorna string)
+function formatarCpfCnpj(valor) {
+    if (!valor) return ''; // Trata valor nulo/vazio
 
-    const digits = valor.replace(/\D/g, ''); // Remove tudo que não for número
+    const digits = valor.replace(/\D/g, ""); // Remove tudo que não é dígito
 
-if (digits.length === 14) {
-    return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5"); // CNPJ
-}
-    } else if (digits.length === 11) {
-        return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4"); // CPF
+    if (digits.length === 11) { // CPF
+        return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    } else if (digits.length === 14) { // CNPJ
+        return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+    } else {
+        return valor; // Ou retorna uma string vazia, ou "CPF/CNPJ inválido"
     }
-
-    return valor; // Retorna o valor original se não for CPF/CNPJ válido
 }
 
-function formatarCpfCnpj(input) {
-    if (!input) return; // Se não houver input, sai da função.
+// Função para aplicar a máscara a um campo de input (baseada no placeholder)
+function aplicarMascaraCpfCnpj(input) {
+    if (!input) return;
 
-    let valor = input.value.replace(/\D/g, ""); // Remove tudo que não for número.
-    const placeholder = input.placeholder; // Pega o placeholder do input.
+    let valor = input.value.replace(/\D/g, "");
+    const placeholder = input.placeholder;
 
     if (placeholder === 'XXX.XXX.XXX-XX') {
-        // Formata como CPF: XXX.XXX.XXX-XX
+        // Formata como CPF
         valor = valor.replace(/^(\d{3})(\d)/, "$1.$2");
         valor = valor.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
-        valor = valor.replace(/\.(\d{3})(\d{1,2})/, ".$1-$2"); // Melhorado para 1 ou 2 dígitos
-
+        valor = valor.replace(/\.(\d{3})(\d{1,2})/, ".$1-$2");
     } else if (placeholder === 'XX.XXX.XXX/XXXX-XX') {
-        // Formata como CNPJ: XX.XXX.XXX/XXXX-XX
+        // Formata como CNPJ
         valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
         valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
         valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
-        valor = valor.replace(/(\d{4})(\d{2})$/, "$1-$2"); // Correção: 4 dígitos, 2 dígitos, final da string.
+        valor = valor.replace(/(\d{4})(\d{2})$/, "$1-$2");
     }
-    // Em qualquer outro caso, não formata.
-
-    input.value = valor; // Atualiza o valor do campo *input*.
+    input.value = valor;
 }
 
-// Aplica a função de formatação automática ao campo CPF/CNPJ
-document.addEventListener("DOMContentLoaded", function () {
-    const cpfCnpjInputs = document.querySelectorAll("input[cpf]"); // Seleciona os campos com atributo data-cpf-cnpj
-
-    cpfCnpjInputs.forEach(input => {
-        input.addEventListener("input", function () {
-            formatarCpfCnpj(this);
-        });
-    });
-});
 
 
 
