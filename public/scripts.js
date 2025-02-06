@@ -1083,7 +1083,15 @@ document.getElementById('tipoCertidao').addEventListener('change', function () {
     }
 });
 
+// Carrega os pedidos quando a página é carregada e quando o DOM está pronto
+document.addEventListener('DOMContentLoaded', function() {
+    carregarPedidos();  // Chama carregarPedidos *após* o DOM ter sido carregado.
+    toUpperCaseInputs(); // Garante que a função seja chamada.
+});
 
+// Adiciona os event listeners para os botões de paginação *fora* da função carregarPedidos
+document.getElementById('prevPage').addEventListener('click', () => changePage(-1));
+document.getElementById('nextPage').addEventListener('click', () => changePage(1));
 
 // Carrega os pedidos quando a página é carregada
 carregarPedidos();
