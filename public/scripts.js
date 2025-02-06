@@ -336,18 +336,24 @@ async function carregarPedidos() {
     }
 }
 
-// Funções para mudar de página e atualizar botões
-function changePage(delta) {
-    currentPage += delta;
-    if (currentPage < 1) currentPage = 1;
-    if (currentPage > totalPages) currentPage = totalPages;
-    carregarPedidos();
+// Funções para mudar de página e atualizar botões (agora usando async/await)
+async function changePage(delta) {
+    const newPage = currentPage + delta;
+    console.log(`Tentando mudar para a página ${newPage}...`); // Debug
+
+    // Verifica se a nova página é válida *antes* de fazer a requisição
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        await carregarPedidos(); // Agora carregarPedidos() é assíncrona
+    } else {
+        console.log(`Página ${newPage} inválida.`); // Debug
+    }
 }
 
 function updatePaginationButtons() {
     document.getElementById('pageNumber').textContent = `Página ${currentPage} de ${totalPages}`;
     document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = currentPage >= totalPages;
+    document.getElementById('nextPage').disabled = currentPage === totalPages;
 }
 
 // Evento para excluir pedido (usando delegação de eventos)
