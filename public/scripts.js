@@ -2,45 +2,6 @@ let currentPage = 1; // Página atual
 let totalPages = 1; // Total de páginas (será calculado)
 let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
-// Função PURA para formatar um CPF ou CNPJ (recebe string, retorna string)
-function formatarCpfCnpj(valor) {
-    if (!valor) return ''; // Trata valor nulo/vazio
-
-    const digits = valor.replace(/\D/g, ""); // Remove tudo que não é dígito
-
-    if (digits.length === 11) { // CPF
-        return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-    } else if (digits.length === 14) { // CNPJ
-        return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
-    } else {
-        return valor; // Ou retorna uma string vazia, ou "CPF/CNPJ inválido"
-    }
-}
-
-// Função para aplicar a máscara a um campo de input (baseada no placeholder)
-function aplicarMascaraCpfCnpj(input) {
-    if (!input) return;
-
-    let valor = input.value.replace(/\D/g, "");
-    const placeholder = input.placeholder;
-
-    if (placeholder === 'XXX.XXX.XXX-XX') {
-        // Formata como CPF
-        valor = valor.replace(/^(\d{3})(\d)/, "$1.$2");
-        valor = valor.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
-        valor = valor.replace(/\.(\d{3})(\d{1,2})/, ".$1-$2");
-    } else if (placeholder === 'XX.XXX.XXX/XXXX-XX') {
-        // Formata como CNPJ
-        valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
-        valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-        valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
-        valor = valor.replace(/(\d{4})(\d{2})$/, "$1-$2");
-    }
-    input.value = valor;
-}
-
-
-
 
 // Função para coletar dados do formulário
 function getDadosFormulario() {
