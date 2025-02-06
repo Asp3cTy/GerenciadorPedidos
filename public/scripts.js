@@ -310,29 +310,28 @@ function extrairDadosParticipante(textoParticipante) {
 
 
 
-// Função para carregar os pedidos do servidor
+// Função para carregar os pedidos do servidor (agora usando async/await)
 async function carregarPedidos() {
-    console.log("Carregando pedidos...");
+    console.log(`Carregando pedidos da página ${currentPage}...`); // Debug
     try {
         const response = await fetch(`/listar/_pedidos.php?page=${currentPage}`);
-
-        if (!response.ok) { // Verifica se a resposta do servidor não foi um erro (status 200-299)
+        if (!response.ok) {
             throw new Error(`Erro ao carregar pedidos: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
         pedidosCarregados = data.pedidos;
+        totalPages = Math.ceil(data.totalPedidos / 2); // Calcula totalPages corretamente
 
-        const totalPedidos = data.totalPedidos;
-        const limit = 2; // Ou use um limite dinâmico
-        totalPages = Math.ceil(totalPedidos / limit);
+        console.log("Total de páginas:", totalPages); // Debug
+        console.log("Pedidos carregados:", pedidosCarregados); //Debug
 
         renderPedidos(pedidosCarregados);
         updatePaginationButtons();
 
     } catch (error) {
-        console.error(error);
-        alert("Erro ao carregar pedidos. Verifique o console para detalhes."); // Mensagem de erro amigável
+        console.error("Erro ao carregar pedidos:", error);
+        alert("Erro ao carregar pedidos. Verifique o console para detalhes.");
     }
 }
 
