@@ -469,15 +469,13 @@ function copiarPedido(pedidoId) {
     const pedido = buscarPedidoPorId(pedidoId);
 
         // Preencher o campo de data formatando para YYYY-MM-dd
-        if (pedido.data) {
+        if (pedido) {
             const data = new Date(pedido.data);
             const dia = String(data.getUTCDate()).padStart(2, '0');
 const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
             const ano = data.getUTCFullYear();
             document.getElementById('data').value = `${ano}-${mes}-${dia}`;
-        } else {
-            document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
-        }
+        } 
     
         let textoPedido = `
 Pedido: ${pedido.pedido}
@@ -488,6 +486,10 @@ N.º Folhas: ${pedido.folhas}
 N.º Imagens: ${pedido.imagens}
 Tipo de Certidão: ${pedido.tipoCertidao}
 `;
+
+   else {
+            document.getElementById('data').value = pedido.data; // Ou defina uma data padrão
+        } 
 
         if (pedido.tipoCertidao === 'ARIRJ') {
             textoPedido += `Código ARIRJ: ${pedido.codigoArirj}\n`;
