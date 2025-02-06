@@ -18,24 +18,28 @@ if (digits.length === 14) {
     return valor; // Retorna o valor original se não for CPF/CNPJ válido
 }
 
-// Função para formatar CPF ou CNPJ conforme a digitação
 function formatarCpfCnpj(input) {
-    let valor = input.value.replace(/\D/g, ""); // Remove tudo que não for número
+    if (!input) return; // Se não houver input, sai da função.
 
-    if (valor.length <= 11) {
+    let valor = input.value.replace(/\D/g, ""); // Remove tudo que não for número.
+    const placeholder = input.placeholder; // Pega o placeholder do input.
+
+    if (placeholder === 'XXX.XXX.XXX-XX') {
         // Formata como CPF: XXX.XXX.XXX-XX
         valor = valor.replace(/^(\d{3})(\d)/, "$1.$2");
         valor = valor.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
-        valor = valor.replace(/\.(\d{3})(\d)/, ".$1-$2");
-    } else {
-// Formata como CNPJ: XX.XXX.XXX/XXXX-XX
-valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
-valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
-valor = valor.replace(/(\d{4})(\d{2})$/, "$1-$2"); // <---  CORREÇÃO AQUI
-    }
+        valor = valor.replace(/\.(\d{3})(\d{1,2})/, ".$1-$2"); // Melhorado para 1 ou 2 dígitos
 
-    input.value = valor; // Atualiza o campo com a formatação
+    } else if (placeholder === 'XX.XXX.XXX/XXXX-XX') {
+        // Formata como CNPJ: XX.XXX.XXX/XXXX-XX
+        valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
+        valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+        valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
+        valor = valor.replace(/(\d{4})(\d{2})$/, "$1-$2"); // Correção: 4 dígitos, 2 dígitos, final da string.
+    }
+    // Em qualquer outro caso, não formata.
+
+    input.value = valor; // Atualiza o valor do campo *input*.
 }
 
 // Aplica a função de formatação automática ao campo CPF/CNPJ
