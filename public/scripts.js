@@ -722,7 +722,7 @@ document.getElementById("closeModal").addEventListener("click", function () {
     const dia = String(hoje.getDate()).padStart(2, "0");
     const mes = String(hoje.getMonth() + 1).padStart(2, "0"); // Janeiro é 0!
     const ano = hoje.getFullYear();
-    document.getElementById("data").value = `<span class="math-inline">\{ano\}\-</span>{mes}-${dia}`;
+    document.getElementById("data").value = ${dataFormatada};
 });
 
 // Funções para abrir e fechar popups
