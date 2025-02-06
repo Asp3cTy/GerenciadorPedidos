@@ -2,17 +2,19 @@ let currentPage = 1; // Página atual
 let totalPages = 1; // Total de páginas (será calculado)
 let pedidosCarregados = []; // Array para armazenar os pedidos carregados
 
+// Função para formatar CPF e CNPJ corretamente
 function formatCpfCnpj(valor) {
-  // Remove tudo que não seja dígito
-  const digits = valor.replace(/\D/g, '');
-  if (digits.length === 11) {
-    // Formata CPF: xxx.xxx.xxx-xx
-    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-  } else if (digits.length === 14) {
-    // Formata CNPJ: xx.xxx.xxx/xxxx-xx
-    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
-  }
-  return valor; // Se não for 11 ou 14, retorna como está.
+    if (!valor) return '';
+
+    const digits = valor.replace(/\D/g, ''); // Remove tudo que não for número
+
+    if (digits.length === 14) {
+        return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5"); // CNPJ
+    } else if (digits.length === 11) {
+        return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4"); // CPF
+    }
+
+    return valor; // Retorna o valor original se não for CPF/CNPJ válido
 }
 
 
