@@ -629,7 +629,7 @@ document.getElementById('copiarTodosPedidos').addEventListener('click', async fu
             const dataFormatada = formatarData(pedido.data); // <--- USE A FUNÇÃO!
             let textoPedido = `
 Pedido: ${pedido.pedido}
-Data: formatarData(pedido.data)
+Data: ${dataFormatada}
 Matrícula: ${pedido.matricula}
 Ônus: ${pedido.onus}
 N.º Folhas: ${pedido.folhas}
